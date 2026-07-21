@@ -19,6 +19,8 @@ struct GadgetEditView: View {
     @State private var rateQuote: ExchangeRateService.Quote?
     @State private var rateFetchError: String?
 
+    @State private var showLifetimeWheel = false
+
     private var issues: [GadgetValidation.Issue] {
         GadgetValidation.issues(for: gadget, baseCurrency: baseCurrency)
     }
@@ -74,16 +76,14 @@ struct GadgetEditView: View {
 
                 Section("Purchase") {
                     LabeledContent("Price") {
-                        HStack(spacing: 4) {
-                            Text(Currency.symbol(gadget.currencyCode))
-                                .foregroundStyle(.secondary)
-                            TextField(
-                                "0", value: priceBinding,
-                                format: .number.precision(.fractionLength(0...Currency.fractionDigits(gadget.currencyCode)))
-                            )
-                            .keyboardType(Currency.fractionDigits(gadget.currencyCode) > 0 ? .decimalPad : .numberPad)
-                            .multilineTextAlignment(.trailing)
-                        }
+                        // No currency symbol here — the Currency picker right below
+                        // already says which currency this is in.
+                        TextField(
+                            "0", value: priceBinding,
+                            format: .number.precision(.fractionLength(0...Currency.fractionDigits(gadget.currencyCode)))
+                        )
+                        .keyboardType(Currency.fractionDigits(gadget.currencyCode) > 0 ? .decimalPad : .numberPad)
+                        .multilineTextAlignment(.trailing)
                     }
                     fieldError(.price)
 
@@ -165,34 +165,45 @@ struct GadgetEditView: View {
 
                 Section {
                     Stepper(value: $gadget.expectedLifetimeMonths, in: 1...Gadget.maxLifetimeMonths, step: 1) {
-                        LabeledContent(
-                            "Expect it to last",
-                            value: Duration.fromMonths(gadget.expectedLifetimeMonths)
-                        )
+                        Button {
+                            withAnimation { showLifetimeWheel.toggle() }
+                        } label: {
+                            LabeledContent(
+                                "Expect it to last",
+                                value: Duration.fromMonths(gadget.expectedLifetimeMonths)
+                            )
+                        }
+                        .buttonStyle(.plain)
                     }
                     .onChange(of: gadget.expectedLifetimeMonths) { lifetimeIsCustom = true }
                     fieldError(.lifetime)
 
-                    HStack(spacing: 0) {
-                        Picker("Years", selection: lifetimeYears) {
-                            ForEach(0...Gadget.maxLifetimeMonths / 12, id: \.self) { year in
-                                Text("\(year) yr").tag(year)
+                    if showLifetimeWheel {
+                        HStack(spacing: 0) {
+                            Picker("Years", selection: lifetimeYears) {
+                                ForEach(0...Gadget.maxLifetimeMonths / 12, id: \.self) { year in
+                                    Text("\(year) yr").tag(year)
+                                }
                             }
-                        }
-                        .pickerStyle(.wheel)
-                        Picker("Months", selection: lifetimeExtraMonths) {
-                            ForEach(0..<12, id: \.self) { month in
-                                Text("\(month) mo").tag(month)
+                            .pickerStyle(.wheel)
+                            Picker("Months", selection: lifetimeExtraMonths) {
+                                ForEach(0..<12, id: \.self) { month in
+                                    Text("\(month) mo").tag(month)
+                                }
                             }
+                            .pickerStyle(.wheel)
                         }
-                        .pickerStyle(.wheel)
+                        .frame(height: 120)
+                        .listRowInsets(EdgeInsets())
+                        .transition(.opacity.combined(with: .move(edge: .top)))
                     }
-                    .frame(height: 120)
-                    .listRowInsets(EdgeInsets())
                 } header: {
                     Text("Expected lifetime")
                 } footer: {
-                    Text("Scroll the wheel to jump to a value, or use the stepper for one month at a time. Default for \(gadget.category.label.lowercased()) is \(Duration.fromMonths(gadget.category.defaultLifetimeMonths)).")
+                    Text(showLifetimeWheel
+                         ? "Scroll the wheel to jump to a value, or use the stepper for one month at a time."
+                         : "Tap the value to scroll to it, or use the stepper for one month at a time.")
+                    + Text(" Default for \(gadget.category.label.lowercased()) is \(Duration.fromMonths(gadget.category.defaultLifetimeMonths)).")
                 }
 
                 if gadget.price > 0 {
