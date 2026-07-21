@@ -7,13 +7,25 @@
  "%@ · fully amortised · %@ owned": "%@ · tersusut penuh · dimiliki %@",
  "%@ · retired after %@": "%@ · dinonaktifkan setelah %@",
  "%lld": "%lld",
- "%lld days": {"other": "%lld hari"},
- "%lld items": {"other": "%lld barang"},
- "%lld items purchased in another currency use the exchange rate recorded at the time of purchase.": {"other": "%lld barang yang dibeli dengan mata uang lain menggunakan nilai tukar yang tercatat pada saat pembelian."},
+ "%lld days": {
+  "other": "%lld hari"
+ },
+ "%lld items": {
+  "other": "%lld barang"
+ },
+ "%lld items purchased in another currency use the exchange rate recorded at the time of purchase.": {
+  "other": "%lld barang yang dibeli dengan mata uang lain menggunakan nilai tukar yang tercatat pada saat pembelian."
+ },
  "%lld mo": "%lld bln",
- "%lld months": {"other": "%lld bulan"},
- "%lld retired": {"other": "%lld nonaktif"},
- "%lld years": {"other": "%lld tahun"},
+ "%lld months": {
+  "other": "%lld bulan"
+ },
+ "%lld retired": {
+  "other": "%lld nonaktif"
+ },
+ "%lld years": {
+  "other": "%lld tahun"
+ },
  "%lld yr": "%lld thn",
  "%lld yr %lld mo": "%lld thn %lld bln",
  "%lld%% of expected lifetime elapsed": "%lld%% dari masa pakai yang diharapkan telah berlalu",
@@ -25,7 +37,9 @@
  "Accessory": "Aksesori",
  "Add item": "Tambah barang",
  "Add your first item": "Tambahkan barang pertama Anda",
- "Added %lld items.": {"other": "%lld barang telah ditambahkan."},
+ "Added %lld items.": {
+  "other": "%lld barang telah ditambahkan."
+ },
  "All sectors": "Semua sektor",
  "Appliances & Kitchen": "Peralatan & Dapur",
  "Audio": "Audio",
@@ -72,6 +86,7 @@
  "Dismiss": "Tutup",
  "Distribution across areas of life": "Distribusi menurut bidang kehidupan",
  "Distribution across categories": "Distribusi menurut kategori",
+ "Done": "Selesai",
  "Edit": "Ubah",
  "Edit Category": "Ubah Kategori",
  "Edit Item": "Ubah Barang",
@@ -154,7 +169,9 @@
  "Restore complete": "Pemulihan selesai",
  "Restore failed": "Pemulihan gagal",
  "Restore from backup": "Pulihkan dari cadangan",
- "Restored %lld custom categories.": {"other": "%lld kategori khusus telah dipulihkan."},
+ "Restored %lld custom categories.": {
+  "other": "%lld kategori khusus telah dipulihkan."
+ },
  "Retire this item": "Nonaktifkan barang ini",
  "Retired": "Nonaktif",
  "Retiring an item stops its cost calculation while retaining it in your history and statistics.": "Menonaktifkan suatu barang akan menghentikan perhitungan biayanya, sementara barang tersebut tetap tersimpan dalam riwayat dan statistik Anda.",
@@ -170,7 +187,9 @@
  "Sector": "Sektor",
  "Settings": "Pengaturan",
  "Show retired": "Tampilkan yang nonaktif",
- "Skipped %lld entries already present.": {"other": "%lld entri yang sudah ada telah dilewati."},
+ "Skipped %lld entries already present.": {
+  "other": "%lld entri yang sudah ada telah dilewati."
+ },
  "Small Appliance": "Peralatan Kecil",
  "Smart Home": "Rumah Pintar",
  "Sofa & Seating": "Sofa & Tempat Duduk",
@@ -230,7 +249,9 @@
  "Year": "Tahun",
  "Years": "Tahun",
  "Yellow": "Kuning",
- "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {"other": "%lld barang Anda saat ini dinilai terhadap %@. Kurs ini menyatakan kembali nilainya dalam %@. Harga yang semula dimasukkan tetap tidak berubah; hanya konversinya yang disesuaikan."},
+ "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
+  "other": "%lld barang Anda saat ini dinilai terhadap %@. Kurs ini menyatakan kembali nilainya dalam %@. Harga yang semula dimasukkan tetap tidak berubah; hanya konversinya yang disesuaikan."
+ },
  "Your items cost you": "Barang-barang Anda menghabiskan biaya",
  "over %@": "selama %@",
  "past expected lifetime": "melewati masa pakai yang diharapkan",

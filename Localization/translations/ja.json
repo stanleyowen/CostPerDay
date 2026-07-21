@@ -7,13 +7,25 @@
  "%@ · fully amortised · %@ owned": "%1$@ · 償却完了 · %2$@ 保有",
  "%@ · retired after %@": "%1$@ · %2$@ で使用終了",
  "%lld": "%lld",
- "%lld days": {"other": "%lld 日"},
- "%lld items": {"other": "%lld 件"},
- "%lld items purchased in another currency use the exchange rate recorded at the time of purchase.": {"other": "他の通貨で購入した %lld 件の項目には、購入時に記録された為替レートが適用されます。"},
+ "%lld days": {
+  "other": "%lld 日"
+ },
+ "%lld items": {
+  "other": "%lld 件"
+ },
+ "%lld items purchased in another currency use the exchange rate recorded at the time of purchase.": {
+  "other": "他の通貨で購入した %lld 件の項目には、購入時に記録された為替レートが適用されます。"
+ },
  "%lld mo": "%lld か月",
- "%lld months": {"other": "%lld か月"},
- "%lld retired": {"other": "使用終了 %lld 件"},
- "%lld years": {"other": "%lld 年"},
+ "%lld months": {
+  "other": "%lld か月"
+ },
+ "%lld retired": {
+  "other": "使用終了 %lld 件"
+ },
+ "%lld years": {
+  "other": "%lld 年"
+ },
  "%lld yr": "%lld 年",
  "%lld yr %lld mo": "%lld 年 %lld か月",
  "%lld%% of expected lifetime elapsed": "想定使用期間の %lld%% が経過",
@@ -25,7 +37,9 @@
  "Accessory": "アクセサリー",
  "Add item": "項目を追加",
  "Add your first item": "最初の項目を追加",
- "Added %lld items.": {"other": "%lld 件の項目を追加しました。"},
+ "Added %lld items.": {
+  "other": "%lld 件の項目を追加しました。"
+ },
  "All sectors": "すべての部門",
  "Appliances & Kitchen": "家電・キッチン",
  "Audio": "オーディオ",
@@ -72,6 +86,7 @@
  "Dismiss": "閉じる",
  "Distribution across areas of life": "生活領域別の分布",
  "Distribution across categories": "カテゴリ別の分布",
+ "Done": "完了",
  "Edit": "編集",
  "Edit Category": "カテゴリを編集",
  "Edit Item": "項目を編集",
@@ -154,7 +169,9 @@
  "Restore complete": "復元が完了しました",
  "Restore failed": "復元に失敗しました",
  "Restore from backup": "バックアップから復元",
- "Restored %lld custom categories.": {"other": "カスタムカテゴリを %lld 件復元しました。"},
+ "Restored %lld custom categories.": {
+  "other": "カスタムカテゴリを %lld 件復元しました。"
+ },
  "Retire this item": "この項目を使用終了にする",
  "Retired": "使用終了",
  "Retiring an item stops its cost calculation while retaining it in your history and statistics.": "項目を使用終了にすると、コストの計算は停止しますが、履歴と統計には引き続き含まれます。",
@@ -170,7 +187,9 @@
  "Sector": "部門",
  "Settings": "設定",
  "Show retired": "使用終了を表示",
- "Skipped %lld entries already present.": {"other": "既に存在する %lld 件をスキップしました。"},
+ "Skipped %lld entries already present.": {
+  "other": "既に存在する %lld 件をスキップしました。"
+ },
  "Small Appliance": "小型家電",
  "Smart Home": "スマートホーム",
  "Sofa & Seating": "ソファ・椅子",
@@ -230,7 +249,9 @@
  "Year": "年",
  "Years": "年",
  "Yellow": "黄",
- "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {"other": "現在、%1$lld 件の項目は %2$@ を基準として価格が設定されています。このレートにより、それらを %3$@ で表示し直します。当初入力された価格は変更されず、換算のみが調整されます。"},
+ "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
+  "other": "現在、%1$lld 件の項目は %2$@ を基準として価格が設定されています。このレートにより、それらを %3$@ で表示し直します。当初入力された価格は変更されず、換算のみが調整されます。"
+ },
  "Your items cost you": "所有物のコストは",
  "over %@": "%@ にわたり",
  "past expected lifetime": "想定使用期間を超過",

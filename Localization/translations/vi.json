@@ -7,13 +7,25 @@
  "%@ · fully amortised · %@ owned": "%@ · đã khấu hao hết · đã sở hữu %@",
  "%@ · retired after %@": "%@ · ngừng sử dụng sau %@",
  "%lld": "%lld",
- "%lld days": {"other": "%lld ngày"},
- "%lld items": {"other": "%lld món đồ"},
- "%lld items purchased in another currency use the exchange rate recorded at the time of purchase.": {"other": "%lld món đồ được mua bằng loại tiền tệ khác sử dụng tỷ giá đã ghi nhận tại thời điểm mua."},
+ "%lld days": {
+  "other": "%lld ngày"
+ },
+ "%lld items": {
+  "other": "%lld món đồ"
+ },
+ "%lld items purchased in another currency use the exchange rate recorded at the time of purchase.": {
+  "other": "%lld món đồ được mua bằng loại tiền tệ khác sử dụng tỷ giá đã ghi nhận tại thời điểm mua."
+ },
  "%lld mo": "%lld tháng",
- "%lld months": {"other": "%lld tháng"},
- "%lld retired": {"other": "%lld đã ngừng"},
- "%lld years": {"other": "%lld năm"},
+ "%lld months": {
+  "other": "%lld tháng"
+ },
+ "%lld retired": {
+  "other": "%lld đã ngừng"
+ },
+ "%lld years": {
+  "other": "%lld năm"
+ },
  "%lld yr": "%lld năm",
  "%lld yr %lld mo": "%lld năm %lld tháng",
  "%lld%% of expected lifetime elapsed": "Đã trôi qua %lld%% tuổi thọ dự kiến",
@@ -25,7 +37,9 @@
  "Accessory": "Phụ kiện",
  "Add item": "Thêm món đồ",
  "Add your first item": "Thêm món đồ đầu tiên của bạn",
- "Added %lld items.": {"other": "Đã thêm %lld món đồ."},
+ "Added %lld items.": {
+  "other": "Đã thêm %lld món đồ."
+ },
  "All sectors": "Tất cả lĩnh vực",
  "Appliances & Kitchen": "Thiết bị & Nhà bếp",
  "Audio": "Âm thanh",
@@ -72,6 +86,7 @@
  "Dismiss": "Đóng",
  "Distribution across areas of life": "Phân bổ theo lĩnh vực đời sống",
  "Distribution across categories": "Phân bổ theo danh mục",
+ "Done": "Xong",
  "Edit": "Sửa",
  "Edit Category": "Sửa Danh mục",
  "Edit Item": "Sửa Món đồ",
@@ -154,7 +169,9 @@
  "Restore complete": "Khôi phục hoàn tất",
  "Restore failed": "Khôi phục thất bại",
  "Restore from backup": "Khôi phục từ bản sao lưu",
- "Restored %lld custom categories.": {"other": "Đã khôi phục %lld danh mục tùy chỉnh."},
+ "Restored %lld custom categories.": {
+  "other": "Đã khôi phục %lld danh mục tùy chỉnh."
+ },
  "Retire this item": "Ngừng sử dụng món đồ này",
  "Retired": "Đã ngừng sử dụng",
  "Retiring an item stops its cost calculation while retaining it in your history and statistics.": "Việc ngừng sử dụng một món đồ sẽ dừng tính chi phí của món đồ đó, đồng thời vẫn giữ lại nó trong lịch sử và thống kê của bạn.",
@@ -170,7 +187,9 @@
  "Sector": "Lĩnh vực",
  "Settings": "Cài đặt",
  "Show retired": "Hiển thị món đã ngừng",
- "Skipped %lld entries already present.": {"other": "Đã bỏ qua %lld mục vốn đã có sẵn."},
+ "Skipped %lld entries already present.": {
+  "other": "Đã bỏ qua %lld mục vốn đã có sẵn."
+ },
  "Small Appliance": "Thiết bị nhỏ",
  "Smart Home": "Nhà thông minh",
  "Sofa & Seating": "Ghế sofa & Chỗ ngồi",
@@ -230,7 +249,9 @@
  "Year": "Năm",
  "Years": "Năm",
  "Yellow": "Vàng",
- "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {"other": "%lld món đồ của bạn hiện đang được định giá theo %@. Tỷ giá này thể hiện lại chúng bằng %@. Giá đã nhập ban đầu vẫn không thay đổi; chỉ phần quy đổi được điều chỉnh."},
+ "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
+  "other": "%lld món đồ của bạn hiện đang được định giá theo %@. Tỷ giá này thể hiện lại chúng bằng %@. Giá đã nhập ban đầu vẫn không thay đổi; chỉ phần quy đổi được điều chỉnh."
+ },
  "Your items cost you": "Các món đồ của bạn tiêu tốn",
  "over %@": "trong %@",
  "past expected lifetime": "quá tuổi thọ dự kiến",

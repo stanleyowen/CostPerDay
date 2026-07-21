@@ -7,13 +7,25 @@
  "%@ · fully amortised · %@ owned": "%@ · 已完全攤提 · 已持有 %@",
  "%@ · retired after %@": "%@ · 使用 %@ 後停用",
  "%lld": "%lld",
- "%lld days": {"other": "%lld 天"},
- "%lld items": {"other": "%lld 件"},
- "%lld items purchased in another currency use the exchange rate recorded at the time of purchase.": {"other": "有 %lld 件物品以其他貨幣購入，將採用購入當時記錄的匯率換算。"},
+ "%lld days": {
+  "other": "%lld 天"
+ },
+ "%lld items": {
+  "other": "%lld 件"
+ },
+ "%lld items purchased in another currency use the exchange rate recorded at the time of purchase.": {
+  "other": "有 %lld 件物品以其他貨幣購入，將採用購入當時記錄的匯率換算。"
+ },
  "%lld mo": "%lld 個月",
- "%lld months": {"other": "%lld 個月"},
- "%lld retired": {"other": "%lld 件已停用"},
- "%lld years": {"other": "%lld 年"},
+ "%lld months": {
+  "other": "%lld 個月"
+ },
+ "%lld retired": {
+  "other": "%lld 件已停用"
+ },
+ "%lld years": {
+  "other": "%lld 年"
+ },
  "%lld yr": "%lld 年",
  "%lld yr %lld mo": "%lld 年 %lld 個月",
  "%lld%% of expected lifetime elapsed": "已使用預期使用年限的 %lld%%",
@@ -25,7 +37,9 @@
  "Accessory": "配件",
  "Add item": "新增物品",
  "Add your first item": "新增第一件物品",
- "Added %lld items.": {"other": "已新增 %lld 件物品。"},
+ "Added %lld items.": {
+  "other": "已新增 %lld 件物品。"
+ },
  "All sectors": "所有領域",
  "Appliances & Kitchen": "家電與廚房",
  "Audio": "音響",
@@ -72,6 +86,7 @@
  "Dismiss": "關閉",
  "Distribution across areas of life": "各生活領域的分布",
  "Distribution across categories": "各類別的分布",
+ "Done": "完成",
  "Edit": "編輯",
  "Edit Category": "編輯類別",
  "Edit Item": "編輯物品",
@@ -154,7 +169,9 @@
  "Restore complete": "還原完成",
  "Restore failed": "還原失敗",
  "Restore from backup": "從備份還原",
- "Restored %lld custom categories.": {"other": "已還原 %lld 個自訂類別。"},
+ "Restored %lld custom categories.": {
+  "other": "已還原 %lld 個自訂類別。"
+ },
  "Retire this item": "停用此物品",
  "Retired": "已停用",
  "Retiring an item stops its cost calculation while retaining it in your history and statistics.": "停用物品後將停止計算其成本，但仍會保留於您的歷史紀錄與統計之中。",
@@ -170,7 +187,9 @@
  "Sector": "領域",
  "Settings": "設定",
  "Show retired": "顯示已停用",
- "Skipped %lld entries already present.": {"other": "已略過 %lld 筆既有項目。"},
+ "Skipped %lld entries already present.": {
+  "other": "已略過 %lld 筆既有項目。"
+ },
  "Small Appliance": "小型家電",
  "Smart Home": "智慧家庭",
  "Sofa & Seating": "沙發與座椅",
@@ -230,7 +249,9 @@
  "Year": "年份",
  "Years": "年",
  "Yellow": "黃色",
- "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {"other": "您的 %lld 件物品目前以 %@ 計價。此匯率會將其改以 %@ 表示。原先輸入的價格維持不變，僅調整換算結果。"},
+ "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
+  "other": "您的 %lld 件物品目前以 %@ 計價。此匯率會將其改以 %@ 表示。原先輸入的價格維持不變，僅調整換算結果。"
+ },
  "Your items cost you": "您的物品每日花費",
  "over %@": "歷時 %@",
  "past expected lifetime": "已超過預期使用年限",

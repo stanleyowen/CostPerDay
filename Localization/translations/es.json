@@ -7,13 +7,31 @@
  "%@ · fully amortised · %@ owned": "%@ · totalmente amortizado · %@ en propiedad",
  "%@ · retired after %@": "%@ · retirado tras %@",
  "%lld": "%lld",
- "%lld days": {"one": "%lld día", "other": "%lld días"},
- "%lld items": {"one": "%lld artículo", "other": "%lld artículos"},
- "%lld items purchased in another currency use the exchange rate recorded at the time of purchase.": {"one": "%lld artículo comprado en otra moneda utiliza el tipo de cambio registrado en el momento de la compra.", "other": "%lld artículos comprados en otra moneda utilizan el tipo de cambio registrado en el momento de la compra."},
+ "%lld days": {
+  "one": "%lld día",
+  "other": "%lld días"
+ },
+ "%lld items": {
+  "one": "%lld artículo",
+  "other": "%lld artículos"
+ },
+ "%lld items purchased in another currency use the exchange rate recorded at the time of purchase.": {
+  "one": "%lld artículo comprado en otra moneda utiliza el tipo de cambio registrado en el momento de la compra.",
+  "other": "%lld artículos comprados en otra moneda utilizan el tipo de cambio registrado en el momento de la compra."
+ },
  "%lld mo": "%lld m",
- "%lld months": {"one": "%lld mes", "other": "%lld meses"},
- "%lld retired": {"one": "%lld retirado", "other": "%lld retirados"},
- "%lld years": {"one": "%lld año", "other": "%lld años"},
+ "%lld months": {
+  "one": "%lld mes",
+  "other": "%lld meses"
+ },
+ "%lld retired": {
+  "one": "%lld retirado",
+  "other": "%lld retirados"
+ },
+ "%lld years": {
+  "one": "%lld año",
+  "other": "%lld años"
+ },
  "%lld yr": "%lld a",
  "%lld yr %lld mo": "%lld a %lld m",
  "%lld%% of expected lifetime elapsed": "%lld%% de la vida útil prevista transcurrida",
@@ -25,7 +43,10 @@
  "Accessory": "Accesorio",
  "Add item": "Añadir artículo",
  "Add your first item": "Añada su primer artículo",
- "Added %lld items.": {"one": "Se añadió %lld artículo.", "other": "Se añadieron %lld artículos."},
+ "Added %lld items.": {
+  "one": "Se añadió %lld artículo.",
+  "other": "Se añadieron %lld artículos."
+ },
  "All sectors": "Todos los sectores",
  "Appliances & Kitchen": "Electrodomésticos y cocina",
  "Audio": "Audio",
@@ -72,6 +93,7 @@
  "Dismiss": "Descartar",
  "Distribution across areas of life": "Distribución por áreas de la vida",
  "Distribution across categories": "Distribución por categorías",
+ "Done": "Listo",
  "Edit": "Editar",
  "Edit Category": "Editar categoría",
  "Edit Item": "Editar artículo",
@@ -154,7 +176,10 @@
  "Restore complete": "Restauración completada",
  "Restore failed": "Error al restaurar",
  "Restore from backup": "Restaurar desde una copia de seguridad",
- "Restored %lld custom categories.": {"one": "Se restauró %lld categoría personalizada.", "other": "Se restauraron %lld categorías personalizadas."},
+ "Restored %lld custom categories.": {
+  "one": "Se restauró %lld categoría personalizada.",
+  "other": "Se restauraron %lld categorías personalizadas."
+ },
  "Retire this item": "Retirar este artículo",
  "Retired": "Retirado",
  "Retiring an item stops its cost calculation while retaining it in your history and statistics.": "Retirar un artículo detiene el cálculo de su costo y lo conserva en su historial y sus estadísticas.",
@@ -170,7 +195,10 @@
  "Sector": "Sector",
  "Settings": "Ajustes",
  "Show retired": "Mostrar retirados",
- "Skipped %lld entries already present.": {"one": "Se omitió %lld entrada ya existente.", "other": "Se omitieron %lld entradas ya existentes."},
+ "Skipped %lld entries already present.": {
+  "one": "Se omitió %lld entrada ya existente.",
+  "other": "Se omitieron %lld entradas ya existentes."
+ },
  "Small Appliance": "Electrodoméstico pequeño",
  "Smart Home": "Hogar inteligente",
  "Sofa & Seating": "Sofás y asientos",
@@ -230,7 +258,10 @@
  "Year": "Año",
  "Years": "Años",
  "Yellow": "Amarillo",
- "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {"one": "Su %lld artículo está valorado actualmente en %@. Esta tasa lo reexpresa en %@. Los precios introducidos originalmente no se modifican; solo se ajusta la conversión.", "other": "Sus %lld artículos están valorados actualmente en %@. Esta tasa los reexpresa en %@. Los precios introducidos originalmente no se modifican; solo se ajusta la conversión."},
+ "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
+  "one": "Su %lld artículo está valorado actualmente en %@. Esta tasa lo reexpresa en %@. Los precios introducidos originalmente no se modifican; solo se ajusta la conversión.",
+  "other": "Sus %lld artículos están valorados actualmente en %@. Esta tasa los reexpresa en %@. Los precios introducidos originalmente no se modifican; solo se ajusta la conversión."
+ },
  "Your items cost you": "Sus artículos le cuestan",
  "over %@": "durante %@",
  "past expected lifetime": "vida útil prevista superada",

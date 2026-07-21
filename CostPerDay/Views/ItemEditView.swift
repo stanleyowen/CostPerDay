@@ -177,7 +177,7 @@ struct ItemEditView: View {
                 Section {
                     Stepper(value: $item.expectedLifetimeMonths, in: 1...Item.maxLifetimeMonths, step: 1) {
                         Button {
-                            withAnimation { showLifetimeWheel.toggle() }
+                            openLifetimeWheel()
                         } label: {
                             LabeledContent(
                                 "Expected to last",
@@ -188,26 +188,6 @@ struct ItemEditView: View {
                     }
                     .onChange(of: item.expectedLifetimeMonths) { lifetimeIsCustom = true }
                     fieldError(.lifetime)
-
-                    if showLifetimeWheel {
-                        HStack(spacing: 0) {
-                            Picker("Years", selection: lifetimeYears) {
-                                ForEach(0...Item.maxLifetimeMonths / 12, id: \.self) { year in
-                                    Text("\(year) yr").tag(year)
-                                }
-                            }
-                            .pickerStyle(.wheel)
-                            Picker("Months", selection: lifetimeExtraMonths) {
-                                ForEach(0..<12, id: \.self) { month in
-                                    Text("\(month) mo").tag(month)
-                                }
-                            }
-                            .pickerStyle(.wheel)
-                        }
-                        .frame(height: 120)
-                        .listRowInsets(EdgeInsets())
-                        .transition(.opacity.combined(with: .move(edge: .top)))
-                    }
                 } header: {
                     Text("Expected lifetime")
                 } footer: {
@@ -266,6 +246,11 @@ struct ItemEditView: View {
                     }
                 }
             }
+            .safeAreaInset(edge: .bottom) {
+                if showLifetimeWheel {
+                    lifetimeWheelAccessory
+                }
+            }
             .navigationTitle(isNew ? String(localized: "New Item", comment: "Screen title") : String(localized: "Edit Item", comment: "Screen title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -321,6 +306,52 @@ struct ItemEditView: View {
     private func cancel() {
         if isNew { context.delete(item) }
         dismiss()
+    }
+
+    /// Opens the lifetime wheel, dismissing any active text field first — the two
+    /// shouldn't compete for the bottom of the screen at the same time.
+    private func openLifetimeWheel() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        withAnimation(.easeOut(duration: 0.25)) { showLifetimeWheel = true }
+    }
+
+    /// A picker that behaves like the keyboard: docked to the bottom of the screen,
+    /// appearing only once the "Expected to last" row is tapped, dismissed with its
+    /// own Done button rather than staying expanded inline in the form.
+    private var lifetimeWheelAccessory: some View {
+        VStack(spacing: 0) {
+            Divider()
+            HStack {
+                Text("Expected lifetime")
+                    .font(.subheadline.weight(.semibold))
+                Spacer()
+                Button("Done") {
+                    withAnimation(.easeIn(duration: 0.2)) { showLifetimeWheel = false }
+                }
+                .font(.subheadline.weight(.semibold))
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+
+            HStack(spacing: 0) {
+                Picker("Years", selection: lifetimeYears) {
+                    ForEach(0...Item.maxLifetimeMonths / 12, id: \.self) { year in
+                        Text("\(year) yr").tag(year)
+                    }
+                }
+                .pickerStyle(.wheel)
+                Picker("Months", selection: lifetimeExtraMonths) {
+                    ForEach(0..<12, id: \.self) { month in
+                        Text("\(month) mo").tag(month)
+                    }
+                }
+                .pickerStyle(.wheel)
+            }
+            .frame(height: 200)
+            .labelsHidden()
+        }
+        .background(.bar)
+        .transition(.move(edge: .bottom))
     }
 
     @MainActor

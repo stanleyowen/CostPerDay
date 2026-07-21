@@ -7,13 +7,25 @@
  "%@ · fully amortised · %@ owned": "%1$@ · 감가상각 완료 · %2$@ 보유",
  "%@ · retired after %@": "%1$@ · %2$@ 사용 후 사용 종료",
  "%lld": "%lld",
- "%lld days": {"other": "%lld일"},
- "%lld items": {"other": "%lld개"},
- "%lld items purchased in another currency use the exchange rate recorded at the time of purchase.": {"other": "다른 통화로 구매한 %lld개 항목에는 구매 시점에 기록된 환율이 적용됩니다."},
+ "%lld days": {
+  "other": "%lld일"
+ },
+ "%lld items": {
+  "other": "%lld개"
+ },
+ "%lld items purchased in another currency use the exchange rate recorded at the time of purchase.": {
+  "other": "다른 통화로 구매한 %lld개 항목에는 구매 시점에 기록된 환율이 적용됩니다."
+ },
  "%lld mo": "%lld개월",
- "%lld months": {"other": "%lld개월"},
- "%lld retired": {"other": "사용 종료 %lld개"},
- "%lld years": {"other": "%lld년"},
+ "%lld months": {
+  "other": "%lld개월"
+ },
+ "%lld retired": {
+  "other": "사용 종료 %lld개"
+ },
+ "%lld years": {
+  "other": "%lld년"
+ },
  "%lld yr": "%lld년",
  "%lld yr %lld mo": "%lld년 %lld개월",
  "%lld%% of expected lifetime elapsed": "예상 사용 기간의 %lld%% 경과",
@@ -25,7 +37,9 @@
  "Accessory": "액세서리",
  "Add item": "항목 추가",
  "Add your first item": "첫 항목 추가하기",
- "Added %lld items.": {"other": "항목 %lld개를 추가했습니다."},
+ "Added %lld items.": {
+  "other": "항목 %lld개를 추가했습니다."
+ },
  "All sectors": "전체 부문",
  "Appliances & Kitchen": "가전·주방",
  "Audio": "오디오",
@@ -72,6 +86,7 @@
  "Dismiss": "닫기",
  "Distribution across areas of life": "생활 영역별 분포",
  "Distribution across categories": "카테고리별 분포",
+ "Done": "완료",
  "Edit": "편집",
  "Edit Category": "카테고리 편집",
  "Edit Item": "항목 편집",
@@ -154,7 +169,9 @@
  "Restore complete": "복원이 완료되었습니다",
  "Restore failed": "복원에 실패했습니다",
  "Restore from backup": "백업에서 복원",
- "Restored %lld custom categories.": {"other": "사용자 카테고리 %lld개를 복원했습니다."},
+ "Restored %lld custom categories.": {
+  "other": "사용자 카테고리 %lld개를 복원했습니다."
+ },
  "Retire this item": "이 항목을 사용 종료로 표시",
  "Retired": "사용 종료",
  "Retiring an item stops its cost calculation while retaining it in your history and statistics.": "항목을 사용 종료로 표시하면 비용 계산은 중단되지만 기록과 통계에는 그대로 남습니다.",
@@ -170,7 +187,9 @@
  "Sector": "부문",
  "Settings": "설정",
  "Show retired": "사용 종료 항목 표시",
- "Skipped %lld entries already present.": {"other": "이미 있는 항목 %lld개를 건너뛰었습니다."},
+ "Skipped %lld entries already present.": {
+  "other": "이미 있는 항목 %lld개를 건너뛰었습니다."
+ },
  "Small Appliance": "소형 가전",
  "Smart Home": "스마트홈",
  "Sofa & Seating": "소파·의자",
@@ -230,7 +249,9 @@
  "Year": "연도",
  "Years": "년",
  "Yellow": "노랑",
- "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {"other": "현재 항목 %1$lld개의 가격은 %2$@을(를) 기준으로 설정되어 있습니다. 이 환율은 해당 항목을 %3$@(으)로 다시 표시합니다. 처음 입력한 가격은 그대로 유지되며 환산만 조정됩니다."},
+ "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
+  "other": "현재 항목 %1$lld개의 가격은 %2$@을(를) 기준으로 설정되어 있습니다. 이 환율은 해당 항목을 %3$@(으)로 다시 표시합니다. 처음 입력한 가격은 그대로 유지되며 환산만 조정됩니다."
+ },
  "Your items cost you": "보유 물품의 비용은",
  "over %@": "%@ 동안",
  "past expected lifetime": "예상 사용 기간 초과",

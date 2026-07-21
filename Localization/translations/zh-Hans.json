@@ -7,13 +7,25 @@
  "%@ · fully amortised · %@ owned": "%@ · 已完全摊销 · 已持有 %@",
  "%@ · retired after %@": "%@ · 使用 %@ 后停用",
  "%lld": "%lld",
- "%lld days": {"other": "%lld 天"},
- "%lld items": {"other": "%lld 件"},
- "%lld items purchased in another currency use the exchange rate recorded at the time of purchase.": {"other": "有 %lld 件物品以其他货币购入，将采用购入当时记录的汇率换算。"},
+ "%lld days": {
+  "other": "%lld 天"
+ },
+ "%lld items": {
+  "other": "%lld 件"
+ },
+ "%lld items purchased in another currency use the exchange rate recorded at the time of purchase.": {
+  "other": "有 %lld 件物品以其他货币购入，将采用购入当时记录的汇率换算。"
+ },
  "%lld mo": "%lld 个月",
- "%lld months": {"other": "%lld 个月"},
- "%lld retired": {"other": "%lld 件已停用"},
- "%lld years": {"other": "%lld 年"},
+ "%lld months": {
+  "other": "%lld 个月"
+ },
+ "%lld retired": {
+  "other": "%lld 件已停用"
+ },
+ "%lld years": {
+  "other": "%lld 年"
+ },
  "%lld yr": "%lld 年",
  "%lld yr %lld mo": "%lld 年 %lld 个月",
  "%lld%% of expected lifetime elapsed": "已使用预期使用年限的 %lld%%",
@@ -25,7 +37,9 @@
  "Accessory": "配件",
  "Add item": "添加物品",
  "Add your first item": "添加第一件物品",
- "Added %lld items.": {"other": "已添加 %lld 件物品。"},
+ "Added %lld items.": {
+  "other": "已添加 %lld 件物品。"
+ },
  "All sectors": "所有领域",
  "Appliances & Kitchen": "家电与厨房",
  "Audio": "音响",
@@ -72,6 +86,7 @@
  "Dismiss": "关闭",
  "Distribution across areas of life": "各生活领域的分布",
  "Distribution across categories": "各类别的分布",
+ "Done": "完成",
  "Edit": "编辑",
  "Edit Category": "编辑类别",
  "Edit Item": "编辑物品",
@@ -154,7 +169,9 @@
  "Restore complete": "恢复完成",
  "Restore failed": "恢复失败",
  "Restore from backup": "从备份恢复",
- "Restored %lld custom categories.": {"other": "已恢复 %lld 个自定义类别。"},
+ "Restored %lld custom categories.": {
+  "other": "已恢复 %lld 个自定义类别。"
+ },
  "Retire this item": "停用此物品",
  "Retired": "已停用",
  "Retiring an item stops its cost calculation while retaining it in your history and statistics.": "停用物品后将停止计算其成本，但仍会保留在您的历史记录与统计之中。",
@@ -170,7 +187,9 @@
  "Sector": "领域",
  "Settings": "设置",
  "Show retired": "显示已停用",
- "Skipped %lld entries already present.": {"other": "已跳过 %lld 条已存在的条目。"},
+ "Skipped %lld entries already present.": {
+  "other": "已跳过 %lld 条已存在的条目。"
+ },
  "Small Appliance": "小型家电",
  "Smart Home": "智能家居",
  "Sofa & Seating": "沙发与座椅",
@@ -230,7 +249,9 @@
  "Year": "年份",
  "Years": "年",
  "Yellow": "黄色",
- "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {"other": "您的 %lld 件物品当前以 %@ 计价。此汇率会将其改以 %@ 表示。原先输入的价格保持不变，仅调整换算结果。"},
+ "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
+  "other": "您的 %lld 件物品当前以 %@ 计价。此汇率会将其改以 %@ 表示。原先输入的价格保持不变，仅调整换算结果。"
+ },
  "Your items cost you": "您的物品每日花费",
  "over %@": "历时 %@",
  "past expected lifetime": "已超过预期使用年限",
