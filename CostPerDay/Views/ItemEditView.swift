@@ -146,31 +146,31 @@ struct ItemEditView: View {
                                 } else {
                                     Image(systemName: "arrow.clockwise")
                                 }
-                                Text(isFetchingRate ? "Fetching rate…" : "Fetch today's rate")
+                                Text(isFetchingRate ? String(localized: "Retrieving rate…", comment: "Shown while an exchange rate is being fetched") : String(localized: "Retrieve today's rate", comment: "Button to fetch the current exchange rate"))
                             }
                         }
                         .disabled(isFetchingRate)
 
                         if let quote = rateQuote {
                             Text(quote.servedFromCache
-                                 ? "From a cached rate, \(quote.asOf.formatted(date: .abbreviated, time: .shortened))"
-                                 : "Fetched just now")
+                                 ? String(localized: "From a cached rate of \(quote.asOf.formatted(date: .abbreviated, time: .shortened))", comment: "Shown under an exchange rate field. The placeholder is a date and time.")
+                                 : String(localized: "Retrieved just now", comment: "Shown under an exchange rate field"))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         } else if let rateFetchError {
-                            Text("\(rateFetchError) Enter the rate yourself.")
+                            Text("\(rateFetchError) Please enter the rate manually.")
                                 .font(.caption)
                                 .foregroundStyle(.orange)
                         }
 
                         if item.price > 0, item.rateToBase > 0 {
-                            LabeledContent("Costs you", value: Money.string(item.priceInBase, code: baseCurrency))
+                            LabeledContent("Equivalent cost", value: Money.string(item.priceInBase, code: baseCurrency))
                                 .foregroundStyle(.secondary)
                         }
                     } header: {
                         Text("Exchange rate")
                     } footer: {
-                        Text("Locked at the rate you paid, so this item's cost never shifts with the market. Your totals are shown in \(baseCurrency).")
+                        Text("The rate is fixed at the time of purchase, so this item's cost does not change with the market. All totals are shown in \(baseCurrency).")
                     }
                 }
 
@@ -180,7 +180,7 @@ struct ItemEditView: View {
                             withAnimation { showLifetimeWheel.toggle() }
                         } label: {
                             LabeledContent(
-                                "Expect it to last",
+                                "Expected to last",
                                 value: Duration.fromMonths(item.expectedLifetimeMonths)
                             )
                         }
@@ -212,9 +212,9 @@ struct ItemEditView: View {
                     Text("Expected lifetime")
                 } footer: {
                     Text(showLifetimeWheel
-                         ? "Scroll the wheel to jump to a value, or use the stepper for one month at a time."
-                         : "Tap the value to scroll to it, or use the stepper for one month at a time.")
-                    + Text(" Default for \(category.label.lowercased()) is \(Duration.fromMonths(category.defaultLifetimeMonths)).")
+                         ? "Use the wheel to select a value directly, or the stepper to adjust one month at a time."
+                         : "Tap the value to select it directly, or use the stepper to adjust one month at a time.")
+                    + Text(" The default for \(category.label) is \(Duration.fromMonths(category.defaultLifetimeMonths)).")
                 }
 
                 if item.price > 0 {
@@ -252,7 +252,7 @@ struct ItemEditView: View {
                 }
 
                 Section("Notes") {
-                    TextField("Why did you buy it?", text: $item.notes, axis: .vertical)
+                    TextField("Reason for purchase", text: $item.notes, axis: .vertical)
                         .lineLimit(3...6)
                 }
 
@@ -266,7 +266,7 @@ struct ItemEditView: View {
                     }
                 }
             }
-            .navigationTitle(isNew ? "New Item" : "Edit Item")
+            .navigationTitle(isNew ? String(localized: "New Item", comment: "Screen title") : String(localized: "Edit Item", comment: "Screen title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -348,7 +348,7 @@ private struct VerdictView: View {
 
     var body: some View {
         VStack(spacing: 10) {
-            Text(isNew ? "This will cost you" : "Planned cost")
+            Text(isNew ? String(localized: "This will cost you", comment: "Heading above the projected daily cost of a new item") : String(localized: "Planned cost", comment: "Heading above the budgeted daily cost"))
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
@@ -358,14 +358,14 @@ private struct VerdictView: View {
                 .contentTransition(.numericText())
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
-            Text("every day for the next \(Duration.fromMonths(item.expectedLifetimeMonths))")
+            Text("per day over the next \(Duration.fromMonths(item.expectedLifetimeMonths))")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
 
             HStack(spacing: 20) {
-                equivalent(Money.string(item.plannedCostPerDay * 7, code: baseCurrency), "a week")
-                equivalent(Money.string(item.plannedCostPerDay * 30.4375, code: baseCurrency), "a month")
+                equivalent(Money.string(item.plannedCostPerDay * 7, code: baseCurrency), String(localized: "per week", comment: "Cost equivalence label"))
+                equivalent(Money.string(item.plannedCostPerDay * 30.4375, code: baseCurrency), String(localized: "per month", comment: "Cost equivalence label"))
             }
             .padding(.top, 4)
         }

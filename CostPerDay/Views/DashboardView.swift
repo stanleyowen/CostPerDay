@@ -16,9 +16,9 @@ struct DashboardView: View {
             Group {
                 if items.isEmpty {
                     ContentUnavailableView(
-                        "Nothing to chart yet",
+                        "No data to display",
                         systemImage: "chart.bar.xaxis",
-                        description: Text("Add a few things and your spending shows up here.")
+                        description: Text("Record a few items and your spending will be summarised here.")
                     )
                 } else {
                     content
@@ -39,16 +39,16 @@ struct DashboardView: View {
                 HeroBurnRate(perDay: stats.dailyBurn, currency: baseCurrency)
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                    StatTile(title: "Total spent", value: Money.string(stats.totalSpent, code: baseCurrency), caption: "\(stats.count) items")
-                    StatTile(title: "In service", value: "\(stats.activeCount)", caption: "\(stats.retiredCount) retired")
-                    StatTile(title: "Average price", value: Money.string(stats.averagePrice, code: baseCurrency), caption: "per item")
-                    StatTile(title: "Paid off", value: "\(stats.paidOffCount)", caption: "outlived their budget")
+                    StatTile(title: String(localized: "Total spent", comment: "Statistic label"), value: Money.string(stats.totalSpent, code: baseCurrency), caption: String(localized: "\(stats.count) items", comment: "Statistic caption"))
+                    StatTile(title: String(localized: "In service", comment: "Statistic label"), value: "\(stats.activeCount)", caption: String(localized: "\(stats.retiredCount) retired", comment: "Statistic caption"))
+                    StatTile(title: String(localized: "Average price", comment: "Statistic label"), value: Money.string(stats.averagePrice, code: baseCurrency), caption: String(localized: "per item", comment: "Statistic caption"))
+                    StatTile(title: String(localized: "Fully amortised", comment: "Statistic label"), value: "\(stats.paidOffCount)", caption: String(localized: "past expected lifetime", comment: "Statistic caption"))
                 }
 
                 if stats.bySector.count > 1 {
                     ChartCard(
-                        title: "Spend by sector",
-                        subtitle: "Which side of life costs the most"
+                        title: String(localized: "Spending by sector", comment: "Chart title"),
+                        subtitle: String(localized: "Distribution across areas of life", comment: "Chart subtitle")
                     ) {
                         Chart(stats.bySector) { slice in
                             BarMark(
@@ -75,8 +75,8 @@ struct DashboardView: View {
                 }
 
                 ChartCard(
-                    title: "Spend by category",
-                    subtitle: "Where the money went"
+                    title: String(localized: "Spending by category", comment: "Chart title"),
+                    subtitle: String(localized: "Distribution across categories", comment: "Chart subtitle")
                 ) {
                     Chart(stats.byCategory) { slice in
                         BarMark(
@@ -103,8 +103,8 @@ struct DashboardView: View {
 
                 if stats.byYear.count > 1 {
                     ChartCard(
-                        title: "Spend by year",
-                        subtitle: "What you committed each year"
+                        title: String(localized: "Spending by year", comment: "Chart title"),
+                        subtitle: String(localized: "Total committed in each year", comment: "Chart subtitle")
                     ) {
                         Chart(stats.byYear) { bucket in
                             BarMark(
@@ -133,8 +133,8 @@ struct DashboardView: View {
 
                 if !stats.worstValue.isEmpty {
                     ChartCard(
-                        title: "Worst value per day",
-                        subtitle: "Your most expensive habits, \(costMode.label.lowercased())"
+                        title: String(localized: "Highest cost per day", comment: "Chart title"),
+                        subtitle: String(localized: "Ranked by cost per day, \(costMode.label)", comment: "Chart subtitle. The placeholder is the selected cost basis.")
                     ) {
                         VStack(spacing: 0) {
                             ForEach(Array(stats.worstValue.enumerated()), id: \.element.item.id) { index, entry in
@@ -246,7 +246,7 @@ private struct HeroBurnRate: View {
 
     var body: some View {
         VStack(spacing: 4) {
-            Text("Daily burn rate")
+            Text("Total daily cost")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
             Text(Money.perDay(perDay, code: currency))
@@ -255,7 +255,7 @@ private struct HeroBurnRate: View {
                 .contentTransition(.numericText())
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
-            Text("\(Money.string(perDay * 30.4375, code: currency)) / month · \(Money.string(perDay * 365.25, code: currency)) / year")
+            Text("\(Money.string(perDay * 30.4375, code: currency)) per month · \(Money.string(perDay * 365.25, code: currency)) per year")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -321,10 +321,10 @@ private struct WorstValueRow: View {
                 .foregroundStyle(entry.category.tint)
                 .frame(width: 24)
             VStack(alignment: .leading, spacing: 1) {
-                Text(item.name.isEmpty ? "Untitled" : item.name)
+                Text(item.name.isEmpty ? String(localized: "Untitled", comment: "Fallback name for an unnamed item") : item.name)
                     .font(.subheadline)
                     .lineLimit(1)
-                Text("\(Money.string(item.price, code: item.currencyCode)) · \(Duration.fromDays(item.daysOwned())) owned")
+                Text(String(localized: "\(Money.string(item.price, code: item.currencyCode)) · \(Duration.fromDays(item.daysOwned())) owned", comment: "Row subtitle. First placeholder is a price, second a duration."))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }

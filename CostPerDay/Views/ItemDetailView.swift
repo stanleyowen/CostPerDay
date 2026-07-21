@@ -31,18 +31,18 @@ struct ItemDetailView: View {
                     LabeledContent("Retired", value: retired.formatted(date: .abbreviated, time: .omitted))
                 } else if item.isPaidOff() {
                     LabeledContent("Status") {
-                        Label("Paid off — every day from here is free", systemImage: "checkmark.seal.fill")
+                        Label("Fully amortised — every further day is free", systemImage: "checkmark.seal.fill")
                             .foregroundStyle(.green)
                             .font(.footnote)
                     }
                 } else {
-                    LabeledContent("Breaks even", value: item.expectedEndDate.formatted(date: .abbreviated, time: .omitted))
-                    LabeledContent("Days left", value: "\(item.daysRemaining())")
+                    LabeledContent("Reaches expected end of life", value: item.expectedEndDate.formatted(date: .abbreviated, time: .omitted))
+                    LabeledContent("Days remaining", value: "\(item.daysRemaining())")
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
                     LifetimeBar(progress: item.lifetimeProgress(), tint: category.tint, height: 8)
-                    Text("\(Int((min(item.lifetimeProgress(), 9.99) * 100).rounded()))% through its expected life")
+                    Text("\(Int((min(item.lifetimeProgress(), 9.99) * 100).rounded()))% of expected lifetime elapsed")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -78,16 +78,16 @@ struct ItemDetailView: View {
 
             Section {
                 if item.isRetired {
-                    Button("Put back in service") { item.retiredDate = nil }
+                    Button("Return to service") { item.retiredDate = nil }
                 } else {
                     Button("Retire this item") { item.retiredDate = .now }
                 }
                 Button("Delete", role: .destructive) { confirmingDelete = true }
             } footer: {
-                Text("Retiring stops the cost clock but keeps the item in your history and stats.")
+                Text("Retiring an item stops its cost calculation while retaining it in your history and statistics.")
             }
         }
-        .navigationTitle(item.name.isEmpty ? "Untitled" : item.name)
+        .navigationTitle(item.name.isEmpty ? String(localized: "Untitled", comment: "Fallback name for an unnamed item") : item.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             Button("Edit") { isEditing = true }
@@ -96,7 +96,7 @@ struct ItemDetailView: View {
             ItemEditView(item: item, isNew: false)
         }
         .confirmationDialog(
-            "Delete \(item.name.isEmpty ? "this item" : item.name)?",
+            Text("Delete \(item.name.isEmpty ? String(localized: "this item", comment: "Used in a delete confirmation when the item has no name") : item.name)?"),
             isPresented: $confirmingDelete,
             titleVisibility: .visible
         ) {
@@ -106,7 +106,7 @@ struct ItemDetailView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("This removes it from your history and stats. Retire it instead if you just stopped using it.")
+            Text("This permanently removes the item from your history and statistics. If you have simply stopped using it, retire it instead.")
         }
     }
 }
@@ -120,15 +120,15 @@ private struct CostComparison: View {
         HStack(spacing: 0) {
             figure(
                 value: item.actualCostPerDay(),
-                title: "So far",
-                caption: "over \(Duration.fromDays(item.daysOwned()))",
+                title: String(localized: "To date", comment: "Cost basis: cost per day so far"),
+                caption: String(localized: "over \(Duration.fromDays(item.daysOwned()))", comment: "Caption under a cost figure. The placeholder is a duration."),
                 emphasised: true
             )
             Divider().frame(height: 60)
             figure(
                 value: item.plannedCostPerDay,
-                title: "Planned",
-                caption: "over \(Duration.fromMonths(item.expectedLifetimeMonths))",
+                title: String(localized: "Planned", comment: "Cost basis: cost per day as budgeted"),
+                caption: String(localized: "over \(Duration.fromMonths(item.expectedLifetimeMonths))", comment: "Caption under a cost figure. The placeholder is a duration."),
                 emphasised: false
             )
         }

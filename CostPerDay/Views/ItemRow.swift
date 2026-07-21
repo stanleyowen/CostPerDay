@@ -14,7 +14,7 @@ struct ItemRow: View {
                 .frame(width: 32)
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(item.name.isEmpty ? "Untitled" : item.name)
+                Text(item.name.isEmpty ? String(localized: "Untitled", comment: "Fallback name for an unnamed item") : item.name)
                     .font(.body.weight(.medium))
                     .lineLimit(1)
 
@@ -43,18 +43,27 @@ struct ItemRow: View {
         .opacity(item.isRetired ? 0.55 : 1)
     }
 
-    /// Shows the price in the currency it was actually paid in — that's the number
-    /// the user remembers — and only converts for the per-day figure.
+    /// Shows the price in the currency it was actually paid in — that is the figure
+    /// the owner recognises — and only converts for the per-day amount.
     private var subtitle: String {
-        var parts: [String] = [Money.string(item.price, code: item.currencyCode)]
+        let price = Money.string(item.price, code: item.currencyCode)
+        let owned = Duration.fromDays(item.daysOwned())
         if item.isRetired {
-            parts.append("retired after \(Duration.fromDays(item.daysOwned()))")
-        } else if item.isPaidOff() {
-            parts.append("paid off · \(Duration.fromDays(item.daysOwned())) owned")
-        } else {
-            parts.append("\(Duration.fromDays(item.daysOwned())) owned")
+            return String(
+                localized: "\(price) · retired after \(owned)",
+                comment: "Item row subtitle. First placeholder is a price, second a duration."
+            )
         }
-        return parts.joined(separator: " · ")
+        if item.isPaidOff() {
+            return String(
+                localized: "\(price) · fully amortised · \(owned) owned",
+                comment: "Item row subtitle for an item past its expected lifetime."
+            )
+        }
+        return String(
+            localized: "\(price) · \(owned) owned",
+            comment: "Item row subtitle. First placeholder is a price, second a duration."
+        )
     }
 }
 

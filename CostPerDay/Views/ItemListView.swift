@@ -18,11 +18,17 @@ struct ItemListView: View {
     private var catalog: CategoryCatalog { CategoryCatalog(custom: customCategories) }
 
     enum SortOption: String, CaseIterable, Identifiable {
-        case costPerDay = "Cost / day"
-        case price = "Price"
-        case newest = "Newest"
-        case name = "Name"
+        case costPerDay, price, newest, name
         var id: String { rawValue }
+
+        var label: String {
+            switch self {
+            case .costPerDay: String(localized: "Cost per day", comment: "Sort option")
+            case .price: String(localized: "Price", comment: "Sort option")
+            case .newest: String(localized: "Most recent", comment: "Sort option")
+            case .name: String(localized: "Name", comment: "Sort option")
+            }
+        }
     }
 
     /// Sectors that actually have something in them — no point offering a filter
@@ -64,7 +70,7 @@ struct ItemListView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Menu {
                         Picker("Sort", selection: $sort) {
-                            ForEach(SortOption.allCases) { Text($0.rawValue).tag($0) }
+                            ForEach(SortOption.allCases) { Text($0.label).tag($0) }
                         }
                         if availableSectors.count > 1 {
                             Divider()
@@ -152,13 +158,22 @@ struct ItemListView: View {
     private func delete(at offsets: IndexSet) {
         let doomed = offsets.compactMap { visible.indices.contains($0) ? visible[$0] : nil }
         guard !doomed.isEmpty else { return }
-        let name = doomed.count == 1 ? (doomed[0].name.isEmpty ? "Item" : doomed[0].name) : "\(doomed.count) items"
+        let name: String
+        if doomed.count == 1 {
+            name = doomed[0].name.isEmpty
+                ? String(localized: "Item", comment: "Fallback name for an unnamed item")
+                : doomed[0].name
+        } else {
+            name = String(localized: "\(doomed.count) items", comment: "Number of items deleted")
+        }
 
         context.undoManager?.beginUndoGrouping()
         for item in doomed { context.delete(item) }
         context.undoManager?.endUndoGrouping()
 
-        withAnimation { deletedNotice = "Deleted \(name)" }
+        withAnimation {
+            deletedNotice = String(localized: "Deleted \(name)", comment: "Undo bar message. The placeholder is an item name or a count.")
+        }
     }
 
     private func undoDelete() {
@@ -199,7 +214,7 @@ private struct UndoBar: View {
     }
 }
 
-/// The number the whole app exists to make you feel: what your things cost you every day.
+/// The figure the whole application exists to surface: the daily cost of everything owned.
 private struct BurnRateHeader: View {
     let items: [Item]
     let mode: CostMode
@@ -211,7 +226,7 @@ private struct BurnRateHeader: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            Text("Your things cost you")
+            Text("Your items cost you")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
             Text(Money.perDay(perDay, code: currency))
@@ -223,7 +238,7 @@ private struct BurnRateHeader: View {
             Text("per day")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-            Text("\(Money.string(perDay * 30.4375, code: currency)) a month · \(Money.string(perDay * 365.25, code: currency)) a year")
+            Text("\(Money.string(perDay * 30.4375, code: currency)) per month · \(Money.string(perDay * 365.25, code: currency)) per year")
                 .font(.caption)
                 .foregroundStyle(.tertiary)
                 .padding(.top, 2)
@@ -239,9 +254,9 @@ private struct EmptyStateView: View {
 
     var body: some View {
         ContentUnavailableView {
-            Label("Nothing tracked yet", systemImage: "square.stack.3d.up.slash")
+            Label("No items recorded", systemImage: "square.stack.3d.up.slash")
         } description: {
-            Text("Add the things you own — electronics, furniture, appliances, clothes — to see what they really cost you each day.")
+            Text("Record the items you own — electronics, furniture, appliances, clothing — to see what each one costs you per day.")
         } actions: {
             Button("Add your first item", action: onAdd)
                 .buttonStyle(.borderedProminent)

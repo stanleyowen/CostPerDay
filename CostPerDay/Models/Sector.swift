@@ -15,12 +15,12 @@ enum Sector: String, CaseIterable, Identifiable, Codable {
 
     var label: String {
         switch self {
-        case .electronics: "Electronics"
-        case .home: "Home & Furniture"
-        case .appliances: "Appliances & Kitchen"
-        case .personal: "Clothing & Personal"
-        case .active: "Transport, Sport & Hobby"
-        case .other: "Other"
+        case .electronics: String(localized: "Electronics", comment: "Sector name")
+        case .home: String(localized: "Home & Furniture", comment: "Sector name")
+        case .appliances: String(localized: "Appliances & Kitchen", comment: "Sector name")
+        case .personal: String(localized: "Clothing & Personal", comment: "Sector name")
+        case .active: String(localized: "Transport, Sport & Hobby", comment: "Sector name")
+        case .other: String(localized: "Other", comment: "Sector name")
         }
     }
 

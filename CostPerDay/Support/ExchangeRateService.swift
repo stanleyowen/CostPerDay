@@ -12,8 +12,10 @@ enum ExchangeRateError: LocalizedError, Sendable {
 
     var errorDescription: String? {
         switch self {
-        case .network: "Couldn't reach the exchange rate service."
-        case .unavailable(let code): "No rate is published for \(code)."
+        case .network:
+            String(localized: "The exchange rate service could not be reached.", comment: "Exchange rate error")
+        case .unavailable(let code):
+            String(localized: "No exchange rate is published for \(code).", comment: "Exchange rate error. The placeholder is a currency code.")
         }
     }
 }

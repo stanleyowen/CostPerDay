@@ -42,7 +42,7 @@ struct CategoryCatalog {
         // than silently reassigning — the item's own cost data is still perfectly valid.
         return CategoryDisplay(
             key: key,
-            label: "Removed category",
+            label: String(localized: "Removed category", comment: "Shown when an item refers to a category that no longer exists"),
             symbol: "questionmark.circle",
             tint: .secondary,
             sector: .other,
@@ -68,7 +68,7 @@ struct CategoryCatalog {
     static func display(for custom: CustomCategory) -> CategoryDisplay {
         CategoryDisplay(
             key: custom.key,
-            label: custom.name.isEmpty ? "Untitled" : custom.name,
+            label: custom.name.isEmpty ? String(localized: "Untitled", comment: "Fallback name for an unnamed custom category") : custom.name,
             symbol: custom.symbolName,
             tint: custom.tint.color,
             sector: custom.sector,

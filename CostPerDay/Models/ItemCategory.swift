@@ -39,40 +39,40 @@ enum ItemCategory: String, CaseIterable, Identifiable, Codable {
 
     var label: String {
         switch self {
-        case .phone: "Phone"
-        case .laptop: "Laptop"
-        case .tablet: "Tablet"
-        case .desktop: "Desktop"
-        case .monitor: "Monitor"
-        case .audio: "Audio"
-        case .wearable: "Wearable"
-        case .camera: "Camera"
-        case .gaming: "Gaming"
-        case .smartHome: "Smart Home"
-        case .accessory: "Accessory"
-        case .bed: "Bed & Mattress"
-        case .seating: "Sofa & Seating"
-        case .tableDesk: "Table & Desk"
-        case .storage: "Storage"
-        case .lighting: "Lighting"
-        case .decor: "Decor & Textiles"
-        case .largeAppliance: "Large Appliance"
-        case .smallAppliance: "Small Appliance"
-        case .cookware: "Cookware"
-        case .tableware: "Tableware"
-        case .clothing: "Clothing"
-        case .footwear: "Footwear"
-        case .bag: "Bags & Luggage"
-        case .jewellery: "Jewellery"
-        case .eyewear: "Eyewear"
-        case .bicycle: "Bicycle"
-        case .vehicle: "Vehicle"
-        case .sports: "Sports & Fitness"
-        case .outdoor: "Outdoor Gear"
-        case .instrument: "Instrument"
-        case .games: "Games & Toys"
-        case .tools: "Tools & DIY"
-        case .other: "Other"
+        case .phone: String(localized: "Phone", comment: "Category name")
+        case .laptop: String(localized: "Laptop", comment: "Category name")
+        case .tablet: String(localized: "Tablet", comment: "Category name")
+        case .desktop: String(localized: "Desktop", comment: "Category name")
+        case .monitor: String(localized: "Monitor", comment: "Category name")
+        case .audio: String(localized: "Audio", comment: "Category name")
+        case .wearable: String(localized: "Wearable", comment: "Category name")
+        case .camera: String(localized: "Camera", comment: "Category name")
+        case .gaming: String(localized: "Gaming", comment: "Category name")
+        case .smartHome: String(localized: "Smart Home", comment: "Category name")
+        case .accessory: String(localized: "Accessory", comment: "Category name")
+        case .bed: String(localized: "Bed & Mattress", comment: "Category name")
+        case .seating: String(localized: "Sofa & Seating", comment: "Category name")
+        case .tableDesk: String(localized: "Table & Desk", comment: "Category name")
+        case .storage: String(localized: "Storage", comment: "Category name")
+        case .lighting: String(localized: "Lighting", comment: "Category name")
+        case .decor: String(localized: "Decor & Textiles", comment: "Category name")
+        case .largeAppliance: String(localized: "Large Appliance", comment: "Category name")
+        case .smallAppliance: String(localized: "Small Appliance", comment: "Category name")
+        case .cookware: String(localized: "Cookware", comment: "Category name")
+        case .tableware: String(localized: "Tableware", comment: "Category name")
+        case .clothing: String(localized: "Clothing", comment: "Category name")
+        case .footwear: String(localized: "Footwear", comment: "Category name")
+        case .bag: String(localized: "Bags & Luggage", comment: "Category name")
+        case .jewellery: String(localized: "Jewellery", comment: "Category name")
+        case .eyewear: String(localized: "Eyewear", comment: "Category name")
+        case .bicycle: String(localized: "Bicycle", comment: "Category name")
+        case .vehicle: String(localized: "Vehicle", comment: "Category name")
+        case .sports: String(localized: "Sports & Fitness", comment: "Category name")
+        case .outdoor: String(localized: "Outdoor Gear", comment: "Category name")
+        case .instrument: String(localized: "Instrument", comment: "Category name")
+        case .games: String(localized: "Games & Toys", comment: "Category name")
+        case .tools: String(localized: "Tools & DIY", comment: "Category name")
+        case .other: String(localized: "Other", comment: "Category name")
         }
     }
 

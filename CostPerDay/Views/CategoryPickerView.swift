@@ -43,7 +43,7 @@ struct CategoryPickerView: View {
                                 VStack(alignment: .leading, spacing: 1) {
                                     Text(category.label)
                                         .foregroundStyle(.primary)
-                                    Text("Usually lasts \(Duration.fromMonths(category.defaultLifetimeMonths))")
+                                    Text("Typically lasts \(Duration.fromMonths(category.defaultLifetimeMonths))")
                                         .font(.caption2)
                                         .foregroundStyle(.secondary)
                                 }
@@ -71,10 +71,10 @@ struct CategoryPickerView: View {
                     Label("New category", systemImage: "plus.circle")
                 }
             } footer: {
-                Text("Can't find it? Make your own, with its own icon and typical lifetime.")
+                Text("If no category matches, create your own with a dedicated icon and typical lifetime.")
             }
         }
-        .searchable(text: $search, prompt: "Search categories")
+        .searchable(text: $search, prompt: Text("Search categories"))
         .navigationTitle("Category")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $creatingCategory) { category in
@@ -115,7 +115,7 @@ struct CustomCategoryEditView: View {
                         }
                     }
                 } footer: {
-                    Text("The sector groups this category in the picker and on the dashboard.")
+                    Text("The sector determines how this category is grouped in the picker and on the dashboard.")
                 }
 
                 Section("Icon") {
@@ -173,10 +173,10 @@ struct CustomCategoryEditView: View {
                 } header: {
                     Text("Default lifetime")
                 } footer: {
-                    Text("Pre-fills the expected lifetime when you pick this category. You can still override it per item.")
+                    Text("Pre-fills the expected lifetime when this category is selected. It can still be adjusted for each individual item.")
                 }
             }
-            .navigationTitle(isNew ? "New Category" : "Edit Category")
+            .navigationTitle(isNew ? String(localized: "New Category", comment: "Screen title") : String(localized: "Edit Category", comment: "Screen title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

@@ -47,10 +47,14 @@ enum Backup {
 
         var errorDescription: String? {
             switch self {
-            case .unreadable: "That file couldn't be read."
-            case .badFormat: "That doesn't look like a CostPerDay backup."
-            case .unsupportedVersion(let v): "This backup was made by a newer version of the app (format \(v))."
-            case .noPermission: "The app wasn't allowed to open that file."
+            case .unreadable:
+                String(localized: "The file could not be read.", comment: "Backup restore error")
+            case .badFormat:
+                String(localized: "This file is not a valid CostPerDay backup.", comment: "Backup restore error")
+            case .unsupportedVersion(let v):
+                String(localized: "This backup was created by a newer version of the application (format \(v)).", comment: "Backup restore error. The placeholder is a format version number.")
+            case .noPermission:
+                String(localized: "The application was not permitted to open that file.", comment: "Backup restore error")
             }
         }
     }

@@ -35,8 +35,8 @@ struct SettingsView: View {
                     Text("Currency")
                 } footer: {
                     Text(foreignCount == 0
-                         ? "Every total in the app is shown in this currency. Things bought abroad keep the exchange rate you entered at purchase."
-                         : "\(foreignCount) item\(foreignCount == 1 ? "" : "s") bought in another currency use the rate you locked in at purchase.")
+                         ? "All totals are shown in this currency. Items purchased abroad retain the exchange rate recorded at the time of purchase."
+                         : String(localized: "\(foreignCount) items purchased in another currency use the exchange rate recorded at the time of purchase.", comment: "Settings footer. The placeholder is a count of items."))
                 }
 
                 Section {
@@ -76,8 +76,8 @@ struct SettingsView: View {
                     Text("Custom categories")
                 } footer: {
                     Text(customCategories.isEmpty
-                         ? "Add your own categories for anything the built-in list doesn't cover."
-                         : "The number on the right is how many items use each one. Deleting a category leaves those items intact — they just show as uncategorised.")
+                         ? String(localized: "Create your own categories for anything the built-in list does not cover.", comment: "Settings footer")
+                         : String(localized: "The figure on the right indicates how many items use each category. Deleting a category preserves those items; they are simply shown as uncategorised.", comment: "Settings footer"))
                 }
 
                 Section {
@@ -96,12 +96,42 @@ struct SettingsView: View {
                 } header: {
                     Text("Backup")
                 } footer: {
-                    Text("Backups are plain JSON. Restoring adds anything missing and skips items you already have — it never overwrites your library.")
+                    Text("Backups are stored as plain JSON. Restoring adds any missing entries and skips items already present; it never overwrites your library.")
                 }
 
                 Section {
-                    LabeledContent("Items", value: "\(items.count)")
+                    Button {
+                        openAppSettings()
+                    } label: {
+                        HStack {
+                            Label("Preferred language", systemImage: "globe")
+                            Spacer()
+                            Text(currentLanguageName)
+                                .foregroundStyle(.secondary)
+                            Image(systemName: "arrow.up.forward.app")
+                                .foregroundStyle(.tertiary)
+                                .font(.footnote)
+                        }
+                    }
+                } header: {
+                    Text("Language")
+                } footer: {
+                    Text("Opens Settings, where the language for this application can be changed independently of the system language.")
+                }
+
+                Section {
+                    Link(destination: URL(string: "https://github.com/stanleyowen/CostPerDay")!) {
+                        LabeledContent {
+                            Image(systemName: "arrow.up.forward.app")
+                                .foregroundStyle(.secondary)
+                                .font(.footnote)
+                        } label: {
+                            Label("View on GitHub", systemImage: "chevron.left.forwardslash.chevron.right")
+                        }
+                    }
                     LabeledContent("Version", value: appVersion)
+                } header: {
+                    Text("About")
                 }
             }
             .navigationTitle("Settings")
@@ -128,6 +158,23 @@ struct SettingsView: View {
         }
     }
 
+    /// The language the app is currently displaying, named in that language —
+    /// "Deutsch" rather than "German" — which is how iOS itself lists them.
+    private var currentLanguageName: String {
+        let code = Bundle.main.preferredLocalizations.first ?? "en"
+        let locale = Locale(identifier: code)
+        return locale.localizedString(forIdentifier: code)
+            ?? locale.localizedString(forLanguageCode: code)
+            ?? code
+    }
+
+    /// Opens this app's page in Settings, where iOS exposes the per-app Language
+    /// control once the bundle ships more than one localisation.
+    private func openAppSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
+    }
+
     private var appVersion: String {
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
@@ -150,7 +197,7 @@ struct SettingsView: View {
         Item.rebase(items, by: factor)
         baseCurrency = code
         rebaseTarget = nil
-        save(failureTitle: "Couldn't change currency")
+        save(failureTitle: String(localized: "Could not change currency", comment: "Alert title"))
     }
 
     // MARK: Backup
@@ -161,7 +208,7 @@ struct SettingsView: View {
                 Backup.makeFile(gadgets: items, baseCurrency: baseCurrency, customCategories: customCategories)
             )
         } catch {
-            alert = AlertState(title: "Export failed", message: error.localizedDescription)
+            alert = AlertState(title: String(localized: "Export failed", comment: "Alert title"), message: error.localizedDescription)
         }
     }
 
@@ -173,16 +220,16 @@ struct SettingsView: View {
                 file, into: context, existing: items, existingCategories: customCategories
             )
             try context.save()
-            var message = "Added \(outcome.added) item\(outcome.added == 1 ? "" : "s")."
+            var message = String(localized: "Added \(outcome.added) items.", comment: "Restore result. The placeholder is a count.")
             if outcome.categoriesAdded > 0 {
-                message += " Restored \(outcome.categoriesAdded) custom categor\(outcome.categoriesAdded == 1 ? "y" : "ies")."
+                message += " " + String(localized: "Restored \(outcome.categoriesAdded) custom categories.", comment: "Restore result. The placeholder is a count.")
             }
             if outcome.skipped > 0 {
-                message += " Skipped \(outcome.skipped) you already had."
+                message += " " + String(localized: "Skipped \(outcome.skipped) entries already present.", comment: "Restore result. The placeholder is a count.")
             }
-            alert = AlertState(title: "Restored", message: message)
+            alert = AlertState(title: String(localized: "Restore complete", comment: "Alert title"), message: message)
         } catch {
-            alert = AlertState(title: "Restore failed", message: error.localizedDescription)
+            alert = AlertState(title: String(localized: "Restore failed", comment: "Alert title"), message: error.localizedDescription)
         }
     }
 
@@ -194,7 +241,7 @@ struct SettingsView: View {
         for index in offsets where customCategories.indices.contains(index) {
             context.delete(customCategories[index])
         }
-        save(failureTitle: "Couldn't delete category")
+        save(failureTitle: String(localized: "Could not delete category", comment: "Alert title"))
     }
 
     private func save(failureTitle: String) {
@@ -234,7 +281,7 @@ private struct RebaseSheet: View {
                         }
                     }
                     if isFetching {
-                        Label("Fetching today's rate…", systemImage: "arrow.clockwise")
+                        Label("Retrieving today's rate…", systemImage: "arrow.clockwise")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     } else if let fetchNote {
@@ -245,10 +292,10 @@ private struct RebaseSheet: View {
                 } header: {
                     Text("Conversion rate")
                 } footer: {
-                    Text("Your \(gadgetCount) gadget\(gadgetCount == 1 ? "" : "s") were priced against \(from). This rate re-expresses them in \(to). Prices you originally entered stay untouched — only the conversion changes.")
+                    Text("Your \(gadgetCount) items are currently priced against \(from). This rate re-expresses them in \(to). The prices originally entered remain unchanged; only the conversion is adjusted.")
                 }
             }
-            .navigationTitle("Switch to \(to)")
+            .navigationTitle(Text("Switch to \(to)"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -265,10 +312,10 @@ private struct RebaseSheet: View {
                 case .success(let quote):
                     factor = quote.rate
                     fetchNote = quote.servedFromCache
-                        ? "Suggested from a cached rate — check it's still right."
-                        : "Suggested from today's rate — edit it if you'd rather use your own."
+                        ? String(localized: "Suggested from a cached rate. Please confirm it is still accurate.", comment: "Note under a suggested exchange rate")
+                        : String(localized: "Suggested from today's rate. Adjust it if you prefer a different value.", comment: "Note under a suggested exchange rate")
                 case .failure:
-                    fetchNote = "Couldn't fetch a rate — enter it yourself."
+                    fetchNote = String(localized: "A rate could not be retrieved. Please enter one manually.", comment: "Note under an exchange rate field")
                 }
                 isFetching = false
             }

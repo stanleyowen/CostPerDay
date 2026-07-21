@@ -74,7 +74,22 @@ enum CategoryTint: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    var label: String { rawValue.capitalized }
+    var label: String {
+        switch self {
+        case .blue: String(localized: "Blue", comment: "Colour name")
+        case .indigo: String(localized: "Indigo", comment: "Colour name")
+        case .purple: String(localized: "Purple", comment: "Colour name")
+        case .pink: String(localized: "Pink", comment: "Colour name")
+        case .red: String(localized: "Red", comment: "Colour name")
+        case .orange: String(localized: "Orange", comment: "Colour name")
+        case .yellow: String(localized: "Yellow", comment: "Colour name")
+        case .green: String(localized: "Green", comment: "Colour name")
+        case .teal: String(localized: "Teal", comment: "Colour name")
+        case .cyan: String(localized: "Cyan", comment: "Colour name")
+        case .brown: String(localized: "Brown", comment: "Colour name")
+        case .gray: String(localized: "Gray", comment: "Colour name")
+        }
+    }
 }
 
 /// SF Symbols offered when creating a custom category. Kept deliberately small and

@@ -1,0 +1,12 @@
+{
+  "%lld days":   {"one": "%lld day",   "other": "%lld days"},
+  "%lld months": {"one": "%lld month", "other": "%lld months"},
+  "%lld years":  {"one": "%lld year",  "other": "%lld years"},
+  "%lld items":  {"one": "%lld item",  "other": "%lld items"},
+  "%lld retired":{"one": "%lld retired","other": "%lld retired"},
+  "Added %lld items.": {"one": "Added %lld item.", "other": "Added %lld items."},
+  "Restored %lld custom categories.": {"one": "Restored %lld custom category.", "other": "Restored %lld custom categories."},
+  "Skipped %lld entries already present.": {"one": "Skipped %lld entry already present.", "other": "Skipped %lld entries already present."},
+  "%lld items purchased in another currency use the exchange rate recorded at the time of purchase.": {"one": "%lld item purchased in another currency uses the exchange rate recorded at the time of purchase.", "other": "%lld items purchased in another currency use the exchange rate recorded at the time of purchase."},
+  "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {"one": "Your %lld item is currently priced against %@. This rate re-expresses it in %@. The price originally entered remains unchanged; only the conversion is adjusted.", "other": "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted."}
+}
