@@ -13,7 +13,7 @@ enum ItemValidation {
         var id: Field { field }
     }
 
-    static func issues(for item: Item, baseCurrency: String, now: Date = .now) -> [Issue] {
+    static func issues(for item: some ItemFields, baseCurrency: String, now: Date = .now) -> [Issue] {
         var issues: [Issue] = []
 
         if item.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -110,7 +110,7 @@ enum ItemValidation {
         return issues
     }
 
-    static func isValid(_ item: Item, baseCurrency: String, now: Date = .now) -> Bool {
+    static func isValid(_ item: some ItemFields, baseCurrency: String, now: Date = .now) -> Bool {
         issues(for: item, baseCurrency: baseCurrency, now: now).isEmpty
     }
 

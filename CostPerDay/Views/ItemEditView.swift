@@ -2,8 +2,12 @@ import SwiftUI
 import SwiftData
 
 struct ItemEditView: View {
-    @Bindable var item: Item
+    let item: Item
     let isNew: Bool
+
+    /// The form edits this, never `item` directly — so Cancel can simply dismiss
+    /// without needing to undo anything. `item` is only touched once, on Save.
+    @State private var draft: ItemDraft
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
@@ -22,37 +26,43 @@ struct ItemEditView: View {
 
     @State private var showLifetimeWheel = false
 
+    init(item: Item, isNew: Bool) {
+        self.item = item
+        self.isNew = isNew
+        _draft = State(initialValue: ItemDraft(item: item))
+    }
+
     private var issues: [ItemValidation.Issue] {
-        ItemValidation.issues(for: item, baseCurrency: baseCurrency)
+        ItemValidation.issues(for: draft, baseCurrency: baseCurrency)
     }
 
     private var catalog: CategoryCatalog { CategoryCatalog(custom: customCategories) }
-    private var category: CategoryDisplay { catalog.display(for: item.categoryKey) }
+    private var category: CategoryDisplay { catalog.display(for: draft.categoryKey) }
 
-    private var isForeign: Bool { item.currencyCode != baseCurrency }
+    private var isForeign: Bool { draft.currencyCode != baseCurrency }
 
-    /// Bridges the model's plain `Double` to an optional so a brand-new (zero)
+    /// Bridges the draft's plain `Double` to an optional so a brand-new (zero)
     /// amount renders as an empty field with a placeholder, instead of a literal
     /// "0" the user has to select and delete before they can type.
     private var priceBinding: Binding<Double?> {
-        Binding(get: { item.price == 0 ? nil : item.price }, set: { item.price = $0 ?? 0 })
+        Binding(get: { draft.price == 0 ? nil : draft.price }, set: { draft.price = $0 ?? 0 })
     }
 
     private var resaleBinding: Binding<Double?> {
-        Binding(get: { item.resaleValue == 0 ? nil : item.resaleValue }, set: { item.resaleValue = $0 ?? 0 })
+        Binding(get: { draft.resaleValue == 0 ? nil : draft.resaleValue }, set: { draft.resaleValue = $0 ?? 0 })
     }
 
     private var lifetimeYears: Binding<Int> {
         Binding(
-            get: { item.expectedLifetimeMonths / 12 },
-            set: { item.expectedLifetimeMonths = clampLifetime($0 * 12 + item.expectedLifetimeMonths % 12) }
+            get: { draft.expectedLifetimeMonths / 12 },
+            set: { draft.expectedLifetimeMonths = clampLifetime($0 * 12 + draft.expectedLifetimeMonths % 12) }
         )
     }
 
     private var lifetimeExtraMonths: Binding<Int> {
         Binding(
-            get: { item.expectedLifetimeMonths % 12 },
-            set: { item.expectedLifetimeMonths = clampLifetime(item.expectedLifetimeMonths / 12 * 12 + $0) }
+            get: { draft.expectedLifetimeMonths % 12 },
+            set: { draft.expectedLifetimeMonths = clampLifetime(draft.expectedLifetimeMonths / 12 * 12 + $0) }
         )
     }
 
@@ -64,13 +74,13 @@ struct ItemEditView: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("Name", text: $item.name)
+                    TextField("Name", text: $draft.name)
                     fieldError(.name)
-                    TextField("Brand (optional)", text: $item.brand)
+                    TextField("Brand (optional)", text: $draft.brand)
                     NavigationLink {
-                        CategoryPickerView(selectedKey: $item.categoryKey) { picked in
+                        CategoryPickerView(selectedKey: $draft.categoryKey) { picked in
                             guard !lifetimeIsCustom else { return }
-                            item.expectedLifetimeMonths = picked.defaultLifetimeMonths
+                            draft.expectedLifetimeMonths = picked.defaultLifetimeMonths
                         }
                     } label: {
                         // Deliberately a plain HStack, not LabeledContent — LabeledContent
@@ -91,24 +101,24 @@ struct ItemEditView: View {
                         // already says which currency this is in.
                         TextField(
                             "0", value: priceBinding,
-                            format: .number.precision(.fractionLength(0...Currency.fractionDigits(item.currencyCode)))
+                            format: .number.precision(.fractionLength(0...Currency.fractionDigits(draft.currencyCode)))
                         )
-                        .keyboardType(Currency.fractionDigits(item.currencyCode) > 0 ? .decimalPad : .numberPad)
+                        .keyboardType(Currency.fractionDigits(draft.currencyCode) > 0 ? .decimalPad : .numberPad)
                         .multilineTextAlignment(.trailing)
                     }
                     fieldError(.price)
 
-                    Picker("Currency", selection: $item.currencyCode) {
+                    Picker("Currency", selection: $draft.currencyCode) {
                         ForEach(Currency.all, id: \.self) { code in
                             Text(Currency.label(code)).tag(code)
                         }
                     }
-                    .onChange(of: item.currencyCode) { _, new in
+                    .onChange(of: draft.currencyCode) { _, new in
                         rateQuote = nil
                         rateFetchError = nil
                         if new == baseCurrency {
                             // Same currency as your totals means no conversion at all.
-                            item.rateToBase = 1
+                            draft.rateToBase = 1
                         } else {
                             // The old rate belonged to a different currency pair — the
                             // moment the user picks a new one, go fetch a fresh rate.
@@ -118,7 +128,7 @@ struct ItemEditView: View {
 
                     DatePicker(
                         "Bought on",
-                        selection: $item.purchaseDate,
+                        selection: $draft.purchaseDate,
                         in: ...Date.now,
                         displayedComponents: .date
                     )
@@ -127,9 +137,9 @@ struct ItemEditView: View {
 
                 if isForeign {
                     Section {
-                        LabeledContent("1 \(item.currencyCode) =") {
+                        LabeledContent("1 \(draft.currencyCode) =") {
                             HStack(spacing: 4) {
-                                TextField("Rate", value: $item.rateToBase, format: .number.precision(.fractionLength(0...6)))
+                                TextField("Rate", value: $draft.rateToBase, format: .number.precision(.fractionLength(0...6)))
                                     .keyboardType(.decimalPad)
                                     .multilineTextAlignment(.trailing)
                                 Text(baseCurrency).foregroundStyle(.secondary)
@@ -163,8 +173,8 @@ struct ItemEditView: View {
                                 .foregroundStyle(.orange)
                         }
 
-                        if item.price > 0, item.rateToBase > 0 {
-                            LabeledContent("Equivalent cost", value: Money.string(item.priceInBase, code: baseCurrency))
+                        if draft.price > 0, draft.rateToBase > 0 {
+                            LabeledContent("Equivalent cost", value: Money.string(draft.priceInBase, code: baseCurrency))
                                 .foregroundStyle(.secondary)
                         }
                     } header: {
@@ -175,18 +185,18 @@ struct ItemEditView: View {
                 }
 
                 Section {
-                    Stepper(value: $item.expectedLifetimeMonths, in: 1...Item.maxLifetimeMonths, step: 1) {
+                    Stepper(value: $draft.expectedLifetimeMonths, in: 1...Item.maxLifetimeMonths, step: 1) {
                         Button {
                             openLifetimeWheel()
                         } label: {
                             LabeledContent(
                                 "Expected to last",
-                                value: Duration.fromMonths(item.expectedLifetimeMonths)
+                                value: Duration.fromMonths(draft.expectedLifetimeMonths)
                             )
                         }
                         .buttonStyle(.plain)
                     }
-                    .onChange(of: item.expectedLifetimeMonths) { lifetimeIsCustom = true }
+                    .onChange(of: draft.expectedLifetimeMonths) { lifetimeIsCustom = true }
                     fieldError(.lifetime)
                 } header: {
                     Text("Expected lifetime")
@@ -197,9 +207,9 @@ struct ItemEditView: View {
                     + Text(" The default for \(category.label) is \(Duration.fromMonths(category.defaultLifetimeMonths)).")
                 }
 
-                if item.price > 0 {
+                if draft.price > 0 {
                     Section {
-                        VerdictView(item: item, isNew: isNew, baseCurrency: baseCurrency)
+                        VerdictView(item: draft, isNew: isNew, baseCurrency: baseCurrency)
                             .listRowInsets(EdgeInsets())
                             .listRowBackground(Color.clear)
                     }
@@ -208,21 +218,21 @@ struct ItemEditView: View {
                 Section("Resale") {
                     LabeledContent("Recovered value") {
                         HStack(spacing: 4) {
-                            Text(Currency.symbol(item.currencyCode))
+                            Text(Currency.symbol(draft.currencyCode))
                                 .foregroundStyle(.secondary)
                             TextField(
                                 "0", value: resaleBinding,
-                                format: .number.precision(.fractionLength(0...Currency.fractionDigits(item.currencyCode)))
+                                format: .number.precision(.fractionLength(0...Currency.fractionDigits(draft.currencyCode)))
                             )
-                            .keyboardType(Currency.fractionDigits(item.currencyCode) > 0 ? .decimalPad : .numberPad)
+                            .keyboardType(Currency.fractionDigits(draft.currencyCode) > 0 ? .decimalPad : .numberPad)
                             .multilineTextAlignment(.trailing)
                         }
                     }
                     fieldError(.resale)
-                    if isForeign, item.resaleValue > 0 {
+                    if isForeign, draft.resaleValue > 0 {
                         LabeledContent("Rate when sold") {
                             HStack(spacing: 4) {
-                                TextField("Same as purchase", value: $item.resaleRateToBase, format: .number.precision(.fractionLength(0...6)))
+                                TextField("Same as purchase", value: $draft.resaleRateToBase, format: .number.precision(.fractionLength(0...6)))
                                     .keyboardType(.decimalPad)
                                     .multilineTextAlignment(.trailing)
                                 Text(baseCurrency).foregroundStyle(.secondary)
@@ -232,7 +242,7 @@ struct ItemEditView: View {
                 }
 
                 Section("Notes") {
-                    TextField("Reason for purchase", text: $item.notes, axis: .vertical)
+                    TextField("Reason for purchase", text: $draft.notes, axis: .vertical)
                         .lineLimit(3...6)
                 }
 
@@ -268,9 +278,9 @@ struct ItemEditView: View {
             }
             .onAppear {
                 if isNew {
-                    item.expectedLifetimeMonths = category.defaultLifetimeMonths
-                    item.currencyCode = baseCurrency
-                    item.rateToBase = 1
+                    draft.expectedLifetimeMonths = category.defaultLifetimeMonths
+                    draft.currencyCode = baseCurrency
+                    draft.rateToBase = 1
                 } else {
                     lifetimeIsCustom = true
                 }
@@ -293,8 +303,9 @@ struct ItemEditView: View {
             withAnimation { showAllIssues = true }
             return
         }
-        item.name = item.name.trimmingCharacters(in: .whitespacesAndNewlines)
-        item.brand = item.brand.trimmingCharacters(in: .whitespacesAndNewlines)
+        draft.name = draft.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        draft.brand = draft.brand.trimmingCharacters(in: .whitespacesAndNewlines)
+        draft.apply(to: item)
         do {
             try context.save()
             dismiss()
@@ -304,7 +315,12 @@ struct ItemEditView: View {
     }
 
     private func cancel() {
-        if isNew { context.delete(item) }
+        if isNew {
+            // Never written to the draft-applied item at all — just discard the
+            // insert made when this sheet was opened.
+            context.delete(item)
+            try? context.save()
+        }
         dismiss()
     }
 
@@ -358,9 +374,9 @@ struct ItemEditView: View {
     private func fetchRate() async {
         isFetchingRate = true
         defer { isFetchingRate = false }
-        switch await ExchangeRateService.shared.quote(from: item.currencyCode, to: baseCurrency) {
+        switch await ExchangeRateService.shared.quote(from: draft.currencyCode, to: baseCurrency) {
         case .success(let quote):
-            item.rateToBase = quote.rate
+            draft.rateToBase = quote.rate
             rateQuote = quote
             rateFetchError = nil
         case .failure(let error):
@@ -371,9 +387,10 @@ struct ItemEditView: View {
 }
 
 /// The deterrent. Shows the running cost in units small enough to feel honest
-/// while you're still deciding whether to keep the entry.
-private struct VerdictView: View {
-    let item: Item
+/// while you're still deciding whether to keep the entry. Generic over `ItemFields`
+/// so it can preview a live `Item` or, here, an in-progress `ItemDraft`.
+private struct VerdictView<Fields: ItemFields>: View {
+    let item: Fields
     let isNew: Bool
     let baseCurrency: String
 

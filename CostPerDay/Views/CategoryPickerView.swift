@@ -90,16 +90,27 @@ struct CategoryPickerView: View {
 
 /// Create or edit one user-defined category.
 struct CustomCategoryEditView: View {
-    @Bindable var category: CustomCategory
+    let category: CustomCategory
     let isNew: Bool
-    var onSave: (CustomCategory) -> Void = { _ in }
+    var onSave: (CustomCategory) -> Void
+
+    /// The form edits this, never `category` directly — so Cancel can simply dismiss
+    /// without needing to undo anything. `category` is only touched once, on Save.
+    @State private var draft: CustomCategoryDraft
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @State private var saveError: String?
 
+    init(category: CustomCategory, isNew: Bool, onSave: @escaping (CustomCategory) -> Void = { _ in }) {
+        self.category = category
+        self.isNew = isNew
+        self.onSave = onSave
+        _draft = State(initialValue: CustomCategoryDraft(category: category))
+    }
+
     private var trimmedName: String {
-        category.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        draft.name.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private let columns = [GridItem(.adaptive(minimum: 46), spacing: 12)]
@@ -108,8 +119,8 @@ struct CustomCategoryEditView: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("Name", text: $category.name)
-                    Picker("Sector", selection: $category.sector) {
+                    TextField("Name", text: $draft.name)
+                    Picker("Sector", selection: $draft.sector) {
                         ForEach(Sector.allCases) { sector in
                             Label(sector.label, systemImage: sector.symbol).tag(sector)
                         }
@@ -122,14 +133,14 @@ struct CustomCategoryEditView: View {
                     LazyVGrid(columns: columns, spacing: 12) {
                         ForEach(CategorySymbols.choices, id: \.self) { symbol in
                             Button {
-                                category.symbolName = symbol
+                                draft.symbolName = symbol
                             } label: {
                                 Image(systemName: symbol)
                                     .font(.title3)
                                     .frame(width: 44, height: 44)
-                                    .foregroundStyle(category.symbolName == symbol ? .white : category.tint.color)
+                                    .foregroundStyle(draft.symbolName == symbol ? .white : draft.tint.color)
                                     .background(
-                                        category.symbolName == symbol ? category.tint.color : Color(.tertiarySystemFill),
+                                        draft.symbolName == symbol ? draft.tint.color : Color(.tertiarySystemFill),
                                         in: .rect(cornerRadius: 10)
                                     )
                             }
@@ -143,13 +154,13 @@ struct CustomCategoryEditView: View {
                     LazyVGrid(columns: columns, spacing: 12) {
                         ForEach(CategoryTint.allCases) { tint in
                             Button {
-                                category.tint = tint
+                                draft.tint = tint
                             } label: {
                                 Circle()
                                     .fill(tint.color)
                                     .frame(width: 34, height: 34)
                                     .overlay {
-                                        if category.tint == tint {
+                                        if draft.tint == tint {
                                             Image(systemName: "checkmark")
                                                 .font(.caption.weight(.bold))
                                                 .foregroundStyle(.white)
@@ -164,10 +175,10 @@ struct CustomCategoryEditView: View {
                 }
 
                 Section {
-                    Stepper(value: $category.defaultLifetimeMonths, in: 1...Item.maxLifetimeMonths, step: 1) {
+                    Stepper(value: $draft.defaultLifetimeMonths, in: 1...Item.maxLifetimeMonths, step: 1) {
                         LabeledContent(
                             "Typically lasts",
-                            value: Duration.fromMonths(category.defaultLifetimeMonths)
+                            value: Duration.fromMonths(draft.defaultLifetimeMonths)
                         )
                     }
                 } header: {
@@ -197,7 +208,8 @@ struct CustomCategoryEditView: View {
     }
 
     private func save() {
-        category.name = trimmedName
+        draft.name = trimmedName
+        draft.apply(to: category)
         // A brand-new category isn't inserted until Save, so cancelling leaves nothing behind.
         if isNew { context.insert(category) }
         do {
