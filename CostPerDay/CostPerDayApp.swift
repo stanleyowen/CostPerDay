@@ -3,7 +3,7 @@ import SwiftData
 
 @main
 struct CostPerDayApp: App {
-    @State private var store = GadgetStore()
+    @State private var store = ItemStore()
 
     var body: some Scene {
         WindowGroup {
@@ -22,19 +22,19 @@ struct CostPerDayApp: App {
 /// store and says so, rather than killing itself on launch.
 @MainActor
 @Observable
-final class GadgetStore {
+final class ItemStore {
     private(set) var container: ModelContainer?
     private(set) var isTemporary = false
     private(set) var failureMessage: String?
 
     init() {
         do {
-            container = try ModelContainer(for: Gadget.self)
+            container = try ModelContainer(for: Item.self, CustomCategory.self)
         } catch {
             let firstFailure = error.localizedDescription
             do {
                 container = try ModelContainer(
-                    for: Gadget.self,
+                    for: Item.self, CustomCategory.self,
                     configurations: ModelConfiguration(isStoredInMemoryOnly: true)
                 )
                 isTemporary = true
@@ -57,8 +57,8 @@ struct RootView: View {
 
     var body: some View {
         TabView {
-            Tab("Gadgets", systemImage: "square.stack.3d.up") {
-                GadgetListView()
+            Tab("Items", systemImage: "square.stack.3d.up") {
+                ItemListView()
             }
             Tab("Dashboard", systemImage: "chart.bar.xaxis") {
                 DashboardView()
@@ -96,7 +96,7 @@ private struct StoreFailureView: View {
         ContentUnavailableView {
             Label("Can't open your library", systemImage: "externaldrive.badge.exclamationmark")
         } description: {
-            Text(message ?? "The gadget database couldn't be opened. Restarting the app may help; if not, reinstalling will start you with an empty library.")
+            Text(message ?? "Your item database couldn't be opened. Restarting the app may help; if not, reinstalling will start you with an empty library.")
         }
     }
 }

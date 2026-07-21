@@ -1,44 +1,48 @@
 import SwiftUI
 import SwiftData
 
-struct GadgetDetailView: View {
-    @Bindable var gadget: Gadget
+struct ItemDetailView: View {
+    @Bindable var item: Item
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
+    @Query private var customCategories: [CustomCategory]
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
 
     @State private var isEditing = false
     @State private var confirmingDelete = false
 
-    private var isForeign: Bool { gadget.currencyCode != baseCurrency }
+    private var isForeign: Bool { item.currencyCode != baseCurrency }
+    private var category: CategoryDisplay {
+        CategoryCatalog(custom: customCategories).display(for: item.categoryKey)
+    }
 
     var body: some View {
         List {
             Section {
-                CostComparison(gadget: gadget, currency: baseCurrency)
+                CostComparison(item: item, currency: baseCurrency)
                     .listRowInsets(EdgeInsets())
                     .listRowBackground(Color.clear)
             }
 
             Section("Lifetime") {
-                LabeledContent("Owned for", value: Duration.fromDays(gadget.daysOwned()))
-                LabeledContent("Expected life", value: Duration.fromMonths(gadget.expectedLifetimeMonths))
-                if let retired = gadget.retiredDate {
+                LabeledContent("Owned for", value: Duration.fromDays(item.daysOwned()))
+                LabeledContent("Expected life", value: Duration.fromMonths(item.expectedLifetimeMonths))
+                if let retired = item.retiredDate {
                     LabeledContent("Retired", value: retired.formatted(date: .abbreviated, time: .omitted))
-                } else if gadget.isPaidOff() {
+                } else if item.isPaidOff() {
                     LabeledContent("Status") {
                         Label("Paid off — every day from here is free", systemImage: "checkmark.seal.fill")
                             .foregroundStyle(.green)
                             .font(.footnote)
                     }
                 } else {
-                    LabeledContent("Breaks even", value: gadget.expectedEndDate.formatted(date: .abbreviated, time: .omitted))
-                    LabeledContent("Days left", value: "\(gadget.daysRemaining())")
+                    LabeledContent("Breaks even", value: item.expectedEndDate.formatted(date: .abbreviated, time: .omitted))
+                    LabeledContent("Days left", value: "\(item.daysRemaining())")
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
-                    LifetimeBar(progress: gadget.lifetimeProgress(), tint: gadget.category.tint, height: 8)
-                    Text("\(Int((min(gadget.lifetimeProgress(), 9.99) * 100).rounded()))% through its expected life")
+                    LifetimeBar(progress: item.lifetimeProgress(), tint: category.tint, height: 8)
+                    Text("\(Int((min(item.lifetimeProgress(), 9.99) * 100).rounded()))% through its expected life")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -46,57 +50,58 @@ struct GadgetDetailView: View {
             }
 
             Section("Purchase") {
-                LabeledContent("Price", value: Money.string(gadget.price, code: gadget.currencyCode))
+                LabeledContent("Price", value: Money.string(item.price, code: item.currencyCode))
                 if isForeign {
-                    LabeledContent("Rate at purchase", value: "1 \(gadget.currencyCode) = \(gadget.effectiveRate.formatted(.number.precision(.fractionLength(0...6)))) \(baseCurrency)")
-                    LabeledContent("In \(baseCurrency)", value: Money.string(gadget.priceInBase, code: baseCurrency))
+                    LabeledContent("Rate at purchase", value: "1 \(item.currencyCode) = \(item.effectiveRate.formatted(.number.precision(.fractionLength(0...6)))) \(baseCurrency)")
+                    LabeledContent("In \(baseCurrency)", value: Money.string(item.priceInBase, code: baseCurrency))
                 }
-                if gadget.resaleValue > 0 {
-                    LabeledContent("Recovered on resale", value: Money.string(gadget.resaleValue, code: gadget.currencyCode))
-                    LabeledContent("Net cost", value: Money.string(gadget.netCost, code: baseCurrency))
+                if item.resaleValue > 0 {
+                    LabeledContent("Recovered on resale", value: Money.string(item.resaleValue, code: item.currencyCode))
+                    LabeledContent("Net cost", value: Money.string(item.netCost, code: baseCurrency))
                 }
-                LabeledContent("Bought", value: gadget.purchaseDate.formatted(date: .abbreviated, time: .omitted))
+                LabeledContent("Bought", value: item.purchaseDate.formatted(date: .abbreviated, time: .omitted))
                 LabeledContent("Category") {
-                    Label(gadget.category.label, systemImage: gadget.category.symbol)
-                        .foregroundStyle(gadget.category.tint)
+                    Label(category.label, systemImage: category.symbol)
+                        .foregroundStyle(category.isMissing ? Color.secondary : category.tint)
                 }
-                if !gadget.brand.isEmpty {
-                    LabeledContent("Brand", value: gadget.brand)
+                LabeledContent("Sector", value: category.sector.label)
+                if !item.brand.isEmpty {
+                    LabeledContent("Brand", value: item.brand)
                 }
             }
 
-            if !gadget.notes.isEmpty {
+            if !item.notes.isEmpty {
                 Section("Notes") {
-                    Text(gadget.notes)
+                    Text(item.notes)
                 }
             }
 
             Section {
-                if gadget.isRetired {
-                    Button("Put back in service") { gadget.retiredDate = nil }
+                if item.isRetired {
+                    Button("Put back in service") { item.retiredDate = nil }
                 } else {
-                    Button("Retire this gadget") { gadget.retiredDate = .now }
+                    Button("Retire this item") { item.retiredDate = .now }
                 }
                 Button("Delete", role: .destructive) { confirmingDelete = true }
             } footer: {
                 Text("Retiring stops the cost clock but keeps the item in your history and stats.")
             }
         }
-        .navigationTitle(gadget.name.isEmpty ? "Untitled" : gadget.name)
+        .navigationTitle(item.name.isEmpty ? "Untitled" : item.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             Button("Edit") { isEditing = true }
         }
         .sheet(isPresented: $isEditing) {
-            GadgetEditView(gadget: gadget, isNew: false)
+            ItemEditView(item: item, isNew: false)
         }
         .confirmationDialog(
-            "Delete \(gadget.name.isEmpty ? "this gadget" : gadget.name)?",
+            "Delete \(item.name.isEmpty ? "this item" : item.name)?",
             isPresented: $confirmingDelete,
             titleVisibility: .visible
         ) {
             Button("Delete", role: .destructive) {
-                context.delete(gadget)
+                context.delete(item)
                 dismiss()
             }
             Button("Cancel", role: .cancel) {}
@@ -108,22 +113,22 @@ struct GadgetDetailView: View {
 
 /// Side-by-side "so far" vs "planned" — the toggleable comparison, shown as one view.
 private struct CostComparison: View {
-    let gadget: Gadget
+    let item: Item
     let currency: String
 
     var body: some View {
         HStack(spacing: 0) {
             figure(
-                value: gadget.actualCostPerDay(),
+                value: item.actualCostPerDay(),
                 title: "So far",
-                caption: "over \(Duration.fromDays(gadget.daysOwned()))",
+                caption: "over \(Duration.fromDays(item.daysOwned()))",
                 emphasised: true
             )
             Divider().frame(height: 60)
             figure(
-                value: gadget.plannedCostPerDay,
+                value: item.plannedCostPerDay,
                 title: "Planned",
-                caption: "over \(Duration.fromMonths(gadget.expectedLifetimeMonths))",
+                caption: "over \(Duration.fromMonths(item.expectedLifetimeMonths))",
                 emphasised: false
             )
         }

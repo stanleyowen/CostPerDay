@@ -3,21 +3,22 @@ import SwiftData
 import Charts
 
 struct DashboardView: View {
-    @Query private var gadgets: [Gadget]
+    @Query private var items: [Item]
+    @Query private var customCategories: [CustomCategory]
     @AppStorage("costMode") private var costModeRaw = CostMode.actual.rawValue
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
 
     private var costMode: CostMode { CostMode(rawValue: costModeRaw) ?? .actual }
-    private var stats: Stats { Stats(gadgets: gadgets, mode: costMode) }
+    private var stats: Stats { Stats(items: items, mode: costMode, catalog: CategoryCatalog(custom: customCategories)) }
 
     var body: some View {
         NavigationStack {
             Group {
-                if gadgets.isEmpty {
+                if items.isEmpty {
                     ContentUnavailableView(
                         "Nothing to chart yet",
                         systemImage: "chart.bar.xaxis",
-                        description: Text("Add a few gadgets and your spending shows up here.")
+                        description: Text("Add a few things and your spending shows up here.")
                     )
                 } else {
                     content
@@ -38,10 +39,39 @@ struct DashboardView: View {
                 HeroBurnRate(perDay: stats.dailyBurn, currency: baseCurrency)
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                    StatTile(title: "Total spent", value: Money.string(stats.totalSpent, code: baseCurrency), caption: "\(stats.count) gadgets")
+                    StatTile(title: "Total spent", value: Money.string(stats.totalSpent, code: baseCurrency), caption: "\(stats.count) items")
                     StatTile(title: "In service", value: "\(stats.activeCount)", caption: "\(stats.retiredCount) retired")
-                    StatTile(title: "Average price", value: Money.string(stats.averagePrice, code: baseCurrency), caption: "per gadget")
+                    StatTile(title: "Average price", value: Money.string(stats.averagePrice, code: baseCurrency), caption: "per item")
                     StatTile(title: "Paid off", value: "\(stats.paidOffCount)", caption: "outlived their budget")
+                }
+
+                if stats.bySector.count > 1 {
+                    ChartCard(
+                        title: "Spend by sector",
+                        subtitle: "Which side of life costs the most"
+                    ) {
+                        Chart(stats.bySector) { slice in
+                            BarMark(
+                                x: .value("Spent", slice.total),
+                                y: .value("Sector", slice.sector.label)
+                            )
+                            .cornerRadius(4)
+                            .foregroundStyle(Color.accentColor)
+                            .annotation(position: .trailing, alignment: .leading) {
+                                Text(Money.string(slice.total, code: baseCurrency))
+                                    .font(.caption2.monospacedDigit())
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .chartXAxis(.hidden)
+                        .chartYAxis {
+                            AxisMarks(preset: .aligned, position: .leading) { _ in
+                                AxisValueLabel().font(.caption)
+                            }
+                        }
+                        .chartXScale(domain: 0...(stats.maxSectorTotal * 1.28))
+                        .frame(height: CGFloat(stats.bySector.count) * 32 + 20)
+                    }
                 }
 
                 ChartCard(
@@ -51,7 +81,7 @@ struct DashboardView: View {
                     Chart(stats.byCategory) { slice in
                         BarMark(
                             x: .value("Spent", slice.total),
-                            y: .value("Category", slice.category.label)
+                            y: .value("Category", slice.label)
                         )
                         .cornerRadius(4)
                         .foregroundStyle(Color.accentColor)
@@ -107,12 +137,12 @@ struct DashboardView: View {
                         subtitle: "Your most expensive habits, \(costMode.label.lowercased())"
                     ) {
                         VStack(spacing: 0) {
-                            ForEach(Array(stats.worstValue.enumerated()), id: \.element.id) { index, gadget in
+                            ForEach(Array(stats.worstValue.enumerated()), id: \.element.item.id) { index, entry in
                                 if index > 0 { Divider() }
                                 NavigationLink {
-                                    GadgetDetailView(gadget: gadget)
+                                    ItemDetailView(item: entry.item)
                                 } label: {
-                                    WorstValueRow(gadget: gadget, mode: costMode, currency: baseCurrency)
+                                    WorstValueRow(entry: entry, mode: costMode, currency: baseCurrency)
                                 }
                                 .buttonStyle(.plain)
                             }
@@ -129,14 +159,22 @@ struct DashboardView: View {
 // MARK: - Aggregation
 
 private struct Stats {
-    let gadgets: [Gadget]
+    let items: [Item]
     let mode: CostMode
+    let catalog: CategoryCatalog
 
-    var active: [Gadget] { gadgets.filter { !$0.isRetired } }
-    var count: Int { gadgets.count }
+    struct Entry: Identifiable {
+        let item: Item
+        let category: CategoryDisplay
+        var id: PersistentIdentifier { item.id }
+    }
+
+    var entries: [Entry] { items.map { Entry(item: $0, category: catalog.display(for: $0.categoryKey)) } }
+    var active: [Item] { items.filter { !$0.isRetired } }
+    var count: Int { items.count }
     var activeCount: Int { active.count }
     var retiredCount: Int { count - activeCount }
-    var totalSpent: Double { gadgets.reduce(0) { $0 + $1.priceInBase } }
+    var totalSpent: Double { items.reduce(0) { $0 + $1.priceInBase } }
     var averagePrice: Double { count == 0 ? 0 : totalSpent / Double(count) }
     var paidOffCount: Int { active.filter { $0.isPaidOff() }.count }
 
@@ -144,18 +182,40 @@ private struct Stats {
     var dailyBurn: Double { active.reduce(0) { $0 + $1.costPerDay(mode: mode) } }
 
     struct CategorySlice: Identifiable {
-        let category: GadgetCategory
+        let key: String
+        let label: String
         let total: Double
-        var id: String { category.rawValue }
+        var id: String { key }
     }
 
     var byCategory: [CategorySlice] {
-        Dictionary(grouping: gadgets, by: \.category)
-            .map { CategorySlice(category: $0.key, total: $0.value.reduce(0) { $0 + $1.priceInBase }) }
+        Dictionary(grouping: entries, by: { $0.category.key })
+            .map { key, group in
+                CategorySlice(
+                    key: key,
+                    label: group[0].category.label,
+                    total: group.reduce(0) { $0 + $1.item.priceInBase }
+                )
+            }
+            .sorted { $0.total > $1.total }
+    }
+
+    struct SectorSlice: Identifiable {
+        let sector: Sector
+        let total: Double
+        var id: String { sector.rawValue }
+    }
+
+    /// Coarser than the category chart — answers "where is my money going" at a glance
+    /// once the library spans electronics, furniture, clothes and everything else.
+    var bySector: [SectorSlice] {
+        Dictionary(grouping: entries, by: { $0.category.sector })
+            .map { SectorSlice(sector: $0.key, total: $0.value.reduce(0) { $0 + $1.item.priceInBase }) }
             .sorted { $0.total > $1.total }
     }
 
     var maxCategoryTotal: Double { max(1, byCategory.first?.total ?? 1) }
+    var maxSectorTotal: Double { max(1, bySector.first?.total ?? 1) }
 
     struct YearBucket: Identifiable {
         let year: Int
@@ -164,13 +224,17 @@ private struct Stats {
     }
 
     var byYear: [YearBucket] {
-        Dictionary(grouping: gadgets) { Calendar.current.component(.year, from: $0.purchaseDate) }
+        Dictionary(grouping: items) { Calendar.current.component(.year, from: $0.purchaseDate) }
             .map { YearBucket(year: $0.key, total: $0.value.reduce(0) { $0 + $1.priceInBase }) }
             .sorted { $0.year < $1.year }
     }
 
-    var worstValue: [Gadget] {
-        active.sorted { $0.costPerDay(mode: mode) > $1.costPerDay(mode: mode) }.prefix(5).map { $0 }
+    var worstValue: [Entry] {
+        entries
+            .filter { !$0.item.isRetired }
+            .sorted { $0.item.costPerDay(mode: mode) > $1.item.costPerDay(mode: mode) }
+            .prefix(5)
+            .map { $0 }
     }
 }
 
@@ -245,25 +309,27 @@ private struct ChartCard<Content: View>: View {
 }
 
 private struct WorstValueRow: View {
-    let gadget: Gadget
+    let entry: Stats.Entry
     let mode: CostMode
     let currency: String
 
+    private var item: Item { entry.item }
+
     var body: some View {
         HStack(spacing: 10) {
-            Image(systemName: gadget.category.symbol)
-                .foregroundStyle(gadget.category.tint)
+            Image(systemName: entry.category.symbol)
+                .foregroundStyle(entry.category.tint)
                 .frame(width: 24)
             VStack(alignment: .leading, spacing: 1) {
-                Text(gadget.name.isEmpty ? "Untitled" : gadget.name)
+                Text(item.name.isEmpty ? "Untitled" : item.name)
                     .font(.subheadline)
                     .lineLimit(1)
-                Text("\(Money.string(gadget.price, code: gadget.currencyCode)) · \(Duration.fromDays(gadget.daysOwned())) owned")
+                Text("\(Money.string(item.price, code: item.currencyCode)) · \(Duration.fromDays(item.daysOwned())) owned")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
             Spacer(minLength: 8)
-            Text(Money.perDay(gadget.costPerDay(mode: mode), code: currency))
+            Text(Money.perDay(item.costPerDay(mode: mode), code: currency))
                 .font(.subheadline.weight(.semibold).monospacedDigit())
             Image(systemName: "chevron.right")
                 .font(.caption2)

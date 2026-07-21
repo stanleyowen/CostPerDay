@@ -1,18 +1,21 @@
 import SwiftUI
 import SwiftData
 
-struct GadgetListView: View {
+struct ItemListView: View {
     @Environment(\.modelContext) private var context
-    @Query(sort: \Gadget.purchaseDate, order: .reverse) private var gadgets: [Gadget]
+    @Query(sort: \Item.purchaseDate, order: .reverse) private var items: [Item]
+    @Query private var customCategories: [CustomCategory]
 
     @AppStorage("costMode") private var costModeRaw = CostMode.actual.rawValue
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
     @State private var sort: SortOption = .costPerDay
     @State private var showRetired = false
-    @State private var newGadget: Gadget?
+    @State private var sectorFilter: Sector?
+    @State private var newItem: Item?
     @State private var deletedNotice: String?
 
     private var costMode: CostMode { CostMode(rawValue: costModeRaw) ?? .actual }
+    private var catalog: CategoryCatalog { CategoryCatalog(custom: customCategories) }
 
     enum SortOption: String, CaseIterable, Identifiable {
         case costPerDay = "Cost / day"
@@ -22,8 +25,19 @@ struct GadgetListView: View {
         var id: String { rawValue }
     }
 
-    private var visible: [Gadget] {
-        let pool = gadgets.filter { showRetired || !$0.isRetired }
+    /// Sectors that actually have something in them — no point offering a filter
+    /// that would return an empty list.
+    private var availableSectors: [Sector] {
+        let present = Set(items.map { catalog.display(for: $0.categoryKey).sector })
+        return Sector.allCases.filter { present.contains($0) }
+    }
+
+    private var visible: [Item] {
+        let catalog = self.catalog
+        var pool = items.filter { showRetired || !$0.isRetired }
+        if let sectorFilter {
+            pool = pool.filter { catalog.display(for: $0.categoryKey).sector == sectorFilter }
+        }
         switch sort {
         case .costPerDay: return pool.sorted { $0.costPerDay(mode: costMode) > $1.costPerDay(mode: costMode) }
         case .price: return pool.sorted { $0.netCost > $1.netCost }
@@ -32,23 +46,34 @@ struct GadgetListView: View {
         }
     }
 
-    private var activeGadgets: [Gadget] { gadgets.filter { !$0.isRetired } }
+    /// The burn rate always reflects everything you still own, regardless of any
+    /// sector filter — it's the total you're trying to keep down.
+    private var activeItems: [Item] { items.filter { !$0.isRetired } }
 
     var body: some View {
         NavigationStack {
             Group {
-                if gadgets.isEmpty {
-                    EmptyStateView { addGadget() }
+                if items.isEmpty {
+                    EmptyStateView { addItem() }
                 } else {
                     list
                 }
             }
-            .navigationTitle("Gadgets")
+            .navigationTitle("Items")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Menu {
                         Picker("Sort", selection: $sort) {
                             ForEach(SortOption.allCases) { Text($0.rawValue).tag($0) }
+                        }
+                        if availableSectors.count > 1 {
+                            Divider()
+                            Picker("Sector", selection: $sectorFilter) {
+                                Text("All sectors").tag(Sector?.none)
+                                ForEach(availableSectors) { sector in
+                                    Label(sector.label, systemImage: sector.symbol).tag(Sector?.some(sector))
+                                }
+                            }
                         }
                         Divider()
                         Toggle("Show retired", isOn: $showRetired)
@@ -61,11 +86,11 @@ struct GadgetListView: View {
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Add gadget", systemImage: "plus") { addGadget() }
+                    Button("Add item", systemImage: "plus") { addItem() }
                 }
             }
-            .sheet(item: $newGadget) { gadget in
-                GadgetEditView(gadget: gadget, isNew: true)
+            .sheet(item: $newItem) { item in
+                ItemEditView(item: item, isNew: true)
             }
             .safeAreaInset(edge: .bottom) {
                 if let notice = deletedNotice {
@@ -77,9 +102,9 @@ struct GadgetListView: View {
 
     private var list: some View {
         List {
-            if !activeGadgets.isEmpty {
+            if !activeItems.isEmpty {
                 Section {
-                    BurnRateHeader(gadgets: activeGadgets, mode: costMode, currency: baseCurrency)
+                    BurnRateHeader(items: activeItems, mode: costMode, currency: baseCurrency)
                         .listRowInsets(EdgeInsets())
                         .listRowBackground(Color.clear)
                 }
@@ -97,31 +122,40 @@ struct GadgetListView: View {
             }
 
             Section {
-                ForEach(visible) { gadget in
+                ForEach(visible) { item in
                     NavigationLink {
-                        GadgetDetailView(gadget: gadget)
+                        ItemDetailView(item: item)
                     } label: {
-                        GadgetRow(gadget: gadget, mode: costMode, currency: baseCurrency)
+                        ItemRow(
+                            item: item,
+                            category: catalog.display(for: item.categoryKey),
+                            mode: costMode,
+                            currency: baseCurrency
+                        )
                     }
                 }
                 .onDelete(perform: delete)
+            } header: {
+                if let sectorFilter {
+                    Text(sectorFilter.label)
+                }
             }
         }
     }
 
-    private func addGadget() {
-        let gadget = Gadget(currencyCode: baseCurrency)
-        context.insert(gadget)
-        newGadget = gadget
+    private func addItem() {
+        let item = Item(currencyCode: baseCurrency)
+        context.insert(item)
+        newItem = item
     }
 
     private func delete(at offsets: IndexSet) {
         let doomed = offsets.compactMap { visible.indices.contains($0) ? visible[$0] : nil }
         guard !doomed.isEmpty else { return }
-        let name = doomed.count == 1 ? (doomed[0].name.isEmpty ? "Gadget" : doomed[0].name) : "\(doomed.count) gadgets"
+        let name = doomed.count == 1 ? (doomed[0].name.isEmpty ? "Item" : doomed[0].name) : "\(doomed.count) items"
 
         context.undoManager?.beginUndoGrouping()
-        for gadget in doomed { context.delete(gadget) }
+        for item in doomed { context.delete(item) }
         context.undoManager?.endUndoGrouping()
 
         withAnimation { deletedNotice = "Deleted \(name)" }
@@ -165,19 +199,19 @@ private struct UndoBar: View {
     }
 }
 
-/// The number the whole app exists to make you feel: what your gadgets cost you every day.
+/// The number the whole app exists to make you feel: what your things cost you every day.
 private struct BurnRateHeader: View {
-    let gadgets: [Gadget]
+    let items: [Item]
     let mode: CostMode
     let currency: String
 
     private var perDay: Double {
-        gadgets.reduce(0) { $0 + $1.costPerDay(mode: mode) }
+        items.reduce(0) { $0 + $1.costPerDay(mode: mode) }
     }
 
     var body: some View {
         VStack(spacing: 6) {
-            Text("Your electronics cost you")
+            Text("Your things cost you")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
             Text(Money.perDay(perDay, code: currency))
@@ -205,11 +239,11 @@ private struct EmptyStateView: View {
 
     var body: some View {
         ContentUnavailableView {
-            Label("No gadgets yet", systemImage: "square.stack.3d.up.slash")
+            Label("Nothing tracked yet", systemImage: "square.stack.3d.up.slash")
         } description: {
-            Text("Add the electronics you own to see what they really cost you each day.")
+            Text("Add the things you own — electronics, furniture, appliances, clothes — to see what they really cost you each day.")
         } actions: {
-            Button("Add your first gadget", action: onAdd)
+            Button("Add your first item", action: onAdd)
                 .buttonStyle(.borderedProminent)
         }
     }

@@ -1,18 +1,28 @@
 import Foundation
 import SwiftData
 
+/// `Item` is the name used throughout the app and its UI.
+///
+/// The underlying class is still called `Gadget` because SwiftData derives the store's
+/// entity name from the class name — renaming it would orphan every record already on
+/// disk from when the app only tracked electronics. The alias keeps the code reading
+/// the way the app now works without putting anyone's existing data at risk.
+typealias Item = Gadget
+
 @Model
 final class Gadget {
     var name: String = ""
     var brand: String = ""
-    var categoryRaw: String = GadgetCategory.other.rawValue
+    /// Either an `ItemCategory` raw value or a `CustomCategory` key. Resolved for
+    /// display through `CategoryCatalog`.
+    var categoryRaw: String = ItemCategory.other.rawValue
     /// The amount paid, in `currencyCode`.
     var price: Double = 0
-    /// The currency this gadget was actually bought in.
+    /// The currency this item was actually bought in.
     var currencyCode: String = "USD"
     /// Rate locked at purchase: one unit of `currencyCode` is worth this many base-currency
-    /// units. Always 1 when the gadget was bought in the base currency. Rebased wholesale
-    /// when the user changes their base currency — see `Gadget.rebase(_:by:)`.
+    /// units. Always 1 when the item was bought in the base currency. Rebased wholesale
+    /// when the user changes their base currency — see `Item.rebase(_:by:)`.
     var rateToBase: Double = 1
     var purchaseDate: Date = Date()
     /// How long you expect this to stay in service, in months.
@@ -30,7 +40,7 @@ final class Gadget {
     init(
         name: String = "",
         brand: String = "",
-        category: GadgetCategory = .other,
+        category: ItemCategory = .other,
         price: Double = 0,
         currencyCode: String = Currency.deviceDefault,
         rateToBase: Double = 1,
@@ -50,10 +60,15 @@ final class Gadget {
         self.createdAt = Date()
     }
 
-    var category: GadgetCategory {
-        get { GadgetCategory(rawValue: categoryRaw) ?? .other }
-        set { categoryRaw = newValue.rawValue }
+    /// The stored category pointer. Use `CategoryCatalog.display(for:)` to render it —
+    /// it may refer to a built-in category or one the user defined.
+    var categoryKey: String {
+        get { categoryRaw }
+        set { categoryRaw = newValue }
     }
+
+    /// Non-nil only when this item uses a built-in category.
+    var builtInCategory: ItemCategory? { ItemCategory(rawValue: categoryRaw) }
 
     var isRetired: Bool { retiredDate != nil }
 }

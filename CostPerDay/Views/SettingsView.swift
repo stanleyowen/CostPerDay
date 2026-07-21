@@ -4,7 +4,8 @@ import UniformTypeIdentifiers
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var context
-    @Query private var gadgets: [Gadget]
+    @Query private var items: [Item]
+    @Query(sort: \CustomCategory.name) private var customCategories: [CustomCategory]
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
 
     @State private var rebaseTarget: String?
@@ -12,8 +13,10 @@ struct SettingsView: View {
     @State private var isImporting = false
     @State private var alert: AlertState?
 
+    @State private var editingCategory: CustomCategory?
+
     private var foreignCount: Int {
-        gadgets.filter { $0.currencyCode != baseCurrency }.count
+        items.filter { $0.currencyCode != baseCurrency }.count
     }
 
     var body: some View {
@@ -32,8 +35,49 @@ struct SettingsView: View {
                     Text("Currency")
                 } footer: {
                     Text(foreignCount == 0
-                         ? "Every total in the app is shown in this currency. Gadgets bought abroad keep the exchange rate you entered at purchase."
-                         : "\(foreignCount) gadget\(foreignCount == 1 ? "" : "s") bought in another currency use the rate you locked in at purchase.")
+                         ? "Every total in the app is shown in this currency. Things bought abroad keep the exchange rate you entered at purchase."
+                         : "\(foreignCount) item\(foreignCount == 1 ? "" : "s") bought in another currency use the rate you locked in at purchase.")
+                }
+
+                Section {
+                    ForEach(customCategories) { category in
+                        Button {
+                            editingCategory = category
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: category.symbolName)
+                                    .foregroundStyle(category.tint.color)
+                                    .frame(width: 26)
+                                VStack(alignment: .leading, spacing: 1) {
+                                    Text(category.name.isEmpty ? "Untitled" : category.name)
+                                        .foregroundStyle(.primary)
+                                    Text("\(category.sector.label) · \(Duration.fromMonths(category.defaultLifetimeMonths))")
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Text("\(usageCount(of: category))")
+                                    .font(.caption)
+                                    .foregroundStyle(.tertiary)
+                            }
+                        }
+                        // Without this, List gives every Button row's text the accent
+                        // tint by default — it reads as disabled/washed-out, not selectable.
+                        .buttonStyle(.plain)
+                    }
+                    .onDelete(perform: deleteCategories)
+
+                    Button {
+                        editingCategory = CustomCategory()
+                    } label: {
+                        Label("New category", systemImage: "plus.circle")
+                    }
+                } header: {
+                    Text("Custom categories")
+                } footer: {
+                    Text(customCategories.isEmpty
+                         ? "Add your own categories for anything the built-in list doesn't cover."
+                         : "The number on the right is how many items use each one. Deleting a category leaves those items intact — they just show as uncategorised.")
                 }
 
                 Section {
@@ -42,7 +86,7 @@ struct SettingsView: View {
                     } label: {
                         Label("Export backup", systemImage: "square.and.arrow.up")
                     }
-                    .disabled(gadgets.isEmpty)
+                    .disabled(items.isEmpty)
 
                     Button {
                         isImporting = true
@@ -52,11 +96,11 @@ struct SettingsView: View {
                 } header: {
                     Text("Backup")
                 } footer: {
-                    Text("Backups are plain JSON. Restoring adds anything missing and skips gadgets you already have — it never overwrites your library.")
+                    Text("Backups are plain JSON. Restoring adds anything missing and skips items you already have — it never overwrites your library.")
                 }
 
                 Section {
-                    LabeledContent("Gadgets", value: "\(gadgets.count)")
+                    LabeledContent("Items", value: "\(items.count)")
                     LabeledContent("Version", value: appVersion)
                 }
             }
@@ -70,8 +114,14 @@ struct SettingsView: View {
             .alert(item: $alert) { state in
                 Alert(title: Text(state.title), message: Text(state.message), dismissButton: .default(Text("OK")))
             }
+            .sheet(item: $editingCategory) { category in
+                CustomCategoryEditView(
+                    category: category,
+                    isNew: !customCategories.contains(where: { $0.uuid == category.uuid })
+                )
+            }
             .sheet(item: $rebaseTarget) { target in
-                RebaseSheet(from: baseCurrency, to: target, gadgetCount: gadgets.count) { factor in
+                RebaseSheet(from: baseCurrency, to: target, gadgetCount: items.count) { factor in
                     applyRebase(to: target, factor: factor)
                 }
             }
@@ -89,7 +139,7 @@ struct SettingsView: View {
     private func requestRebase(to code: String) {
         guard code != baseCurrency else { return }
         // With nothing stored yet there are no rates to convert, so just switch.
-        if gadgets.isEmpty {
+        if items.isEmpty {
             baseCurrency = code
         } else {
             rebaseTarget = code
@@ -97,7 +147,7 @@ struct SettingsView: View {
     }
 
     private func applyRebase(to code: String, factor: Double) {
-        Gadget.rebase(gadgets, by: factor)
+        Item.rebase(items, by: factor)
         baseCurrency = code
         rebaseTarget = nil
         save(failureTitle: "Couldn't change currency")
@@ -107,7 +157,9 @@ struct SettingsView: View {
 
     private func export() {
         do {
-            exportURL = try Backup.writeTemporary(Backup.makeFile(gadgets: gadgets, baseCurrency: baseCurrency))
+            exportURL = try Backup.writeTemporary(
+                Backup.makeFile(gadgets: items, baseCurrency: baseCurrency, customCategories: customCategories)
+            )
         } catch {
             alert = AlertState(title: "Export failed", message: error.localizedDescription)
         }
@@ -117,16 +169,32 @@ struct SettingsView: View {
         do {
             let url = try result.get()
             let file = try Backup.read(from: url)
-            let outcome = Backup.restore(file, into: context, existing: gadgets)
-            try context.save()
-            alert = AlertState(
-                title: "Restored",
-                message: "Added \(outcome.added) gadget\(outcome.added == 1 ? "" : "s")."
-                    + (outcome.skipped > 0 ? " Skipped \(outcome.skipped) you already had." : "")
+            let outcome = Backup.restore(
+                file, into: context, existing: items, existingCategories: customCategories
             )
+            try context.save()
+            var message = "Added \(outcome.added) item\(outcome.added == 1 ? "" : "s")."
+            if outcome.categoriesAdded > 0 {
+                message += " Restored \(outcome.categoriesAdded) custom categor\(outcome.categoriesAdded == 1 ? "y" : "ies")."
+            }
+            if outcome.skipped > 0 {
+                message += " Skipped \(outcome.skipped) you already had."
+            }
+            alert = AlertState(title: "Restored", message: message)
         } catch {
             alert = AlertState(title: "Restore failed", message: error.localizedDescription)
         }
+    }
+
+    private func usageCount(of category: CustomCategory) -> Int {
+        items.filter { $0.categoryKey == category.key }.count
+    }
+
+    private func deleteCategories(at offsets: IndexSet) {
+        for index in offsets where customCategories.indices.contains(index) {
+            context.delete(customCategories[index])
+        }
+        save(failureTitle: "Couldn't delete category")
     }
 
     private func save(failureTitle: String) {
