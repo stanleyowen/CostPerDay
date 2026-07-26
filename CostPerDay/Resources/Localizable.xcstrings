@@ -78,6 +78,9 @@
         }
       }
     },
+    "\"To date\" divides the price by the days you've owned it, so it falls the longer you keep something. \"Planned\" divides by the expected lifetime — the rate you budgeted for at the start." : {
+      "comment" : "Onboarding page body"
+    },
     "%@ · %@" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2661,6 +2664,9 @@
         }
       }
     },
+    "Add what you own" : {
+      "comment" : "Onboarding page title"
+    },
     "Add your first item" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4717,6 +4723,9 @@
           }
         }
       }
+    },
+    "Continue" : {
+      "comment" : "Onboarding button"
     },
     "Conversion rate" : {
       "extractionState" : "manual",
@@ -6966,6 +6975,9 @@
         }
       }
     },
+    "Everything stays on your device" : {
+      "comment" : "Onboarding page title"
+    },
     "Exchange rate" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7973,6 +7985,9 @@
           }
         }
       }
+    },
+    "Get Started" : {
+      "comment" : "Onboarding button"
     },
     "Gray" : {
       "comment" : "Colour name",
@@ -9448,6 +9463,9 @@
           }
         }
       }
+    },
+    "Log the price, purchase date and how long you expect it to last. Electronics, furniture, clothing — anything you paid for." : {
+      "comment" : "Onboarding page body"
     },
     "Monitor" : {
       "comment" : "Category name",
@@ -14684,6 +14702,9 @@
         }
       }
     },
+    "See what everything you own actually costs you — broken down to the day, not just the receipt." : {
+      "comment" : "Onboarding page body"
+    },
     "Settings" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -14837,6 +14858,9 @@
           }
         }
       }
+    },
+    "Skip" : {
+      "comment" : "Onboarding button"
     },
     "Skipped %lld entries already present." : {
       "comment" : "Restore result. The placeholder is a count.",
@@ -18771,6 +18795,9 @@
         }
       }
     },
+    "Two ways to see the cost" : {
+      "comment" : "Onboarding page title"
+    },
     "Typically lasts" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -19467,6 +19494,9 @@
         }
       }
     },
+    "Welcome to CostPerDay" : {
+      "comment" : "Onboarding page title"
+    },
     "Year" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -19972,6 +20002,9 @@
           }
         }
       }
+    },
+    "Your library is stored locally, never on a server. Export a backup or restore one anytime from Settings." : {
+      "comment" : "Onboarding page body"
     }
   },
   "version" : "1.1"

@@ -55,6 +55,9 @@ final class ItemStore {
 struct RootView: View {
     var isTemporary = false
 
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @State private var showOnboarding = false
+
     var body: some View {
         TabView {
             Tab("Items", systemImage: "square.stack.3d.up") {
@@ -71,6 +74,14 @@ struct RootView: View {
             if isTemporary {
                 TemporaryStoreBanner()
             }
+        }
+        .onAppear { showOnboarding = !hasCompletedOnboarding }
+        .fullScreenCover(isPresented: $showOnboarding) {
+            OnboardingView {
+                hasCompletedOnboarding = true
+                showOnboarding = false
+            }
+            .interactiveDismissDisabled()
         }
     }
 }
