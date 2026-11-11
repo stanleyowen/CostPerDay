@@ -1,0 +1,72 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project
+
+Dayrate (formerly CostPerDay; the GitHub repo and local folder still use the old name) is an iOS 18+ SwiftUI + SwiftData app that shows the daily cost of owning things (price amortised over days owned or expected lifetime). Fully on-device; the only network call is an optional exchange-rate lookup (`open.er-api.com`). No third-party dependencies.
+
+## Commands
+
+```bash
+# Build
+xcodebuild build -project Dayrate.xcodeproj -scheme Dayrate \
+  -destination 'platform=iOS Simulator,name=iPhone 17'
+
+# All tests (Swift Testing, not XCTest)
+xcodebuild test -project Dayrate.xcodeproj -scheme Dayrate \
+  -destination 'platform=iOS Simulator,name=iPhone 17'
+
+# Single suite or test: -only-testing:<Target>/<SuiteStruct>[/<testFunc()>]
+xcodebuild test -project Dayrate.xcodeproj -scheme Dayrate \
+  -destination 'platform=iOS Simulator,name=iPhone 17' \
+  -only-testing:DayrateTests/DraftTests
+
+# Regenerate the string catalog after changing any translation
+python3 Localization/build_catalog.py
+```
+
+Debug builds accept the `-seedSampleData` launch argument to populate an empty store with `SampleData`.
+
+The Xcode project uses file-system-synchronized groups, so new Swift files under `Dayrate/` or `DayrateTests/` are picked up without editing `project.pbxproj`.
+
+## Architecture
+
+**Persistence & data-safety invariants** — these exist to protect users' on-disk data; don't "clean them up":
+- `Item` is a `typealias` for the `@Model` class `Gadget`. SwiftData derives the entity name from the class name, so renaming `Gadget` would orphan existing stores.
+- `ItemCategory` raw values are persisted on every item: add cases, never rename them.
+- An item's `categoryRaw` is either an `ItemCategory` raw value or a custom category key (`"custom:" + uuid`). Always resolve it for display through `CategoryCatalog.display(for:)`, which also handles deleted/unknown categories (`isMissing`) rather than reassigning them.
+- `ItemStore` (in `DayrateApp.swift`) falls back to an in-memory container if the real store can't open, and the UI shows a banner. Model changes must remain lightweight-migratable (all stored properties have defaults).
+
+**Multi-currency model** — each item stores `price` in its own `currencyCode` plus `rateToBase`, a rate locked at purchase time (and an optional `resaleRateToBase`). All aggregate math is done in the user's base currency (`@AppStorage("baseCurrency")`). Changing the base currency calls `Gadget.rebase(_:by:)` to rescale every stored rate; original prices are never modified.
+
+**Cost math lives in one place** — the `ItemFields` protocol (`Models/ItemFields.swift`) holds all conversion and cost-per-day logic (`netCost`, `daysOwned`, `plannedDays`, `costPerDay(mode:)`, etc.) as extensions. Both the persisted `Gadget` and the unmanaged `ItemDraft` conform, so edit forms preview costs from the draft. Functions take a `now:` parameter so tests can pin time. `CostMode` (`.actual` = "To date", `.planned` = "Planned") selects which reading the UI shows.
+
+**Draft editing pattern** — edit forms bind to `ItemDraft` / `CustomCategoryDraft` (plain structs), never to the live `@Model`, and write back only via `apply(to:)` on Save. This prevents SwiftData autosave from persisting edits the user cancels. Follow this for any new edit form. `DraftTests` pins this behavior.
+
+**Validation** — `ItemValidation.issues(for:baseCurrency:)` is the single source of truth for what a valid item is, shared by the edit form, backup import, and tests.
+
+**Backup** — `Backup.swift` defines a versioned JSON format (`BackupFile`, `formatVersion`) that is deliberately independent of the SwiftData schema. Restore is additive only (skips entries already present, never overwrites). New fields must be optional so older backups still decode.
+
+**Exchange rates** — `ExchangeRateService` is an actor with an injectable `URLSession` and `UserDefaults`; it caches per-base snapshots for 12h and serves stale cache as an offline fallback. Tests stub the network via a custom `URLProtocol`.
+
+## Design system
+
+`Support/Theme.swift` holds the visual identity and shared components; reuse them rather than restyling per screen.
+- **Brand:** `Brand.ember`/`Brand.amber` (the `Brand.flame` gradient) on deep ink (`Brand.night`). The app tint is the `AccentColor` asset: #D2401C light (4.7:1 on white) and #FF5F3A dark. `Brand.paidOff` (green) means "fully amortised".
+- **The curve:** `BrandCurve` is the normalised `k/(t+k)` "price ÷ days" hyperbola behind the logo (`BrandMark`), the hero card background (`HeroBackground`) and the onboarding demo.
+- **Components:** `ItemGlyph` (category icon in a lifetime-progress ring), `CategoryTile`, `Chip`, `CostModePicker` (the shared To date/Planned switch with its explainer popover), `CostPeriod` (day/week/month/year), `InfoRow`, `CardHeader`, and the `.card()` modifier.
+- **App icon:** generated by `python3 Design/make_icon.py <out_dir>`, which writes the default, dark and tinted variants. Its geometry matches `BrandMark`, so change both together.
+- **Derived data:** screens compute their derived data once per render (`ItemListView`'s `Snapshot` and `ItemRowModel`, `DashboardView`'s `Stats`). Don't turn these back into computed properties that are read repeatedly.
+
+## Localization
+
+Do not hand-edit `Dayrate/Resources/Localizable.xcstrings` — it is generated. To add or change a user-facing string:
+1. Use the English text as the key in code (`String(localized: "...", comment: "...")` or a SwiftUI `Text` literal).
+2. Add it to `Localization/keys.json` (key → context comment).
+3. Add a translation to every file in `Localization/translations/` (11 languages). Plural-sensitive keys are objects of CLDR forms and must also be listed in `Localization/en_plurals.json` for the English forms.
+4. Run `python3 Localization/build_catalog.py`; it refuses to write if any language is missing a key, has mismatched format specifiers, or lacks required plural forms.
+
+Strings added to Swift code but missing from `keys.json` silently stay English, and the build doesn't flag them. To find them, build the app, then compare the keys in the compiler's `*.stringsdata` files (under DerivedData's `Objects-normal/arm64/`) against `keys.json`.
+
+`Localization/TRANSLATION_GUIDE.md` has the conventions: formal register in every language (de *Sie*, fr *vous*, ja です・ます, etc.), preserve `%@`/`%lld`/`%%` exactly, use positional specifiers (`%1$@`) when word order changes, and the domain glossary ("To date", "Planned", "Fully amortised"). The supported-language list is duplicated in `build_catalog.py` (`LANGS`), `LocalizationTests.expectedLanguages`, and `knownRegions` in the project file; keep them in sync.
