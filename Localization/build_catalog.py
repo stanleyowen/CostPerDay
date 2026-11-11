@@ -13,7 +13,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).parent
 SCRATCH = ROOT / "translations"
-OUT = pathlib.Path(__file__).parent.parent / "Dayrate/Resources/Localizable.xcstrings"
+OUT = pathlib.Path(__file__).parent.parent / "Wallet/Resources/Localizable.xcstrings"
 
 LANGS = ["zh-Hant", "zh-Hans", "ja", "ko", "id", "es", "fr", "de", "pt-BR", "ru", "vi"]
 

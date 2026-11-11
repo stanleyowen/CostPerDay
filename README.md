@@ -1,119 +1,163 @@
-# Dayrate
+<p align="center">
+  <img src="Design/screenshots/hero.png" alt="Wallet — every transaction, and everything it bought" width="100%">
+</p>
 
-**Dayrate** is an iOS app that turns what you paid for something into what it's
-actually costing you *right now* — a daily rate, amortised over how long you've
-owned it or expect to keep it. It exists to make the ongoing cost of ownership
-visible, as a small deterrent against impulse purchases.
+<p align="center">
+  <b>A private, beautifully fast money tracker for iPhone, which also tells you what the things you buy really cost per day.</b>
+</p>
 
-Built with SwiftUI and SwiftData, targeting iOS 18+.
+<p align="center">
+  <img alt="iOS 18+" src="https://img.shields.io/badge/iOS-18%2B-111?logo=apple&logoColor=white">
+  <img alt="Swift" src="https://img.shields.io/badge/Swift-SwiftUI%20%C2%B7%20SwiftData-F05138?logo=swift&logoColor=white">
+  <img alt="On-device" src="https://img.shields.io/badge/data-100%25%20on--device-2EA44F">
+  <img alt="Languages" src="https://img.shields.io/badge/languages-12-FFB23F">
+  <img alt="License: GPL v3" src="https://img.shields.io/badge/license-GPLv3-FF5F3A">
+</p>
 
-## Why
+---
 
-A $1,200 laptop doesn't feel like $1,200 once it's a year old — but expressed as
-"$1.10 a day, and falling" it stays legible for as long as you own it. Dayrate
-applies that framing to everything you record: electronics, furniture, appliances,
-clothing, vehicles, or anything else you spent money on.
+## Why Wallet?
+
+Most expense trackers stop at the receipt. A $1,200 laptop shows up as one big
+expense in March and then disappears. **Wallet keeps the receipt *and* follows
+the thing you bought**: "$1.10 a day, and falling". The longer you keep it,
+the better the purchase looks.
+
+It's also everything you'd expect from a serious wallet: accounts in any
+currency, transfers, budgets, labels, deep reports, Shortcuts & Siri, and a
+one-tap import from BudgetBakers Wallet. No account, no server, no analytics.
+
+## A quick tour
+
+<table>
+  <tr>
+    <td align="center" width="25%"><img src="Design/screenshots/home.png" alt="Home"><br><b>Home</b><br><sub>Balance trend, accounts, this month at a glance</sub></td>
+    <td align="center" width="25%"><img src="Design/screenshots/composer.png" alt="Add a transaction"><br><b>Log in seconds</b><br><sub>Calculator keypad + suggestions from your history</sub></td>
+    <td align="center" width="25%"><img src="Design/screenshots/transactions.png" alt="Transactions"><br><b>Transactions</b><br><sub>Grouped by day, searchable, filterable</sub></td>
+    <td align="center" width="25%"><img src="Design/screenshots/reports.png" alt="Reports"><br><b>Reports</b><br><sub>Any week, month, quarter or year</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="Design/screenshots/home-2.png" alt="Budgets and spending"><br><b>Budgets</b><br><sub>Pace markers and a daily allowance</sub></td>
+    <td align="center"><img src="Design/screenshots/reports-2.png" alt="Spending calendar"><br><b>Spending calendar</b><br><sub>Income sources and balance trend</sub></td>
+    <td align="center"><img src="Design/screenshots/reports-3.png" alt="Insights"><br><b>Insights</b><br><sub>Labels, accounts, largest expenses</sub></td>
+    <td align="center"><img src="Design/screenshots/items.png" alt="Items"><br><b>What things cost per day</b><br><sub>Every purchase, amortised</sub></td>
+  </tr>
+</table>
 
 ## Features
 
-- **Cost per day, two ways** — *To date* (price ÷ days owned, falls the longer you
-  keep something) and *Planned* (price ÷ expected lifetime, the rate you budgeted
-  for up front).
-- **A dashboard** — total daily/monthly/yearly burn rate, spend by sector and
-  category, spend by year, and a ranked list of your worst-value items.
-- **Multi-currency support** — record an item in the currency you actually paid in;
-  the exchange rate is locked at purchase time and everything rolls up into a
-  single base currency you choose in Settings.
-- **Built-in and custom categories** — over 30 built-in categories across five
-  sectors (electronics, home, appliances, personal, active), plus your own.
-- **Retire, don't delete** — mark an item sold, given away, or dead to stop its
-  cost clock while keeping the history; record what you recovered on resale.
-- **Local JSON backup and restore** — export your whole library to a file and
-  restore it later; restoring only adds what's missing and never overwrites.
-- **Fully localized** — English plus Chinese (Traditional/Simplified), Japanese,
-  Korean, Indonesian, Spanish, French, German, Portuguese (Brazil), Russian, and
-  Vietnamese.
-- **Guided first launch** — a short onboarding flow introduces the core idea and
-  the two cost bases before you ever see the tab bar.
-- **Everything stays on-device** — no account, no server, no analytics. Your data
-  lives in SwiftData locally; the only network call is an optional exchange-rate
-  lookup when you record an item in a foreign currency.
+### 💳 Wallet
+- **Accounts:** bank, cash, credit cards, e-wallets, savings, investments and loans, each in its own currency. Archive old ones, or keep savings out of your spending statistics.
+- **Fast entry:**
+  - A calculator keypad that does sums (`120+45×2`).
+  - Notes that complete themselves from your history and fill in the category, account and usual amount.
+  - Labels.
+  - Transfers between accounts, including across currencies.
+- **Transactions:** grouped by day with daily totals. Search notes, labels and amounts; filter by period, type, account, category and label; swipe to duplicate or delete (with undo).
+- **Budgets:** weekly, monthly or yearly, for everything or for chosen categories, with a pace marker and "what's left per day".
+
+### 📊 Reports
+- Week, month, quarter, year or all time. Swipe between periods, or narrow to a single account.
+- Spending compared with **the same stretch** of the previous period (1–11 Nov vs 1–11 Oct, not vs all of October), plus your savings rate.
+- A spending or cash-flow chart, a group and category breakdown, and drill-down into any category's 12-period trend and transactions.
+- A spending calendar, weekday averages, balance trend, income sources, largest expenses, labels, and spending by account.
+- CSV export of any period.
+
+### 📦 Ownership: the twist
+- Turn any purchase into a **tracked item**: from the transaction, from the composer, or from Home's *"Bought something lasting?"* suggestions.
+- See its cost per day two ways: **To date** (price ÷ days owned) and **Planned** (price ÷ expected lifetime).
+- Link repairs and accessories as **upkeep** to get the true total cost of ownership.
+- Retire items when you're done with them, and record resale value.
+
+### ⚡️ Shortcuts & Siri
+- **Add Transaction** takes an amount, type, account, category, note, merchant, date and labels. Leave the category out and Wallet picks the one you usually use.
+- **Get Balance**, **Get Spending** and **New Transaction**, which opens straight to the keypad.
+- **Log every Apple Pay payment automatically.** In Shortcuts, add a *Transaction* automation that runs Wallet's *Add Transaction* (full steps in Settings → Shortcuts & Siri).
+
+### 🔒 Private by design
+- Everything lives on your device in SwiftData. The only network request is an optional exchange-rate lookup for foreign-currency entries.
+- An optional **Face ID / Touch ID / passcode lock**, which also hides the app in the app switcher.
+- **Hide balances** blurs every figure until tapped.
+- Exports are written with complete file protection, and CSV cells are escaped against spreadsheet formula injection.
+
+### 🔁 Coming from BudgetBakers Wallet?
+In **Settings → Import from BudgetBakers**, pick Wallet's CSV export. It brings over:
+- accounts, categories (mapped by Wallet's own IDs) and labels
+- notes, including multi-line ones
+- foreign-currency rates
+- transfers, re-paired from Wallet's two-line format
+
+Import again with a newer export at any time; only new records are added.
+
+### 🌍 Also
+Full JSON backup and restore (additive, never overwrites) and localisation in
+12 languages: English, 繁體中文, 简体中文, 日本語, 한국어, Bahasa Indonesia, Español,
+Français, Deutsch, Português (Brasil), Русский and Tiếng Việt.
 
 ## Getting started
 
-**Requirements:** Xcode 16+, iOS 18 SDK, a Mac to build on.
+**Requirements:** Xcode 16 or later with the iOS 18 SDK.
 
 ```bash
-git clone https://github.com/stanleyowen/CostPerDay.git
-cd CostPerDay
-open Dayrate.xcodeproj
+git clone https://github.com/stanleyowen/Wallet.git
+cd Wallet
+open Wallet.xcodeproj
 ```
 
-Select the `Dayrate` scheme and run on a simulator or device running iOS 18+.
+Run the **Wallet** scheme. Debug builds accept a few launch arguments:
 
-To launch with sample data pre-loaded (Debug builds only), add
-`-seedSampleData` as a launch argument in the scheme's Run options.
+| Argument | What it does |
+|---|---|
+| `-seedSampleData` | Sample accounts, four months of transactions, budgets and items |
+| `-importWalletCSV <path>` | Imports a BudgetBakers CSV export on launch |
+| `-skipOnboarding`, `-initialTab <tab>`, `-openComposer`, `-scrollAnchor center\|bottom` | For scripted simulator screenshots |
 
-## How it works
+> The bundle identifier is still `com.stanley.Dayrate`, so existing installs of
+> the app's earlier versions (Dayrate, Tally) upgrade in place and keep their data.
 
-1. **Add an item** — name, category, price, currency, purchase date, and how
-   long you expect it to last.
-2. Dayrate immediately shows what that works out to per day, both as budgeted
-   (*Planned*) and, once some time has passed, as it's played out so far (*To
-   date*).
-3. **The Dashboard** rolls every item up into a single daily burn rate, plus
-   breakdowns by sector, category, and year.
-4. **Retire an item** when you stop using it — its cost clock stops, and any
-   resale value is netted off the total.
-5. **Back up** your library to JSON from Settings any time, and restore it on
-   a new device or after a reinstall.
-
-## Project structure
+## How it's built
 
 ```
-CostPerDay/
-├── Dayrate/
-│   ├── DayrateApp.swift        # App entry point, SwiftData container, onboarding gate
-│   ├── Models/                 # SwiftData models (Item, CustomCategory, ItemCategory, Sector...)
-│   ├── Views/                  # Items list, Dashboard, Item editor, Settings, Onboarding
-│   ├── Support/                # Formatting, currency, backup, exchange rates, validation
-│   └── Resources/              # Localizable.xcstrings (generated, see Localization/)
-├── DayrateTests/                # Unit tests
-└── Localization/                 # Translation pipeline (see below)
+Wallet/
+├── WalletApp.swift        App entry: tabs, app lock, global sheets
+├── Models/                Record, Account, Budget, RecordCategory, Item (Gadget)…
+├── Support/
+│   ├── Ledger.swift        Balances, net worth: pure functions over value snapshots
+│   ├── ReportEngine.swift  Periods, reports, budgets
+│   ├── WalletImport.swift  BudgetBakers CSV → import plan (CSV.swift parses)
+│   ├── Suggestions.swift   Learns notes → category / account / amount
+│   └── AppLock.swift, Backup.swift, Theme.swift, …
+├── Intents/               App Intents for Shortcuts & Siri
+└── Views/                 Home, Transactions, Reports, Items, Settings, editors
+WalletTests/               Swift Testing suites
+Design/                    App icon + README image generators, screenshots
+Localization/              Translation sources and catalog builder
 ```
 
-## Localization
+**Principles:**
+- **The math is pure and tested.** All money math runs on immutable `Flow` snapshots.
+- **Edits are drafts.** Editors bind to plain structs, so Cancel is always a true no-op.
+- **Writes are non-destructive.** Imports and restores only ever add.
 
-Translations aren't hand-edited in the Xcode string catalog. The source of truth
-is [`Localization/keys.json`](Localization/keys.json) (every English string, with
-context comments) and one JSON file per language under
-[`Localization/translations/`](Localization/translations/).
-[`Localization/build_catalog.py`](Localization/build_catalog.py) validates every
-translation — key coverage, format-specifier consistency, plural forms — and
-merges them into `Dayrate/Resources/Localizable.xcstrings`:
+Run the tests:
 
 ```bash
-python3 Localization/build_catalog.py
-```
-
-Adding a new user-facing string means adding it to `keys.json`, adding its
-translation to each file in `translations/`, then re-running the script. See
-[`Localization/TRANSLATION_GUIDE.md`](Localization/TRANSLATION_GUIDE.md) for the
-full conventions (register, glossary, format-specifier rules).
-
-## Testing
-
-```bash
-xcodebuild test -project Dayrate.xcodeproj -scheme Dayrate \
+xcodebuild test -project Wallet.xcodeproj -scheme Wallet \
   -destination 'platform=iOS Simulator,name=iPhone 17'
 ```
 
-Covers cost/amortisation math, category resolution, draft validation, exchange
-rate handling, and localization consistency.
+### Regenerating assets
+```bash
+python3 Design/make_icon.py Wallet/Assets.xcassets/AppIcon.appiconset   # app icon (needs Pillow)
+python3 Design/make_readme_images.py <screenshots_dir> Design/screenshots  # README images
+python3 Localization/build_catalog.py                                    # string catalog
+```
 
-## Privacy
+README screenshots are always taken from a simulator seeded with `-seedSampleData`,
+never from real data.
 
-Dayrate stores your library locally on-device via SwiftData. Nothing is sent
-to a server, and there is no account, tracking, or analytics. The only network
-request the app makes is an optional currency-conversion lookup when you record
-or rebase an item priced in a foreign currency.
+## License
+
+Wallet is free software: you can redistribute it and/or modify it under the
+terms of the **GNU General Public License v3.0** as published by the Free
+Software Foundation. See [`LICENSE`](LICENSE) for the full text.
