@@ -274,3 +274,65 @@ struct RecordDraftTests {
         #expect(record.toAmount == 0)
     }
 }
+
+@Suite("Report focus")
+struct ReportFocusTests {
+    let account = UUID()
+
+    private func flows() -> [Flow] {
+        [
+            // 2 Nov 2026 is a Monday.
+            Flow(kind: .expense, amount: 100, date: day(2026, 11, 2), accountID: account, categoryKey: RecordCategory.groceries.rawValue, labels: ["Trip"]),
+            Flow(kind: .expense, amount: 40, date: day(2026, 11, 3), accountID: account, categoryKey: RecordCategory.restaurant.rawValue),
+            Flow(kind: .expense, amount: 25, date: day(2026, 11, 9), accountID: account, categoryKey: RecordCategory.taxi.rawValue, labels: ["Trip"]),
+            Flow(kind: .income, amount: 1_000, date: day(2026, 11, 1), accountID: account, categoryKey: RecordCategory.wage.rawValue),
+            Flow(kind: .expense, amount: 60, date: day(2026, 10, 5), accountID: account, categoryKey: RecordCategory.groceries.rawValue),
+        ]
+    }
+
+    private func report(_ focus: ReportFocus, now: Date = day(2026, 12, 2)) -> Report {
+        let period = ReportPeriod.containing(day(2026, 11, 15), range: .month, calendar: calendar)
+        return Report.build(flows: flows(), period: period, focus: focus, now: now, calendar: calendar)
+    }
+
+    @Test("A focused group narrows totals, the breakdown and the previous period")
+    func group() {
+        let focused = report(ReportFocus(category: "group:food"))
+        #expect(focused.expense == 140)
+        #expect(focused.income == 0)
+        #expect(focused.expenseByCategory.map(\.key) == [RecordCategory.groceries.rawValue, RecordCategory.restaurant.rawValue])
+        #expect(focused.previousExpense == 60)
+    }
+
+    @Test("A focused category, label or weekday filters every figure")
+    func otherDimensions() {
+        #expect(report(ReportFocus(category: RecordCategory.taxi.rawValue)).expense == 25)
+        #expect(report(ReportFocus(label: "Trip")).expense == 125)
+        // Mondays (weekday 2): 2 Nov groceries and 9 Nov taxi.
+        #expect(report(ReportFocus(weekday: 2)).expense == 125)
+        #expect(report(ReportFocus(category: "group:food", label: "Trip")).expense == 100)
+    }
+
+    @Test("A focused day highlights without filtering the period's totals")
+    func dayDoesNotFilter() {
+        #expect(report(ReportFocus(day: day(2026, 11, 3, 0))).expense == 165)
+    }
+
+    @Test("Stepping up from a category lands on its group")
+    func parent() {
+        #expect(ReportFocus(category: RecordCategory.taxi.rawValue).parentCategory == "group:transport")
+        #expect(ReportFocus(category: "group:transport").parentCategory == nil)
+    }
+
+    @Test("Transaction filters honour a weekday from a report")
+    func transactionWeekday() {
+        let monday = Flow(kind: .expense, amount: 1, date: day(2026, 11, 2), accountID: account)
+        let tuesday = Flow(kind: .expense, amount: 1, date: day(2026, 11, 3), accountID: account)
+        var filter = TransactionFilter()
+        // TransactionFilter uses the device calendar, so ask it which weekday that is.
+        filter.weekday = Calendar.current.component(.weekday, from: monday.date)
+        #expect(filter.isActive)
+        #expect(filter.matches(monday, interval: nil))
+        #expect(!filter.matches(tuesday, interval: nil))
+    }
+}

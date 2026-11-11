@@ -116,6 +116,49 @@ struct ReportPeriod: Hashable, Sendable {
     }
 }
 
+/// What the user has narrowed a report to by tapping its charts. Category, label and
+/// weekday filter every figure (including the previous-period comparison); `day`
+/// only highlights a day and lists its transactions, so the period's shape stays
+/// visible around it.
+struct ReportFocus: Hashable, Sendable {
+    /// A category key, or `group:<raw>` for a whole group.
+    var category: String?
+    var label: String?
+    /// `Calendar` weekday: 1 = Sunday … 7 = Saturday.
+    var weekday: Int?
+    var day: Date?
+
+    var isEmpty: Bool { category == nil && label == nil && weekday == nil && day == nil }
+
+    /// The category one level up: a category's group, or nothing for a group.
+    var parentCategory: String? {
+        guard let category, !category.hasPrefix("group:"), let parsed = RecordCategory(rawValue: category) else { return nil }
+        return "group:" + parsed.group.rawValue
+    }
+
+    func matches(_ flow: Flow, calendar: Calendar = .current) -> Bool {
+        if let category {
+            guard flow.kind != .transfer else { return false }
+            if category.hasPrefix("group:") {
+                if "group:" + flow.category.group.rawValue != category { return false }
+            } else if flow.categoryKey != category {
+                return false
+            }
+        }
+        if let label, !flow.labels.contains(label) { return false }
+        if let weekday, calendar.component(.weekday, from: flow.date) != weekday { return false }
+        return true
+    }
+
+    /// The same focus with the weekday cleared — the weekday chart needs every day
+    /// to stay visible while one of them is selected.
+    var withoutWeekday: ReportFocus {
+        var copy = self
+        copy.weekday = nil
+        return copy
+    }
+}
+
 /// Everything the Reports screen shows for one period, computed in a single pass.
 struct Report: Sendable {
     struct Slice: Identifiable, Hashable, Sendable {
@@ -176,6 +219,7 @@ struct Report: Sendable {
         period: ReportPeriod,
         excludedAccounts: Set<UUID> = [],
         accountFilter: UUID? = nil,
+        focus: ReportFocus = ReportFocus(),
         now: Date = .now,
         calendar: Calendar = .current
     ) -> Report {
@@ -183,7 +227,7 @@ struct Report: Sendable {
             guard flow.kind != .transfer else { return false }
             if let id = flow.accountID, excludedAccounts.contains(id) { return false }
             if let accountFilter, flow.accountID != accountFilter { return false }
-            return true
+            return focus.matches(flow, calendar: calendar)
         }
 
         var income = 0.0, expense = 0.0, incomeCount = 0, expenseCount = 0

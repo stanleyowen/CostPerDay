@@ -315,6 +315,7 @@ private struct NetWorthHero: View {
 private struct MonthCard: View {
     let report: Report
     let currency: String
+    @Environment(AppRouter.self) private var router
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -325,8 +326,8 @@ private struct MonthCard: View {
                 }
             }
             let maxValue = max(report.income, report.expense, 1)
-            flowBar(title: String(localized: "Income"), value: report.income, fraction: report.income / maxValue, tint: .income)
-            flowBar(title: String(localized: "Expenses"), value: report.expense, fraction: report.expense / maxValue, tint: Brand.ember)
+            flowBar(title: String(localized: "Income"), value: report.income, fraction: report.income / maxValue, tint: .income) { show(.income) }
+            flowBar(title: String(localized: "Expenses"), value: report.expense, fraction: report.expense / maxValue, tint: Brand.ember) { show(.expense) }
             Divider()
             HStack {
                 FigureColumn(title: String(localized: "Net"), value: Money.string(report.net, code: currency), tint: report.net >= 0 ? .income : Brand.ember)
@@ -344,14 +345,32 @@ private struct MonthCard: View {
         .card()
     }
 
-    private func flowBar(title: String, value: Double, fraction: Double, tint: Color) -> some View {
+    /// This month's income or expenses in the Transactions tab.
+    private func show(_ kind: RecordKind) {
+        var filter = TransactionFilter()
+        filter.kinds = [kind]
+        filter.period = .thisMonth
+        router.showTransactions(filter)
+    }
+
+    private func flowBar(title: String, value: Double, fraction: Double, tint: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            flowBarContent(title: title, value: value, fraction: fraction, tint: tint)
+                .contentShape(.rect)
+        }
+        .buttonStyle(PressableStyle())
+    }
+
+    private func flowBarContent(title: String, value: Double, fraction: Double, tint: Color) -> some View {
         VStack(alignment: .leading, spacing: 5) {
             HStack {
                 Text(title).font(.caption.weight(.medium)).foregroundStyle(.secondary)
                 Spacer()
                 Text(Money.string(value, code: currency))
                     .font(.caption.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(.primary)
                     .sensitive()
+                Image(systemName: "chevron.right").font(.caption2.weight(.bold)).foregroundStyle(.tertiary)
             }
             GeometryReader { geo in
                 ZStack(alignment: .leading) {

@@ -33,7 +33,7 @@ python3 Localization/build_catalog.py
 Debug builds accept launch arguments (all inert in Release, see `Support/DebugFlags.swift` and `SampleData`):
 - `-seedSampleData` — items plus two accounts and ~3 months of transactions in an empty store.
 - `-importWalletCSV <path>` — import a Wallet CSV at launch (idempotent).
-- `-skipOnboarding`, `-initialTab home|transactions|reports|items|settings`, `-openComposer`, `-scrollAnchor center|bottom` — for scripted simulator screenshots (`xcrun simctl launch … ` then `xcrun simctl io booted screenshot`).
+- `-skipOnboarding`, `-initialTab home|transactions|reports|items|settings`, `-openComposer`, `-scrollAnchor center|bottom`, `-reportFocus <category key or group:raw>`, `-reportDay <day of month>` — for scripted simulator screenshots (`xcrun simctl launch … ` then `xcrun simctl io booted screenshot`).
 
 The Xcode project uses file-system-synchronized groups, so new Swift files under `Wallet/` or `WalletTests/` are picked up without editing `project.pbxproj`.
 
@@ -53,6 +53,8 @@ The Xcode project uses file-system-synchronized groups, so new Swift files under
 **Multi-currency model** — each item stores `price` in its own `currencyCode` plus `rateToBase`, a rate locked at purchase time (and an optional `resaleRateToBase`). Records do the same (`amount`, `currencyCode` = the source account's currency, locked `rateToBase`). All aggregate math is done in the user's base currency (`@AppStorage("baseCurrency")`). Changing the base currency calls `Gadget.rebase`, `Record.rebase` and `Budget.rebase` to rescale stored rates/limits; original amounts are never modified. Foreign account balances convert at the most recently locked rate for that currency (`Ledger.latestRates`), so net worth works offline.
 
 **Ledger math lives in one place too** — `Support/Ledger.swift` (balances, net worth, net-worth series) and `Support/ReportEngine.swift` (`ReportPeriod`, `Report.build`, `BudgetStatus`) are pure functions over `Flow`, a Sendable value snapshot of a `Record`. Transfers never count as income or spending; accounts with `excludeFromStats` count toward balances but not reports. A running period is compared like-for-like with the same elapsed stretch of the previous one. Screens build a `LedgerSnapshot` once per render.
+
+**Charts are filters** — Reports keeps a `ReportFocus` (category/group, label, weekday, day) that `Report.build` applies to every figure; `day` only highlights and lists, it doesn't narrow totals. Tapping a slice/row/bar/day/label/account sets it; bars wider than a day zoom the period instead (`zoomTrail` steps back out). Bar-chart taps go through `View.onChartTap`, a tap (not drag) overlay so scrolling over charts still works. The filter bar converts the focus into a `TransactionFilter` for "Show N transactions".
 
 **Wallet import** — `Support/CSV.swift` (RFC 4180 parser, lenient numbers, formula-injection-safe writer) and `Support/WalletImport.swift` turn a BudgetBakers export into a `Plan` before anything is written; `LedgerWriter` (`@ModelActor`) inserts it off the main actor. Transfer legs sharing a timestamp are re-paired; unpaired legs become outside transfers. Categories map by `envelope_id`, then English name. Each record gets a hashed `importKey`, so re-importing a newer export only adds what's new — keep keys stable.
 

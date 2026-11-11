@@ -61,6 +61,10 @@ one-tap import from BudgetBakers Wallet. No account, no server, no analytics.
 - Spending compared with **the same stretch** of the previous period (1–11 Nov vs 1–11 Oct, not vs all of October), plus your savings rate.
 - A spending or cash-flow chart, a group and category breakdown, and drill-down into any category's 12-period trend and transactions.
 - A spending calendar, weekday averages, balance trend, income sources, largest expenses, labels, and spending by account.
+- **Every chart is a filter:**
+  - Tap a slice, bar, calendar day, weekday, label, income source or account, and the whole report narrows to it.
+  - Tap a month bar in a year view to zoom in.
+  - Jump to the matching transactions with one tap.
 - CSV export of any period.
 
 ### 📦 Ownership: the twist

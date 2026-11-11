@@ -82,5 +82,9 @@
  "%lld transfers have no matching account in the export, so they're kept as money moving in or out of Wallet.": {
   "one": "%lld transfer has no matching account in the export, so it's kept as money moving in or out of Wallet.",
   "other": "%lld transfers have no matching account in the export, so they're kept as money moving in or out of Wallet."
+ },
+ "Show %lld transactions": {
+  "one": "Show %lld transaction",
+  "other": "Show %lld transactions"
  }
 }

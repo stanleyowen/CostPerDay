@@ -134,9 +134,13 @@ struct TransactionsView: View {
 
     private func summary(_ snapshot: Snapshot) -> some View {
         HStack(alignment: .top) {
-            FigureColumn(title: String(localized: "Income"), value: Money.string(snapshot.income, code: baseCurrency), tint: .income)
+            kindToggle(.income) {
+                FigureColumn(title: String(localized: "Income"), value: Money.string(snapshot.income, code: baseCurrency), tint: .income)
+            }
             Spacer()
-            FigureColumn(title: String(localized: "Expenses"), value: Money.string(snapshot.expense, code: baseCurrency), alignment: .center)
+            kindToggle(.expense) {
+                FigureColumn(title: String(localized: "Expenses"), value: Money.string(snapshot.expense, code: baseCurrency), alignment: .center)
+            }
             Spacer()
             FigureColumn(title: String(localized: "Net"), value: Money.string(snapshot.income - snapshot.expense, code: baseCurrency),
                          tint: snapshot.income >= snapshot.expense ? .income : Brand.ember, alignment: .trailing)
@@ -150,6 +154,24 @@ struct TransactionsView: View {
                 .offset(y: 18)
         }
         .padding(.bottom, 14)
+    }
+
+    /// Tapping a figure in the summary narrows the list to that type (tap again to undo).
+    private func kindToggle<Content: View>(_ kind: RecordKind, @ViewBuilder content: () -> Content) -> some View {
+        let selected = router.transactionFilter.kinds == [kind]
+        return Button {
+            withAnimation(.snappy) { router.transactionFilter.kinds = selected ? [] : [kind] }
+        } label: {
+            content()
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(selected ? kind.tint.opacity(0.14) : .clear, in: .rect(cornerRadius: 10, style: .continuous))
+                .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, -8)
+        .accessibilityAddTraits(selected ? .isSelected : [])
+        .sensoryFeedback(.selection, trigger: selected)
     }
 
     private var activeFilters: some View {
@@ -173,6 +195,9 @@ struct TransactionsView: View {
                 }
                 ForEach(Array(filter.labels).sorted(), id: \.self) { label in
                     Chip(title: label, systemImage: "xmark", isSelected: true, tint: LabelTint.color(for: label)) { router.transactionFilter.labels.remove(label) }
+                }
+                if let weekday = filter.weekday, Calendar.current.standaloneWeekdaySymbols.indices.contains(weekday - 1) {
+                    Chip(title: Calendar.current.standaloneWeekdaySymbols[weekday - 1], systemImage: "xmark", isSelected: true, tint: .purple) { router.transactionFilter.weekday = nil }
                 }
                 if filter.trackedOnly {
                     Chip(title: String(localized: "Linked to items"), systemImage: "xmark", isSelected: true, tint: Brand.ember) { router.transactionFilter.trackedOnly = false }

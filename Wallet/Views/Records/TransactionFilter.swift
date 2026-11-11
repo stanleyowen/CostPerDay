@@ -10,6 +10,8 @@ struct TransactionFilter: Equatable {
     /// Category keys, or `group:<raw>` for a whole group.
     var categories: Set<String> = []
     var labels: Set<String> = []
+    /// `Calendar` weekday (1 = Sunday), set when drilling in from a report.
+    var weekday: Int?
     var trackedOnly = false
 
     /// Not `self != TransactionFilter()`: the custom-range dates default to "now",
@@ -18,7 +20,7 @@ struct TransactionFilter: Equatable {
 
     var activeCount: Int {
         (period == .all ? 0 : 1) + (kinds.isEmpty ? 0 : 1) + (accounts.isEmpty ? 0 : 1)
-            + (categories.isEmpty ? 0 : 1) + (labels.isEmpty ? 0 : 1) + (trackedOnly ? 1 : 0)
+            + (categories.isEmpty ? 0 : 1) + (labels.isEmpty ? 0 : 1) + (trackedOnly ? 1 : 0) + (weekday == nil ? 0 : 1)
     }
 
     func interval(now: Date = .now, calendar: Calendar = .current) -> DateInterval? {
@@ -39,6 +41,7 @@ struct TransactionFilter: Equatable {
             if !categories.contains(flow.categoryKey) && !categories.contains("group:" + flow.category.group.rawValue) { return false }
         }
         if !labels.isEmpty, !flow.labels.contains(where: labels.contains) { return false }
+        if let weekday, Calendar.current.component(.weekday, from: flow.date) != weekday { return false }
         return true
     }
 
