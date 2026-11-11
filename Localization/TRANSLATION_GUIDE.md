@@ -1,4 +1,4 @@
-# Translation task — Dayrate (iOS app)
+# Translation task — Wallet (iOS app)
 
 ## What the app is
 A personal finance app that records physical possessions (electronics, furniture,
@@ -94,7 +94,7 @@ layouts. Keep translations approximately as short as the English. In particular:
 
 ## Leave untouched
 - `"0"` and `"%lld"` — bare placeholders; output them unchanged.
-- Do not translate the app name "Dayrate" or "GitHub" or "JSON".
+- Do not translate the app name "Wallet" (always this app, never translated), "BudgetBakers" / "BudgetBakers Wallet" (the other app), "Apple Pay", "Siri", "Face ID", "GitHub", "JSON" or "CSV". Apple's Shortcuts app uses Apple's own localized name for it.
 - "View on GitHub" — translate only the "View on" part.
 
 ## Before you finish

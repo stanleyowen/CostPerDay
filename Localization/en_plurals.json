@@ -1,12 +1,86 @@
 {
-  "%lld days":   {"one": "%lld day",   "other": "%lld days"},
-  "%lld months": {"one": "%lld month", "other": "%lld months"},
-  "%lld years":  {"one": "%lld year",  "other": "%lld years"},
-  "%lld items":  {"one": "%lld item",  "other": "%lld items"},
-  "%lld retired":{"one": "%lld retired","other": "%lld retired"},
-  "Added %lld items.": {"one": "Added %lld item.", "other": "Added %lld items."},
-  "Restored %lld custom categories.": {"one": "Restored %lld custom category.", "other": "Restored %lld custom categories."},
-  "Skipped %lld entries already present.": {"one": "Skipped %lld entry already present.", "other": "Skipped %lld entries already present."},
-  "%lld items purchased in another currency use the exchange rate recorded at the time of purchase.": {"one": "%lld item purchased in another currency uses the exchange rate recorded at the time of purchase.", "other": "%lld items purchased in another currency use the exchange rate recorded at the time of purchase."},
-  "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {"one": "Your %lld item is currently priced against %@. This rate re-expresses it in %@. The price originally entered remains unchanged; only the conversion is adjusted.", "other": "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted."}
+ "%lld days": {
+  "one": "%lld day",
+  "other": "%lld days"
+ },
+ "%lld months": {
+  "one": "%lld month",
+  "other": "%lld months"
+ },
+ "%lld years": {
+  "one": "%lld year",
+  "other": "%lld years"
+ },
+ "%lld items": {
+  "one": "%lld item",
+  "other": "%lld items"
+ },
+ "%lld retired": {
+  "one": "%lld retired",
+  "other": "%lld retired"
+ },
+ "Added %lld items.": {
+  "one": "Added %lld item.",
+  "other": "Added %lld items."
+ },
+ "Restored %lld custom categories.": {
+  "one": "Restored %lld custom category.",
+  "other": "Restored %lld custom categories."
+ },
+ "Skipped %lld entries already present.": {
+  "one": "Skipped %lld entry already present.",
+  "other": "Skipped %lld entries already present."
+ },
+ "%lld items purchased in another currency use the exchange rate recorded at the time of purchase.": {
+  "one": "%lld item purchased in another currency uses the exchange rate recorded at the time of purchase.",
+  "other": "%lld items purchased in another currency use the exchange rate recorded at the time of purchase."
+ },
+ "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
+  "one": "Your %lld item is currently priced against %@. This rate re-expresses it in %@. The price originally entered remains unchanged; only the conversion is adjusted.",
+  "other": "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted."
+ },
+ "%lld accounts created": {
+  "one": "%lld account created",
+  "other": "%lld accounts created"
+ },
+ "%lld already present, skipped": {
+  "one": "%lld already present, skipped",
+  "other": "%lld already present, skipped"
+ },
+ "%lld expenses": {
+  "one": "%lld expense",
+  "other": "%lld expenses"
+ },
+ "%lld rows couldn't be read and will be left out.": {
+  "one": "%lld row couldn't be read and will be left out.",
+  "other": "%lld rows couldn't be read and will be left out."
+ },
+ "%lld transactions": {
+  "one": "%lld transaction",
+  "other": "%lld transactions"
+ },
+ "%lld transactions added": {
+  "one": "%lld transaction added",
+  "other": "%lld transactions added"
+ },
+ "%lld transactions were imported before and will be skipped.": {
+  "one": "%lld transaction was imported before and will be skipped.",
+  "other": "%lld transactions were imported before and will be skipped."
+ },
+ "Added %lld transactions.": {
+  "one": "Added %lld transaction.",
+  "other": "Added %lld transactions."
+ },
+ "Delete account and %lld transactions": {
+  "one": "Delete account and %lld transaction",
+  "other": "Delete account and %lld transactions"
+ },
+ "Import %lld transactions": {
+  "one": "Import %lld transaction",
+  "other": "Import %lld transactions"
+ },
+ "%lld transfers have no matching account in the export, so they're kept as money moving in or out of Wallet.": {
+  "one": "%lld transfer has no matching account in the export, so it's kept as money moving in or out of Wallet.",
+  "other": "%lld transfers have no matching account in the export, so they're kept as money moving in or out of Wallet."
+ }
 }
