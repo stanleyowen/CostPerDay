@@ -1,4 +1,4 @@
-# Translation task — CostPerDay (iOS app)
+# Translation task — Dayrate (iOS app)
 
 ## What the app is
 A personal finance app that records physical possessions (electronics, furniture,
@@ -25,7 +25,7 @@ finance tool, not a playful consumer app.
 
 ## Output
 Write ONE file per language: `<lang>.json` in this directory, e.g. `ja.json`.
-It must be a JSON object with **exactly the same 241 keys** as `keys.json`.
+It must be a JSON object with **exactly the same 256 keys** as `keys.json`.
 Each value is either:
   - a plain string — the translation, OR
   - an object of CLDR plural forms (see below) for the plural-sensitive keys.
@@ -94,7 +94,7 @@ layouts. Keep translations approximately as short as the English. In particular:
 
 ## Leave untouched
 - `"0"` and `"%lld"` — bare placeholders; output them unchanged.
-- Do not translate the app name "CostPerDay" or "GitHub" or "JSON".
+- Do not translate the app name "Dayrate" or "GitHub" or "JSON".
 - "View on GitHub" — translate only the "View on" part.
 
 ## Before you finish

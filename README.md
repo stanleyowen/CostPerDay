@@ -1,6 +1,6 @@
-# CostPerDay
+# Dayrate
 
-**CostPerDay** is an iOS app that turns what you paid for something into what it's
+**Dayrate** is an iOS app that turns what you paid for something into what it's
 actually costing you *right now* — a daily rate, amortised over how long you've
 owned it or expect to keep it. It exists to make the ongoing cost of ownership
 visible, as a small deterrent against impulse purchases.
@@ -10,7 +10,7 @@ Built with SwiftUI and SwiftData, targeting iOS 18+.
 ## Why
 
 A $1,200 laptop doesn't feel like $1,200 once it's a year old — but expressed as
-"$1.10 a day, and falling" it stays legible for as long as you own it. CostPerDay
+"$1.10 a day, and falling" it stays legible for as long as you own it. Dayrate
 applies that framing to everything you record: electronics, furniture, appliances,
 clothing, vehicles, or anything else you spent money on.
 
@@ -46,10 +46,10 @@ clothing, vehicles, or anything else you spent money on.
 ```bash
 git clone https://github.com/stanleyowen/CostPerDay.git
 cd CostPerDay
-open CostPerDay.xcodeproj
+open Dayrate.xcodeproj
 ```
 
-Select the `CostPerDay` scheme and run on a simulator or device running iOS 18+.
+Select the `Dayrate` scheme and run on a simulator or device running iOS 18+.
 
 To launch with sample data pre-loaded (Debug builds only), add
 `-seedSampleData` as a launch argument in the scheme's Run options.
@@ -58,7 +58,7 @@ To launch with sample data pre-loaded (Debug builds only), add
 
 1. **Add an item** — name, category, price, currency, purchase date, and how
    long you expect it to last.
-2. CostPerDay immediately shows what that works out to per day, both as budgeted
+2. Dayrate immediately shows what that works out to per day, both as budgeted
    (*Planned*) and, once some time has passed, as it's played out so far (*To
    date*).
 3. **The Dashboard** rolls every item up into a single daily burn rate, plus
@@ -72,13 +72,13 @@ To launch with sample data pre-loaded (Debug builds only), add
 
 ```
 CostPerDay/
-├── CostPerDay/
-│   ├── CostPerDayApp.swift     # App entry point, SwiftData container, onboarding gate
+├── Dayrate/
+│   ├── DayrateApp.swift        # App entry point, SwiftData container, onboarding gate
 │   ├── Models/                 # SwiftData models (Item, CustomCategory, ItemCategory, Sector...)
 │   ├── Views/                  # Items list, Dashboard, Item editor, Settings, Onboarding
 │   ├── Support/                # Formatting, currency, backup, exchange rates, validation
 │   └── Resources/              # Localizable.xcstrings (generated, see Localization/)
-├── CostPerDayTests/             # Unit tests
+├── DayrateTests/                # Unit tests
 └── Localization/                 # Translation pipeline (see below)
 ```
 
@@ -90,7 +90,7 @@ context comments) and one JSON file per language under
 [`Localization/translations/`](Localization/translations/).
 [`Localization/build_catalog.py`](Localization/build_catalog.py) validates every
 translation — key coverage, format-specifier consistency, plural forms — and
-merges them into `CostPerDay/Resources/Localizable.xcstrings`:
+merges them into `Dayrate/Resources/Localizable.xcstrings`:
 
 ```bash
 python3 Localization/build_catalog.py
@@ -104,7 +104,7 @@ full conventions (register, glossary, format-specifier rules).
 ## Testing
 
 ```bash
-xcodebuild test -project CostPerDay.xcodeproj -scheme CostPerDay \
+xcodebuild test -project Dayrate.xcodeproj -scheme Dayrate \
   -destination 'platform=iOS Simulator,name=iPhone 17'
 ```
 
@@ -113,7 +113,7 @@ rate handling, and localization consistency.
 
 ## Privacy
 
-CostPerDay stores your library locally on-device via SwiftData. Nothing is sent
+Dayrate stores your library locally on-device via SwiftData. Nothing is sent
 to a server, and there is no account, tracking, or analytics. The only network
 request the app makes is an optional currency-conversion lookup when you record
 or rebase an item priced in a foreign currency.
