@@ -151,10 +151,11 @@ struct AccountCard: View {
             Spacer(minLength: 0)
             if !compact { name }
             Text(Money.exact(balance, code: account.currencyCode))
-                .font(.system(.headline, design: .rounded).weight(.bold).monospacedDigit())
+                .font(.system(.title3, design: .rounded).weight(.bold).monospacedDigit())
                 .foregroundStyle(.white)
                 .lineLimit(1)
-                .minimumScaleFactor(0.6)
+                // Long amounts (NT$1,234,567.89) shrink to fit rather than truncate.
+                .minimumScaleFactor(0.5)
                 .contentTransition(.numericText(value: balance))
         }
         .padding(compact ? 12 : 14)
