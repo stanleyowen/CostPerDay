@@ -428,7 +428,7 @@ struct AccountDetailView: View {
 
     private func balanceChart(_ series: [(date: Date, value: Double)]) -> some View {
         TrendChart(series: series, tint: account.tint.color, lineColors: [account.tint.color],
-                   currency: account.currencyCode, plotHeight: 130, spacing: 4) { focused in
+                   currency: account.currencyCode, plotHeight: 160, spacing: 4) { focused in
             Text(focused.map { "\($0.date.formatted(.dateTime.day().month())) · \(Money.exact($0.value, code: account.currencyCode))" } ?? String(localized: "Last 90 days", comment: "Chart caption"))
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.secondary)

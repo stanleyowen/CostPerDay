@@ -379,7 +379,7 @@ private struct NetWorthHero: View {
         VStack(alignment: .leading, spacing: 16) {
             if series.count > 2 {
                 // Scrub the line to read the balance on any of the last 30 days.
-                TrendChart(series: series, showsAxis: false, plotHeight: 54, spacing: 16) { focused in
+                TrendChart(series: series, currency: currency, plotHeight: 150, spacing: 16) { focused in
                     header(focused: focused)
                 }
             } else {

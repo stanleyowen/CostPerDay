@@ -923,7 +923,7 @@ private struct NetWorthTrendCard: View {
         let buckets = period.buckets().filter { $0.start <= Date.now }
         let series = Ledger.netWorthSeries(accounts: ledger.refs, flows: ledger.flows, rates: ledger.rates, buckets: buckets)
         if series.count > 1 {
-            TrendChart(series: series, currency: currency, plotHeight: 170) { focused in
+            TrendChart(series: series, currency: currency, plotHeight: 190) { focused in
                 HStack(alignment: .top) {
                     CardHeader(title: String(localized: "Balance trend", comment: "Chart title"), subtitle: String(localized: "All accounts, at the end of each period", comment: "Chart subtitle"))
                     if let focused {

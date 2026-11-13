@@ -21,7 +21,6 @@ struct TrendChart<Readout: View>: View {
     var tint: Color
     var lineColors: [Color]
     var currency: String?
-    var showsAxis: Bool
     var plotHeight: CGFloat
     var spacing: CGFloat
     @ViewBuilder var readout: (Point?) -> Readout
@@ -29,14 +28,13 @@ struct TrendChart<Readout: View>: View {
     @State private var scrub = ScrubState<Point>()
 
     init(series: [(date: Date, value: Double)], tint: Color = Brand.accent, lineColors: [Color] = [Brand.accent, Brand.highlight],
-         currency: String? = nil, showsAxis: Bool = true, plotHeight: CGFloat, spacing: CGFloat = 12,
+         currency: String? = nil, plotHeight: CGFloat, spacing: CGFloat = 12,
          @ViewBuilder readout: @escaping (Point?) -> Readout) {
         let points = series.map { Point(date: $0.date, value: $0.value) }
         self.points = points.isSorted { $0.date <= $1.date } ? points : points.sorted { $0.date < $1.date }
         self.tint = tint
         self.lineColors = lineColors
         self.currency = currency
-        self.showsAxis = showsAxis
         self.plotHeight = plotHeight
         self.spacing = spacing
         self.readout = readout
@@ -46,7 +44,7 @@ struct TrendChart<Readout: View>: View {
         let points = self.points
         VStack(alignment: .leading, spacing: spacing) {
             readout(scrub.value)
-            TrendPlot(points: points, tint: tint, lineColors: lineColors, currency: currency, showsAxis: showsAxis, scrub: scrub)
+            TrendPlot(points: points, tint: tint, lineColors: lineColors, currency: currency, scrub: scrub)
                 .equatable()
                 .frame(height: plotHeight)
                 .sensitive()
@@ -70,16 +68,26 @@ private struct TrendPlot: View, Equatable {
     let tint: Color
     let lineColors: [Color]
     let currency: String?
-    let showsAxis: Bool
     let scrub: ScrubState<Point>
 
     nonisolated static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.points == rhs.points && lhs.tint == rhs.tint && lhs.lineColors == rhs.lineColors
-            && lhs.currency == rhs.currency && lhs.showsAxis == rhs.showsAxis && lhs.scrub === rhs.scrub
+            && lhs.currency == rhs.currency && lhs.scrub === rhs.scrub
+    }
+
+    /// Dates on the x-axis at the grain the range calls for: days for a month or
+    /// two, months up to a little over a year, then years.
+    private var dateFormat: Date.FormatStyle {
+        guard let first = points.first?.date, let last = points.last?.date else { return .dateTime.day().month(.abbreviated) }
+        let days = last.timeIntervalSince(first) / 86_400
+        if days <= 62 { return .dateTime.day().month(.abbreviated) }
+        if days <= 400 { return .dateTime.month(.abbreviated) }
+        return .dateTime.year()
     }
 
     var body: some View {
         let values = points.map(\.value)
+        let dateFormat = self.dateFormat
         let low = values.min() ?? 0, high = values.max() ?? 1
         let pad = max((high - low) * 0.15, abs(high) * 0.002, 1)
         let floor = low - pad
@@ -101,14 +109,19 @@ private struct TrendPlot: View, Equatable {
         .chartXSelection(value: scrub.binding { (date: Date) in
             points.nearestIndex(to: date.timeIntervalSinceReferenceDate) { $0.date.timeIntervalSinceReferenceDate }.map { points[$0] }
         })
-        .chartXAxis(.hidden)
+        .chartXAxis {
+            AxisMarks(values: .automatic(desiredCount: 4)) { value in
+                AxisTick(length: 4).foregroundStyle(.quaternary)
+                AxisValueLabel {
+                    if let date = value.as(Date.self) { Text(date, format: dateFormat).font(.caption2) }
+                }
+            }
+        }
         .chartYAxis {
-            if showsAxis {
-                AxisMarks(position: .trailing, values: .automatic(desiredCount: 3)) { value in
-                    AxisGridLine().foregroundStyle(.quaternary)
-                    AxisValueLabel {
-                        if let v = value.as(Double.self), let currency { Text(Money.compact(v, code: currency)).font(.caption2) }
-                    }
+            AxisMarks(position: .trailing, values: .automatic(desiredCount: 3)) { value in
+                AxisGridLine().foregroundStyle(.quaternary)
+                AxisValueLabel {
+                    if let v = value.as(Double.self), let currency { Text(Money.compact(v, code: currency)).font(.caption2) }
                 }
             }
         }
