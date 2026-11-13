@@ -82,6 +82,11 @@ struct TransactionsView: View {
                     }
                     .accessibilityLabel(Text("Filter"))
                     .badge(router.transactionFilter.activeCount)
+                    // A toolbar badge is drawn by the bar button underneath and isn't
+                    // refreshed when the count changes ("Clear all" left the old
+                    // number up). Tying the button's identity to the count rebuilds
+                    // it, badge included, whenever the count moves.
+                    .id(router.transactionFilter.activeCount)
                 }
             }
             .safeAreaInset(edge: .bottom, spacing: 0) {
