@@ -83,5 +83,5 @@ extension Money {
 
 extension Color {
     static let income = Color(red: 0.13, green: 0.66, blue: 0.36)
-    static let expense = Brand.ember
+    static let expense = Brand.expense
 }

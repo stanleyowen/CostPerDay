@@ -11,6 +11,7 @@ struct WalletApp: App {
         WindowGroup {
             if let container = store.container {
                 RootView(isTemporary: store.isTemporary)
+                    .tint(Brand.accent)
                     .modelContainer(container)
                     .environment(router)
                     .environment(lock)
@@ -99,7 +100,7 @@ struct RootView: View {
                 hasCompletedOnboarding = true
                 showOnboarding = false
             }
-            .tint(Color.accentColor)
+            .tint(Brand.accent)
             .interactiveDismissDisabled()
         }
     }

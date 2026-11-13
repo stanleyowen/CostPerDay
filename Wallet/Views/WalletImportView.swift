@@ -69,7 +69,7 @@ struct WalletImportView: View {
             VStack(spacing: 20) {
                 Image(systemName: "square.and.arrow.down.on.square.fill")
                     .font(.system(size: 54))
-                    .foregroundStyle(Brand.flame)
+                    .foregroundStyle(Brand.gradient)
                     .padding(.top, 24)
                 VStack(spacing: 6) {
                     Text("Move your history to Wallet").font(.title2.bold())
@@ -108,7 +108,7 @@ struct WalletImportView: View {
                 .font(.subheadline.weight(.bold))
                 .foregroundStyle(.white)
                 .frame(width: 26, height: 26)
-                .background(Brand.ember, in: .circle)
+                .background(Brand.accent, in: .circle)
             Text(text).font(.subheadline)
         }
     }

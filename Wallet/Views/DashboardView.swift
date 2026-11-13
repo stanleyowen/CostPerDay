@@ -50,7 +50,7 @@ struct DashboardView: View {
 
                 LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
                     StatTile(
-                        symbol: "sum", tint: .accentColor,
+                        symbol: "sum", tint: Brand.accent,
                         title: String(localized: "Total daily cost", comment: "Statistic label"),
                         value: Money.perDay(stats.dailyBurn, code: baseCurrency),
                         caption: String(localized: "\(Money.string(stats.dailyBurn * 30.4375, code: baseCurrency)) per month · \(Money.string(stats.dailyBurn * 365.25, code: baseCurrency)) per year")
@@ -472,7 +472,7 @@ private struct YearChartCard: View {
                 .cornerRadius(6)
                 .foregroundStyle(
                     selectedYear == nil || selectedYear == String(bucket.year)
-                        ? AnyShapeStyle(Brand.flame) : AnyShapeStyle(Color.secondary.opacity(0.3))
+                        ? AnyShapeStyle(Brand.gradient) : AnyShapeStyle(Color.secondary.opacity(0.3))
                 )
             }
             .chartXSelection(value: $selectedYear)

@@ -58,7 +58,7 @@ struct CategoryPickerView: View {
                             .padding(.vertical, 14)
                             .background {
                                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                    .strokeBorder(Color.accentColor.opacity(0.5), style: StrokeStyle(lineWidth: 1.5, dash: [6, 4]))
+                                    .strokeBorder(Brand.accent.opacity(0.5), style: StrokeStyle(lineWidth: 1.5, dash: [6, 4]))
                             }
                     }
                     .buttonStyle(.plain)

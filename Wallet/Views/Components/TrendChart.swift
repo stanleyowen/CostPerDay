@@ -10,13 +10,13 @@ struct TrendChart: View {
     }
 
     let points: [Point]
-    var tint: Color = Brand.amber
-    var lineStyle: AnyShapeStyle = AnyShapeStyle(Brand.flame)
+    var tint: Color = Brand.accent
+    var lineStyle: AnyShapeStyle = AnyShapeStyle(Brand.gradient)
     var currency: String?
     var showsAxis = true
     @Binding var selection: Date?
 
-    init(series: [(date: Date, value: Double)], tint: Color = Brand.amber, lineStyle: AnyShapeStyle = AnyShapeStyle(Brand.flame),
+    init(series: [(date: Date, value: Double)], tint: Color = Brand.accent, lineStyle: AnyShapeStyle = AnyShapeStyle(Brand.gradient),
          currency: String? = nil, showsAxis: Bool = true, selection: Binding<Date?> = .constant(nil)) {
         self.points = series.map { Point(date: $0.date, value: $0.value) }
         self.tint = tint

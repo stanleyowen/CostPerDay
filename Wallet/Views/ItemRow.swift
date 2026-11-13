@@ -108,7 +108,7 @@ struct ItemPreviewCard: View {
 /// Fills with the category colour, then turns green once the item has outlived its budget.
 struct LifetimeBar: View {
     let progress: Double
-    var tint: Color = .accentColor
+    var tint: Color = Brand.accent
     var height: CGFloat = 4
 
     private var clamped: Double {

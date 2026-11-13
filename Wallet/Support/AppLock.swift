@@ -98,7 +98,7 @@ struct LockScreen: View {
             VStack(spacing: 22) {
                 Spacer()
                 BrandMark(size: 92)
-                    .shadow(color: Brand.ember.opacity(0.4), radius: 24, y: 10)
+                    .shadow(color: Brand.leather.opacity(0.4), radius: 24, y: 10)
                 Text("Wallet is locked")
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(.white)
@@ -113,7 +113,7 @@ struct LockScreen: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
-                .tint(Brand.ember)
+                .tint(Brand.accent)
                 .disabled(lock.isAuthenticating)
                 .padding(.bottom, 40)
             }

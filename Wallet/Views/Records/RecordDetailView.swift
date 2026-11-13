@@ -187,7 +187,7 @@ struct RecordDetailView: View {
                                  ? String(localized: "Purchase", comment: "Role of a transaction linked to an item")
                                  : String(localized: "Upkeep", comment: "Role of a transaction linked to an item"))
                                 .font(.caption.weight(.semibold))
-                                .foregroundStyle(Brand.ember)
+                                .foregroundStyle(Brand.accent)
                         }
                         Spacer()
                         VStack(alignment: .trailing, spacing: 1) {

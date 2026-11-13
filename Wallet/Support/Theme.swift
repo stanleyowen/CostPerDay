@@ -1,20 +1,47 @@
 import SwiftUI
 
 /// The visual identity, in one place. Wallet's mark is a classic leather wallet
-/// (`BrandMark`); the interface accent is a warm ember-to-amber gradient on deep
-/// ink, and the falling "price ÷ days" curve from the ownership tracker lives on in
-/// the hero cards and onboarding.
+/// (`BrandMark`). The interface takes its colours from the icon, with the brand
+/// accent and the money meanings kept apart so a button never reads as "spent":
+/// - `accent` is what you tap and what's selected (also the system tint).
+/// - `expense` / `Color.income` mean money out / in, and nothing else.
+/// - `night` is the deep hero surface; `amber` the gold "per day" highlight.
+/// The falling "price ÷ days" curve from the ownership tracker lives on in the hero
+/// cards and onboarding.
 enum Brand {
-    static let ember = Color(red: 1.000, green: 0.373, blue: 0.227) // #FF5F3A
-    static let amber = Color(red: 1.000, green: 0.698, blue: 0.247) // #FFB23F
-    static let ink = Color(red: 0.086, green: 0.078, blue: 0.133)   // #161422
-    static let inkRaised = Color(red: 0.180, green: 0.133, blue: 0.259) // #2E2242
+    /// Teal from the white card's stripe. The dark shade keeps white button text
+    /// legible (≥ 3:1) while still reading on dark surfaces; mirrored in the
+    /// `AccentColor` asset for system UI.
+    static let accent = Color(light: 0x0B7D74, dark: 0x20A497)
+    /// The second stop of the accent gradient.
+    static let highlight = Color(hex: 0x3FC1B0)
+    /// Coral from the front card: money out, and nothing else.
+    static let expense = Color(light: 0xD9473A, dark: 0xFF6B5A)
+    static let amber = Color(hex: 0xF2B544)
+    /// Deep teal ink for hero surfaces.
+    static let ink = Color(hex: 0x0A1A1C)
+    static let inkRaised = Color(hex: 0x143437)
+    /// The icon's leather, for the soft glow under the mark.
+    static let leather = Color(hex: 0x824A26)
 
     /// Success state: an item that has outlived its expected lifetime.
     static let paidOff = Color.green
 
-    static let flame = LinearGradient(colors: [ember, amber], startPoint: .leading, endPoint: .trailing)
+    static let gradient = LinearGradient(colors: [accent, highlight], startPoint: .leading, endPoint: .trailing)
     static let night = LinearGradient(colors: [inkRaised, ink], startPoint: .topLeading, endPoint: .bottomTrailing)
+}
+
+extension Color {
+    init(hex: UInt32) {
+        self.init(red: Double((hex >> 16) & 0xFF) / 255, green: Double((hex >> 8) & 0xFF) / 255, blue: Double(hex & 0xFF) / 255)
+    }
+
+    /// A colour that follows the environment's light/dark appearance.
+    init(light: UInt32, dark: UInt32) {
+        self.init(UIColor { traits in
+            UIColor(Color(hex: traits.userInterfaceStyle == .dark ? dark : light))
+        })
+    }
 }
 
 // MARK: - The curve
@@ -252,14 +279,14 @@ struct HeroBackground: View {
     private var curves: some View {
         ZStack {
             BrandCurve(steepness: 0.22, floor: 0.18)
-                .stroke(Brand.flame, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                .stroke(Brand.gradient, style: StrokeStyle(lineWidth: 3, lineCap: .round))
                 .opacity(0.55)
                 .padding(.top, 18)
                 .padding(.bottom, 26)
                 .padding(.leading, -10)
                 .blur(radius: 0.4)
             BrandCurve(steepness: 0.22, floor: 0.18)
-                .stroke(Brand.ember, style: StrokeStyle(lineWidth: 18, lineCap: .round))
+                .stroke(Brand.accent, style: StrokeStyle(lineWidth: 18, lineCap: .round))
                 .opacity(0.18)
                 .blur(radius: 16)
                 .padding(.top, 18)
@@ -334,7 +361,7 @@ struct Chip: View {
     let title: String
     var systemImage: String?
     var isSelected = false
-    var tint: Color = .accentColor
+    var tint: Color = Brand.accent
     let action: () -> Void
 
     var body: some View {

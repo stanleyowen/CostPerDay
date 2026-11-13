@@ -439,7 +439,7 @@ struct RecordEditView: View {
     private var trackToggle: some View {
         Toggle(isOn: $trackAsItem.animation(.snappy)) {
             HStack(spacing: 12) {
-                CategoryTile(symbol: "shippingbox.fill", tint: Brand.ember, size: 32)
+                CategoryTile(symbol: "shippingbox.fill", tint: Brand.accent, size: 32)
                 VStack(alignment: .leading, spacing: 1) {
                     Text("Track as an owned item")
                         .font(.subheadline.weight(.semibold))
@@ -449,7 +449,7 @@ struct RecordEditView: View {
                 }
             }
         }
-        .tint(Brand.ember)
+        .tint(Brand.accent)
         .padding(14)
         .background(Color(.secondarySystemGroupedBackground), in: .rect(cornerRadius: 20, style: .continuous))
     }

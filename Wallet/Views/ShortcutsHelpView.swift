@@ -21,7 +21,7 @@ struct ShortcutsHelpView: View {
             }
 
             Section("Actions") {
-                action("Add Transaction", symbol: "plus.circle.fill", tint: Brand.ember,
+                action("Add Transaction", symbol: "plus.circle.fill", tint: Brand.accent,
                        detail: String(localized: "Amount, type, account, category, note, merchant, date and labels. Leave the category out and Wallet picks the one you usually use."))
                 action("New Transaction", symbol: "square.and.pencil", tint: .blue,
                        detail: String(localized: "Opens Wallet with the entry keypad ready."))
@@ -68,7 +68,7 @@ struct ShortcutsHelpView: View {
                 .font(.caption.weight(.bold))
                 .foregroundStyle(.white)
                 .frame(width: 22, height: 22)
-                .background(Brand.ember, in: .circle)
+                .background(Brand.accent, in: .circle)
             Text(text).font(.subheadline)
         }
     }

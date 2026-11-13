@@ -143,7 +143,7 @@ struct TransactionsView: View {
             }
             Spacer()
             FigureColumn(title: String(localized: "Net"), value: Money.string(snapshot.income - snapshot.expense, code: baseCurrency),
-                         tint: snapshot.income >= snapshot.expense ? .income : Brand.ember, alignment: .trailing)
+                         tint: snapshot.income >= snapshot.expense ? .income : Brand.expense, alignment: .trailing)
         }
         .padding(16)
         .background(Color(.secondarySystemGroupedBackground), in: .rect(cornerRadius: 20, style: .continuous))
@@ -200,7 +200,7 @@ struct TransactionsView: View {
                     Chip(title: Calendar.current.standaloneWeekdaySymbols[weekday - 1], systemImage: "xmark", isSelected: true, tint: .purple) { router.transactionFilter.weekday = nil }
                 }
                 if filter.trackedOnly {
-                    Chip(title: String(localized: "Linked to items"), systemImage: "xmark", isSelected: true, tint: Brand.ember) { router.transactionFilter.trackedOnly = false }
+                    Chip(title: String(localized: "Linked to items"), systemImage: "xmark", isSelected: true, tint: Brand.accent) { router.transactionFilter.trackedOnly = false }
                 }
                 Button("Clear all") { withAnimation(.snappy) { router.transactionFilter = TransactionFilter() } }
                     .font(.subheadline.weight(.semibold))

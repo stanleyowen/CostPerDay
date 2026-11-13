@@ -327,17 +327,17 @@ private struct MonthCard: View {
             }
             let maxValue = max(report.income, report.expense, 1)
             flowBar(title: String(localized: "Income"), value: report.income, fraction: report.income / maxValue, tint: .income) { show(.income) }
-            flowBar(title: String(localized: "Expenses"), value: report.expense, fraction: report.expense / maxValue, tint: Brand.ember) { show(.expense) }
+            flowBar(title: String(localized: "Expenses"), value: report.expense, fraction: report.expense / maxValue, tint: Brand.expense) { show(.expense) }
             Divider()
             HStack {
-                FigureColumn(title: String(localized: "Net"), value: Money.string(report.net, code: currency), tint: report.net >= 0 ? .income : Brand.ember)
+                FigureColumn(title: String(localized: "Net"), value: Money.string(report.net, code: currency), tint: report.net >= 0 ? .income : Brand.expense)
                 Spacer()
                 FigureColumn(title: String(localized: "Per day"), value: Money.string(report.averageDailyExpense, code: currency), alignment: .center)
                 Spacer()
                 FigureColumn(
                     title: String(localized: "Saved"),
                     value: report.savingsRate.map { $0.formatted(.percent.precision(.fractionLength(0))) } ?? "—",
-                    tint: (report.savingsRate ?? 0) >= 0 ? .primary : Brand.ember,
+                    tint: (report.savingsRate ?? 0) >= 0 ? .primary : Brand.expense,
                     alignment: .trailing
                 )
             }
@@ -514,7 +514,7 @@ private struct WelcomeCard: View {
     var body: some View {
         VStack(spacing: 18) {
             BrandMark(size: 84)
-                .shadow(color: Brand.ember.opacity(0.35), radius: 20, y: 8)
+                .shadow(color: Brand.leather.opacity(0.35), radius: 20, y: 8)
                 .padding(.top, 12)
             VStack(spacing: 6) {
                 Text("Let's set up your wallet")

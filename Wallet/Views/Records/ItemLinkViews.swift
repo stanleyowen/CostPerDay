@@ -33,7 +33,7 @@ struct ItemSpendingCard: View {
                     InfoRow("Including upkeep") {
                         Text(Money.perDay(item.totalCostPerDay(), code: currency) + " " + String(localized: "per day"))
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(Brand.ember)
+                            .foregroundStyle(Brand.accent)
                     }
                     Divider()
                 }

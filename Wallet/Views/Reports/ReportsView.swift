@@ -275,7 +275,7 @@ struct ReportsView: View {
                         }
                     }
                     if let day = focus.day {
-                        Chip(title: day.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated)), systemImage: "xmark", isSelected: true, tint: Brand.ember) {
+                        Chip(title: day.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated)), systemImage: "xmark", isSelected: true, tint: Brand.accent) {
                             setFocus { $0.day = nil }
                         }
                     }
@@ -306,7 +306,7 @@ struct ReportsView: View {
                     .font(.subheadline.weight(.semibold))
                     .padding(.horizontal, 14)
                     .padding(.vertical, 11)
-                    .background(Color.accentColor.opacity(0.12), in: .rect(cornerRadius: 14, style: .continuous))
+                    .background(Brand.accent.opacity(0.12), in: .rect(cornerRadius: 14, style: .continuous))
                     .contentShape(.rect)
                 }
                 .buttonStyle(.plain)
@@ -423,7 +423,7 @@ private struct SummaryCard: View {
             HStack {
                 FigureColumn(title: String(localized: "Income"), value: Money.string(report.income, code: currency), tint: .income)
                 Spacer()
-                FigureColumn(title: String(localized: "Net"), value: Money.string(report.net, code: currency), tint: report.net >= 0 ? .income : Brand.ember, alignment: .center)
+                FigureColumn(title: String(localized: "Net"), value: Money.string(report.net, code: currency), tint: report.net >= 0 ? .income : Brand.expense, alignment: .center)
                 Spacer()
                 FigureColumn(title: String(localized: "Saved"), value: report.savingsRate.map { $0.formatted(.percent.precision(.fractionLength(0))) } ?? "—", alignment: .trailing)
             }
@@ -513,7 +513,7 @@ private struct CashFlowChartCard: View {
                         if showsIncome {
                             Text(verbatim: "+\(Money.string(focused.income, code: currency))").foregroundStyle(Color.income)
                         }
-                        Text(verbatim: "−\(Money.string(focused.expense, code: currency))").foregroundStyle(Brand.ember)
+                        Text(verbatim: "−\(Money.string(focused.expense, code: currency))").foregroundStyle(Brand.expense)
                         Text(label(for: focused.start)).foregroundStyle(.secondary)
                     }
                     .font(.caption.weight(.semibold).monospacedDigit())
@@ -529,7 +529,7 @@ private struct CashFlowChartCard: View {
                             .opacity(dimmed ? 0.3 : 1)
                     }
                     BarMark(x: .value("Period", bucket.start, unit: unit), y: .value("Amount", showsIncome ? -bucket.expense : bucket.expense))
-                        .foregroundStyle(Brand.ember.gradient)
+                        .foregroundStyle(Brand.expense.gradient)
                         .cornerRadius(3)
                         .opacity(dimmed ? 0.3 : 1)
                 }
@@ -833,7 +833,7 @@ private struct CalendarHeatmapCard: View {
                             .foregroundStyle(intensity > 0.55 ? AnyShapeStyle(.white) : AnyShapeStyle(.primary))
                             .frame(maxWidth: .infinity, minHeight: 34)
                             .background(
-                                value > 0 ? AnyShapeStyle(Brand.ember.opacity(0.15 + 0.85 * intensity)) : AnyShapeStyle(Color.primary.opacity(isFuture ? 0.02 : 0.05)),
+                                value > 0 ? AnyShapeStyle(Brand.expense.opacity(0.15 + 0.85 * intensity)) : AnyShapeStyle(Color.primary.opacity(isFuture ? 0.02 : 0.05)),
                                 in: .rect(cornerRadius: 8, style: .continuous)
                             )
                             .overlay {
@@ -874,7 +874,7 @@ private struct WeekdayCard: View {
                 BarMark(x: .value("Day", symbols[index]), y: .value("Average", report.weekdayExpense[index]))
                     .foregroundStyle(
                         isSelected || (selected == nil && report.weekdayExpense[index] == peak && peak > 0)
-                            ? AnyShapeStyle(Brand.flame) : AnyShapeStyle(Color.secondary.opacity(selected == nil ? 0.35 : 0.2))
+                            ? AnyShapeStyle(Brand.gradient) : AnyShapeStyle(Color.secondary.opacity(selected == nil ? 0.35 : 0.2))
                     )
                     .cornerRadius(5)
             }

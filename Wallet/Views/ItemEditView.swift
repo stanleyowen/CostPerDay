@@ -239,7 +239,7 @@ struct ItemEditView: View {
                         }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 7)
-                        .background(Color.accentColor.opacity(0.14), in: .capsule)
+                        .background(Brand.accent.opacity(0.14), in: .capsule)
                         .foregroundStyle(.tint)
                     }
                     .buttonStyle(.plain)

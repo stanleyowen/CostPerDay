@@ -295,7 +295,7 @@ struct AccountsView: View {
                 Spacer()
                 Text(Money.exact(ledger.balance(of: account), code: account.currencyCode))
                     .font(.system(.subheadline, design: .rounded).weight(.semibold).monospacedDigit())
-                    .foregroundStyle(ledger.balance(of: account) < 0 ? AnyShapeStyle(Brand.ember) : AnyShapeStyle(.primary))
+                    .foregroundStyle(ledger.balance(of: account) < 0 ? AnyShapeStyle(Brand.expense) : AnyShapeStyle(.primary))
                     .sensitive()
             }
         }

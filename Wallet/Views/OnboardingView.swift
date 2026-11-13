@@ -128,7 +128,7 @@ private struct PageDots: View {
         HStack(spacing: 6) {
             ForEach(0..<count, id: \.self) { index in
                 Capsule()
-                    .fill(index == current ? AnyShapeStyle(Color.accentColor) : AnyShapeStyle(Color.secondary.opacity(0.3)))
+                    .fill(index == current ? AnyShapeStyle(Brand.accent) : AnyShapeStyle(Color.secondary.opacity(0.3)))
                     .frame(width: index == current ? 22 : 7, height: 7)
             }
         }
@@ -146,7 +146,7 @@ private struct WelcomeArt: View {
 
     var body: some View {
         BrandMark(size: 168, drawProgress: progress)
-            .shadow(color: Brand.ember.opacity(0.35), radius: 30, y: 14)
+            .shadow(color: Brand.leather.opacity(0.35), radius: 30, y: 14)
             .onChange(of: isActive, initial: true) { _, active in
                 guard active else { return }
                 progress = 0
@@ -180,7 +180,7 @@ private struct TransactionStackArt: View {
                     Text("−" + sample.2.formatted(.number.precision(.fractionLength(0...2))))
                         .font(.system(.subheadline, design: .rounded).weight(.semibold).monospacedDigit())
                     if sample.0 == .electronics {
-                        Image(systemName: "shippingbox.fill").font(.caption).foregroundStyle(Brand.ember)
+                        Image(systemName: "shippingbox.fill").font(.caption).foregroundStyle(Brand.accent)
                     }
                 }
                 .padding(12)
@@ -222,7 +222,7 @@ private struct ReportArt: View {
                 }
                 Image(systemName: "chart.pie.fill")
                     .font(.title)
-                    .foregroundStyle(Brand.flame)
+                    .foregroundStyle(Brand.gradient)
             }
             .frame(width: 150, height: 150)
             VStack(alignment: .leading, spacing: 9) {
@@ -284,10 +284,10 @@ private struct CostDemo: View {
                 ZStack(alignment: .topLeading) {
                     curve.stroke(Color.secondary.opacity(0.25), style: StrokeStyle(lineWidth: 3, lineCap: .round))
                     curve.trim(from: 0, to: t)
-                        .stroke(Brand.flame, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                        .stroke(Brand.gradient, style: StrokeStyle(lineWidth: 4, lineCap: .round))
                     Circle()
                         .fill(.white)
-                        .overlay(Circle().stroke(Brand.ember, lineWidth: 3))
+                        .overlay(Circle().stroke(Brand.accent, lineWidth: 3))
                         .frame(width: 16, height: 16)
                         .position(x: rect.width * t, y: (1 - curve.height(at: t)) * rect.height)
                 }
@@ -296,7 +296,7 @@ private struct CostDemo: View {
 
             VStack(spacing: 4) {
                 Slider(value: $days, in: 7...maxDays)
-                    .tint(Brand.ember)
+                    .tint(Brand.accent)
                     .accessibilityLabel(Text("Owned for"))
                     .accessibilityValue(Text(Duration.fromDays(Int(days))))
                 HStack {
@@ -321,7 +321,7 @@ private struct CostDemo: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(highlighted ? AnyShapeStyle(Brand.ember) : AnyShapeStyle(.secondary))
+                .foregroundStyle(highlighted ? AnyShapeStyle(Brand.accent) : AnyShapeStyle(.secondary))
             Text(Money.perDay(value, code: baseCurrency))
                 .font(.system(.title2, design: .rounded).weight(.bold).monospacedDigit())
                 .contentTransition(.numericText(value: value))
@@ -332,7 +332,7 @@ private struct CostDemo: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
         .background(
-            highlighted ? AnyShapeStyle(Brand.ember.opacity(0.1)) : AnyShapeStyle(Color(.tertiarySystemFill)),
+            highlighted ? AnyShapeStyle(Brand.accent.opacity(0.1)) : AnyShapeStyle(Color(.tertiarySystemFill)),
             in: .rect(cornerRadius: 16, style: .continuous)
         )
     }
@@ -345,11 +345,11 @@ private struct PrivacyArt: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(Brand.ember.opacity(0.08))
+                .fill(Brand.accent.opacity(0.08))
                 .frame(width: 250, height: 250)
                 .scaleEffect(appear ? 1 : 0.7)
             Circle()
-                .fill(Brand.ember.opacity(0.12))
+                .fill(Brand.accent.opacity(0.12))
                 .frame(width: 180, height: 180)
                 .scaleEffect(appear ? 1 : 0.7)
             Image(systemName: "iphone")
@@ -360,7 +360,7 @@ private struct PrivacyArt: View {
                 .foregroundStyle(.white)
                 .frame(width: 64, height: 64)
                 .background(Brand.night, in: .circle)
-                .overlay(Circle().strokeBorder(Brand.flame, lineWidth: 3))
+                .overlay(Circle().strokeBorder(Brand.gradient, lineWidth: 3))
                 .offset(x: 46, y: 40)
                 .scaleEffect(appear ? 1 : 0.4)
         }

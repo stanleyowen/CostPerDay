@@ -52,7 +52,7 @@ struct RecordRow: View {
                     if let linkedItemName {
                         Image(systemName: "shippingbox.fill")
                             .font(.caption2)
-                            .foregroundStyle(Brand.ember)
+                            .foregroundStyle(Brand.accent)
                             .accessibilityLabel(Text("Tracked as \(linkedItemName)"))
                     }
                     Text(subtitle(category))
@@ -245,7 +245,7 @@ struct KindPicker: View {
 extension RecordKind {
     var tint: Color {
         switch self {
-        case .expense: Brand.ember
+        case .expense: Brand.expense
         case .income: .income
         case .transfer: RecordCategoryDisplay.transfer.tint
         }
@@ -262,8 +262,8 @@ struct FloatingAddButton: View {
                 .font(.title2.weight(.bold))
                 .foregroundStyle(.white)
                 .frame(width: 60, height: 60)
-                .background(Brand.flame, in: .circle)
-                .shadow(color: Brand.ember.opacity(0.45), radius: 14, y: 6)
+                .background(Brand.gradient, in: .circle)
+                .shadow(color: Brand.accent.opacity(0.45), radius: 14, y: 6)
         }
         .buttonStyle(PressableStyle())
         .accessibilityLabel(Text("Add transaction"))
@@ -318,9 +318,9 @@ struct ChangeBadge: View {
             Image(systemName: up ? "arrow.up.right" : "arrow.down.right")
         }
         .font(.caption.weight(.semibold))
-        .foregroundStyle(good ? Color.income : Brand.ember)
+        .foregroundStyle(good ? Color.income : Brand.expense)
         .padding(.horizontal, 8)
         .padding(.vertical, 3)
-        .background((good ? Color.income : Brand.ember).opacity(0.13), in: .capsule)
+        .background((good ? Color.income : Brand.expense).opacity(0.13), in: .capsule)
     }
 }

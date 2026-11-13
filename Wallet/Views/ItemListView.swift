@@ -444,7 +444,7 @@ private struct EmptyStateView: View {
         VStack(spacing: 20) {
             Spacer()
             BrandMark(size: 96)
-                .shadow(color: Brand.ember.opacity(0.35), radius: 24, y: 10)
+                .shadow(color: Brand.leather.opacity(0.35), radius: 24, y: 10)
             VStack(spacing: 8) {
                 Text("No items recorded")
                     .font(.title2.bold())

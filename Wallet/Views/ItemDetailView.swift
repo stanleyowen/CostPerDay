@@ -121,7 +121,7 @@ struct ItemDetailView: View {
             Badge(
                 text: String(localized: "\(Duration.fromDays(item.daysRemaining(now: now))) remaining", comment: "Status badge. The placeholder is a duration."),
                 systemImage: "hourglass",
-                tint: .accentColor
+                tint: Brand.accent
             )
         }
     }
@@ -277,7 +277,7 @@ private struct CostFigure: View {
             .background(Color(.secondarySystemGroupedBackground), in: .rect(cornerRadius: 22, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .strokeBorder(isHighlighted ? Color.accentColor : .clear, lineWidth: 2)
+                    .strokeBorder(isHighlighted ? Brand.accent : .clear, lineWidth: 2)
             }
             .contentShape(.rect)
         }
