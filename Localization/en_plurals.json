@@ -94,9 +94,5 @@
  "%lld weeks": {
   "one": "%lld week",
   "other": "%lld weeks"
- },
- "%lld active": {
-  "one": "%lld active",
-  "other": "%lld active"
  }
 }

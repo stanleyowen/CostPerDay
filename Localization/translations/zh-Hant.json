@@ -20,9 +20,6 @@
  "%lld accounts created": {
   "other": "已建立 %lld 個帳戶"
  },
- "%lld active": {
-  "other": "%lld 項已啟用"
- },
  "%lld already present, skipped": {
   "other": "%lld 筆已存在，已略過"
  },
@@ -173,6 +170,7 @@
  "Choose": "選擇",
  "Choose CSV file": "選擇 CSV 檔案",
  "Choose Transaction, pick your cards, and select Run Immediately.": "選擇「交易」，選取您的卡片，然後選擇「立即執行」。",
+ "Choose a period": "選擇時間段",
  "Choose an account.": "請選擇帳戶。",
  "Choose another file": "選擇其他檔案",
  "Choose from your transactions": "從您的交易中選擇",
@@ -208,6 +206,8 @@
  "Current": "本期",
  "Current balance": "目前餘額",
  "Custom categories": "自訂類別",
+ "Custom range": "自訂範圍",
+ "Custom range…": "自訂範圍…",
  "Cyan": "青色",
  "Date": "日期",
  "Day": "星期",
@@ -263,6 +263,7 @@
  "Export failed": "匯出失敗",
  "Export transactions (CSV)": "匯出交易（CSV）",
  "Eyewear": "眼鏡",
+ "Filter": "篩選",
  "Finances": "財務",
  "Financial expenses": "財務支出",
  "Financial investments": "金融投資",
@@ -383,7 +384,6 @@
  "Monitor": "螢幕",
  "Month": "月",
  "Monthly": "每月",
- "More filters": "更多篩選",
  "Mortgage": "房貸",
  "Most expensive day": "支出最多的日子",
  "Most recent": "最近新增",

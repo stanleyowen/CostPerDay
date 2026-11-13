@@ -20,9 +20,6 @@
  "%lld accounts created": {
   "other": "Đã tạo %lld tài khoản"
  },
- "%lld active": {
-  "other": "%lld đang bật"
- },
  "%lld already present, skipped": {
   "other": "Bỏ qua %lld mục đã có"
  },
@@ -173,6 +170,7 @@
  "Choose": "Chọn",
  "Choose CSV file": "Chọn tệp CSV",
  "Choose Transaction, pick your cards, and select Run Immediately.": "Chọn Giao dịch, chọn thẻ của bạn, rồi chọn Chạy ngay lập tức.",
+ "Choose a period": "Chọn khoảng thời gian",
  "Choose an account.": "Vui lòng chọn tài khoản.",
  "Choose another file": "Chọn tệp khác",
  "Choose from your transactions": "Chọn từ giao dịch của bạn",
@@ -208,6 +206,8 @@
  "Current": "Hiện tại",
  "Current balance": "Số dư hiện tại",
  "Custom categories": "Danh mục tùy chỉnh",
+ "Custom range": "Khoảng tùy chỉnh",
+ "Custom range…": "Khoảng tùy chỉnh…",
  "Cyan": "Xanh lơ",
  "Date": "Ngày",
  "Day": "Ngày",
@@ -263,6 +263,7 @@
  "Export failed": "Xuất thất bại",
  "Export transactions (CSV)": "Xuất giao dịch (CSV)",
  "Eyewear": "Mắt kính",
+ "Filter": "Bộ lọc",
  "Finances": "Tài chính",
  "Financial expenses": "Chi phí tài chính",
  "Financial investments": "Đầu tư tài chính",
@@ -383,7 +384,6 @@
  "Monitor": "Màn hình",
  "Month": "Tháng",
  "Monthly": "Hằng tháng",
- "More filters": "Bộ lọc khác",
  "Mortgage": "Vay thế chấp",
  "Most expensive day": "Ngày chi tiêu nhiều nhất",
  "Most recent": "Mới nhất",

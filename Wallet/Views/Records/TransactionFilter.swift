@@ -60,10 +60,11 @@ struct TransactionFilter: Equatable {
     }
 }
 
-/// The filters behind the bar's rows: which accounts, or everything else (type,
-/// categories, labels, items). The period lives on the bar itself.
+/// Every filter except the period, which has its own control above the list:
+/// which accounts (`.all`, on the Transactions tab) and type, categories, labels
+/// and items (`.details`, on an account's page, which is already one account).
 struct TransactionFilterSheet: View {
-    enum Part { case accounts, details }
+    enum Part { case all, details }
 
     @Binding var filter: TransactionFilter
     let part: Part
@@ -75,28 +76,31 @@ struct TransactionFilterSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                if part == .accounts {
+                if part == .all && !accounts.isEmpty {
                     Section {
                         ForEach(accounts) { account in
                             toggleRow(account.displayName, symbol: account.kind.symbol, tint: account.tint.color, isOn: filter.accounts.contains(account.uuid)) {
                                 filter.accounts.formSymmetricDifference([account.uuid])
                             }
                         }
+                    } header: {
+                        Text("Accounts")
                     } footer: {
                         Text("None selected means every account.", comment: "Transaction filter: accounts footer")
                     }
-                } else {
-                    details
                 }
+                details
             }
-            .navigationTitle(part == .accounts ? String(localized: "Accounts") : String(localized: "More filters", comment: "Transaction filter sheet title"))
+            .navigationTitle(String(localized: "Filter", comment: "Transaction filter sheet title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
+                    // Resets what this sheet shows; the period is left alone.
                     Button("Reset") {
-                        if part == .accounts { filter.accounts = [] } else { filter.clearDetails() }
+                        if part == .all { filter.accounts = [] }
+                        filter.clearDetails()
                     }
-                    .disabled(part == .accounts ? filter.accounts.isEmpty : filter.detailCount == 0)
+                    .disabled(Self.count(filter, part: part) == 0)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }.fontWeight(.semibold)
@@ -104,6 +108,11 @@ struct TransactionFilterSheet: View {
             }
             .sensoryFeedback(.selection, trigger: filter)
         }
+    }
+
+    /// How many filters this sheet holds are on — the badge on its button.
+    static func count(_ filter: TransactionFilter, part: Part) -> Int {
+        filter.detailCount + (part == .all && !filter.accounts.isEmpty ? 1 : 0)
     }
 
     @ViewBuilder
@@ -161,5 +170,23 @@ struct TransactionFilterSheet: View {
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(isOn ? .isSelected : [])
+    }
+}
+
+/// The toolbar button that opens the filter sheet, with how many filters are on.
+struct FilterToolbarButton: View {
+    let count: Int
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: count > 0 ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
+        }
+        .accessibilityLabel(Text("Filter", comment: "Transaction filter sheet title"))
+        .badge(count)
+        // A toolbar badge is drawn by the bar button underneath and isn't refreshed
+        // when the count changes; tying the button's identity to the count rebuilds
+        // it, badge included, whenever the count moves.
+        .id(count)
     }
 }

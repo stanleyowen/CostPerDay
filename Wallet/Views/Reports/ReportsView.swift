@@ -350,15 +350,10 @@ private struct ReportsContent: View {
     private func periodNavigator(period: ReportPeriod, earliest: Date?) -> some View {
         let canGoBack = range != .all && (earliest.map { period.interval.start > $0 } ?? false)
         let canGoForward = range != .all && period.interval.end <= Date.now
-        return HStack {
-            Button {
-                withAnimation(.snappy) { anchor = period.shifted(by: -1).interval.start }
-            } label: {
-                Image(systemName: "chevron.left").font(.body.weight(.semibold)).frame(width: 40, height: 36)
-            }
-            .disabled(!canGoBack)
-            .accessibilityLabel(Text("Previous period"))
-            Spacer()
+        // The app's one period control (PeriodStepper); tapping the title comes back to now.
+        return PeriodStepper(steppable: range != .all, canGoBack: canGoBack, canGoForward: canGoForward) { delta in
+            withAnimation(.snappy) { anchor = period.shifted(by: delta).interval.start }
+        } title: {
             VStack(spacing: 1) {
                 Text(period.title)
                     .font(.headline)
@@ -367,24 +362,11 @@ private struct ReportsContent: View {
                     Text("Current").font(.caption2.weight(.semibold)).foregroundStyle(.tint)
                 }
             }
+            .padding(.vertical, 4)
+            .contentShape(.rect)
             .onTapGesture { withAnimation(.snappy) { anchor = .now } }
-            Spacer()
-            Button {
-                withAnimation(.snappy) { anchor = period.shifted(by: 1).interval.start }
-            } label: {
-                Image(systemName: "chevron.right").font(.body.weight(.semibold)).frame(width: 40, height: 36)
-            }
-            .disabled(!canGoForward)
-            .accessibilityLabel(Text("Next period"))
         }
         .sensoryFeedback(.selection, trigger: anchor)
-        .gesture(
-            DragGesture(minimumDistance: 30).onEnded { value in
-                guard abs(value.translation.width) > abs(value.translation.height) else { return }
-                if value.translation.width < 0, canGoForward { withAnimation(.snappy) { anchor = period.shifted(by: 1).interval.start } }
-                if value.translation.width > 0, canGoBack { withAnimation(.snappy) { anchor = period.shifted(by: -1).interval.start } }
-            }
-        )
     }
 }
 

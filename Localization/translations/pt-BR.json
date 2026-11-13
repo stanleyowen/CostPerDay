@@ -22,10 +22,6 @@
   "one": "%lld conta criada",
   "other": "%lld contas criadas"
  },
- "%lld active": {
-  "one": "%lld ativo",
-  "other": "%lld ativos"
- },
  "%lld already present, skipped": {
   "one": "%lld já existente, ignorada",
   "other": "%lld já existentes, ignoradas"
@@ -192,6 +188,7 @@
  "Choose": "Escolher",
  "Choose CSV file": "Escolher arquivo CSV",
  "Choose Transaction, pick your cards, and select Run Immediately.": "Escolha Transação, selecione seus cartões e escolha Executar Imediatamente.",
+ "Choose a period": "Escolher um período",
  "Choose an account.": "Escolha uma conta.",
  "Choose another file": "Escolher outro arquivo",
  "Choose from your transactions": "Escolher entre suas transações",
@@ -227,6 +224,8 @@
  "Current": "Atual",
  "Current balance": "Saldo atual",
  "Custom categories": "Categorias personalizadas",
+ "Custom range": "Período personalizado",
+ "Custom range…": "Período personalizado…",
  "Cyan": "Ciano",
  "Date": "Data",
  "Day": "Dia",
@@ -282,6 +281,7 @@
  "Export failed": "Falha na exportação",
  "Export transactions (CSV)": "Exportar transações (CSV)",
  "Eyewear": "Óculos",
+ "Filter": "Filtrar",
  "Finances": "Finanças",
  "Financial expenses": "Despesas financeiras",
  "Financial investments": "Investimentos financeiros",
@@ -404,7 +404,6 @@
  "Monitor": "Monitor",
  "Month": "Mês",
  "Monthly": "Mensal",
- "More filters": "Mais filtros",
  "Mortgage": "Financiamento imobiliário",
  "Most expensive day": "Dia mais caro",
  "Most recent": "Mais recentes",

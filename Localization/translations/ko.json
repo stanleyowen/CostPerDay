@@ -20,9 +20,6 @@
  "%lld accounts created": {
   "other": "계좌 %lld개 생성됨"
  },
- "%lld active": {
-  "other": "%lld개 적용 중"
- },
  "%lld already present, skipped": {
   "other": "%lld건은 이미 있어 건너뜀"
  },
@@ -173,6 +170,7 @@
  "Choose": "선택",
  "Choose CSV file": "CSV 파일 선택",
  "Choose Transaction, pick your cards, and select Run Immediately.": "'거래'를 선택하고 카드를 고른 다음 '즉시 실행'을 선택합니다.",
+ "Choose a period": "기간 선택",
  "Choose an account.": "계좌를 선택하십시오.",
  "Choose another file": "다른 파일 선택",
  "Choose from your transactions": "거래에서 선택",
@@ -208,6 +206,8 @@
  "Current": "현재",
  "Current balance": "현재 잔액",
  "Custom categories": "사용자 카테고리",
+ "Custom range": "사용자 지정 기간",
+ "Custom range…": "사용자 지정 기간…",
  "Cyan": "시안",
  "Date": "날짜",
  "Day": "일",
@@ -263,6 +263,7 @@
  "Export failed": "내보내기에 실패했습니다",
  "Export transactions (CSV)": "거래 내보내기(CSV)",
  "Eyewear": "안경류",
+ "Filter": "필터",
  "Finances": "재정",
  "Financial expenses": "금융 비용",
  "Financial investments": "금융 투자",
@@ -383,7 +384,6 @@
  "Monitor": "모니터",
  "Month": "월",
  "Monthly": "매월",
- "More filters": "추가 필터",
  "Mortgage": "주택담보대출",
  "Most expensive day": "지출이 가장 많은 날",
  "Most recent": "최신순",

@@ -22,10 +22,6 @@
   "one": "%lld compte créé",
   "other": "%lld comptes créés"
  },
- "%lld active": {
-  "one": "%lld actif",
-  "other": "%lld actifs"
- },
  "%lld already present, skipped": {
   "one": "%lld déjà présente, ignorée",
   "other": "%lld déjà présentes, ignorées"
@@ -192,6 +188,7 @@
  "Choose": "Choisir",
  "Choose CSV file": "Choisir un fichier CSV",
  "Choose Transaction, pick your cards, and select Run Immediately.": "Choisissez Transaction, sélectionnez vos cartes, puis choisissez Exécuter immédiatement.",
+ "Choose a period": "Choisir une période",
  "Choose an account.": "Choisissez un compte.",
  "Choose another file": "Choisir un autre fichier",
  "Choose from your transactions": "Choisir parmi vos transactions",
@@ -227,6 +224,8 @@
  "Current": "En cours",
  "Current balance": "Solde actuel",
  "Custom categories": "Catégories personnalisées",
+ "Custom range": "Période personnalisée",
+ "Custom range…": "Période personnalisée…",
  "Cyan": "Cyan",
  "Date": "Date",
  "Day": "Jour",
@@ -282,6 +281,7 @@
  "Export failed": "Échec de l'exportation",
  "Export transactions (CSV)": "Exporter les transactions (CSV)",
  "Eyewear": "Lunettes",
+ "Filter": "Filtrer",
  "Finances": "Finances",
  "Financial expenses": "Frais financiers",
  "Financial investments": "Placements financiers",
@@ -404,7 +404,6 @@
  "Monitor": "Écran",
  "Month": "Mois",
  "Monthly": "Mensuel",
- "More filters": "Autres filtres",
  "Mortgage": "Crédit immobilier",
  "Most expensive day": "Jour le plus coûteux",
  "Most recent": "Plus récent",

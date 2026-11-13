@@ -20,9 +20,6 @@
  "%lld accounts created": {
   "other": "%lld 件の口座を作成"
  },
- "%lld active": {
-  "other": "%lld 件適用中"
- },
  "%lld already present, skipped": {
   "other": "既存の %lld 件をスキップ"
  },
@@ -173,6 +170,7 @@
  "Choose": "選択",
  "Choose CSV file": "CSV ファイルを選択",
  "Choose Transaction, pick your cards, and select Run Immediately.": "「取引」を選択し、対象のカードを選んで「すぐに実行」を選択します。",
+ "Choose a period": "期間を選択",
  "Choose an account.": "口座を選択してください。",
  "Choose another file": "別のファイルを選択",
  "Choose from your transactions": "取引から選択",
@@ -208,6 +206,8 @@
  "Current": "現在",
  "Current balance": "現在の残高",
  "Custom categories": "カスタムカテゴリ",
+ "Custom range": "期間を指定",
+ "Custom range…": "期間を指定…",
  "Cyan": "シアン",
  "Date": "日付",
  "Day": "曜日",
@@ -263,6 +263,7 @@
  "Export failed": "書き出しに失敗しました",
  "Export transactions (CSV)": "取引を書き出す（CSV）",
  "Eyewear": "眼鏡類",
+ "Filter": "フィルタ",
  "Finances": "家計",
  "Financial expenses": "金融費用",
  "Financial investments": "金融投資",
@@ -383,7 +384,6 @@
  "Monitor": "モニター",
  "Month": "月",
  "Monthly": "毎月",
- "More filters": "その他のフィルタ",
  "Mortgage": "住宅ローン",
  "Most expensive day": "支出が最も多い日",
  "Most recent": "新しい順",

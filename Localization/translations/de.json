@@ -22,10 +22,6 @@
   "one": "%lld Konto erstellt",
   "other": "%lld Konten erstellt"
  },
- "%lld active": {
-  "one": "%lld aktiv",
-  "other": "%lld aktiv"
- },
  "%lld already present, skipped": {
   "one": "%lld bereits vorhanden, übersprungen",
   "other": "%lld bereits vorhanden, übersprungen"
@@ -192,6 +188,7 @@
  "Choose": "Auswählen",
  "Choose CSV file": "CSV-Datei auswählen",
  "Choose Transaction, pick your cards, and select Run Immediately.": "Wählen Sie „Transaktion“, wählen Sie Ihre Karten aus und aktivieren Sie „Sofort ausführen“.",
+ "Choose a period": "Zeitraum auswählen",
  "Choose an account.": "Wählen Sie ein Konto aus.",
  "Choose another file": "Andere Datei auswählen",
  "Choose from your transactions": "Aus Ihren Buchungen auswählen",
@@ -227,6 +224,8 @@
  "Current": "Aktuell",
  "Current balance": "Aktueller Kontostand",
  "Custom categories": "Eigene Kategorien",
+ "Custom range": "Eigener Zeitraum",
+ "Custom range…": "Eigener Zeitraum…",
  "Cyan": "Cyan",
  "Date": "Datum",
  "Day": "Tag",
@@ -282,6 +281,7 @@
  "Export failed": "Export fehlgeschlagen",
  "Export transactions (CSV)": "Buchungen exportieren (CSV)",
  "Eyewear": "Brillen",
+ "Filter": "Filter",
  "Finances": "Finanzen",
  "Financial expenses": "Finanzausgaben",
  "Financial investments": "Finanzanlagen",
@@ -404,7 +404,6 @@
  "Monitor": "Monitor",
  "Month": "Monat",
  "Monthly": "Monatlich",
- "More filters": "Weitere Filter",
  "Mortgage": "Hypothek",
  "Most expensive day": "Teuerster Tag",
  "Most recent": "Neueste",

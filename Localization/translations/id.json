@@ -20,9 +20,6 @@
  "%lld accounts created": {
   "other": "%lld akun dibuat"
  },
- "%lld active": {
-  "other": "%lld aktif"
- },
  "%lld already present, skipped": {
   "other": "%lld sudah ada, dilewati"
  },
@@ -173,6 +170,7 @@
  "Choose": "Pilih",
  "Choose CSV file": "Pilih file CSV",
  "Choose Transaction, pick your cards, and select Run Immediately.": "Pilih Transaksi, pilih kartu Anda, lalu pilih Jalankan Segera.",
+ "Choose a period": "Pilih periode",
  "Choose an account.": "Pilih akun.",
  "Choose another file": "Pilih file lain",
  "Choose from your transactions": "Pilih dari transaksi Anda",
@@ -208,6 +206,8 @@
  "Current": "Saat ini",
  "Current balance": "Saldo saat ini",
  "Custom categories": "Kategori khusus",
+ "Custom range": "Rentang khusus",
+ "Custom range…": "Rentang khusus…",
  "Cyan": "Sian",
  "Date": "Tanggal",
  "Day": "Hari",
@@ -263,6 +263,7 @@
  "Export failed": "Ekspor gagal",
  "Export transactions (CSV)": "Ekspor transaksi (CSV)",
  "Eyewear": "Kacamata",
+ "Filter": "Filter",
  "Finances": "Keuangan",
  "Financial expenses": "Biaya keuangan",
  "Financial investments": "Investasi keuangan",
@@ -383,7 +384,6 @@
  "Monitor": "Monitor",
  "Month": "Bulan",
  "Monthly": "Bulanan",
- "More filters": "Filter lainnya",
  "Mortgage": "KPR",
  "Most expensive day": "Hari termahal",
  "Most recent": "Terbaru",

@@ -351,9 +351,10 @@ struct AccountDetailView: View {
     @Query private var accounts: [Account]
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
     @State private var editing = false
-    /// The bar at the bottom narrows this account's transactions like the
-    /// Transactions tab's does (accounts aside: this is one account).
+    /// Narrows this account's transactions like the Transactions tab's filter
+    /// (accounts aside: this is one account).
     @State private var filter = TransactionFilter()
+    @State private var showingFilters = false
     @Environment(AppRouter.self) private var router
 
     init(account: Account) {
@@ -410,17 +411,22 @@ struct AccountDetailView: View {
         }
         .navigationTitle(account.displayName)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            Button("Edit") { editing = true }
+        .pinnedHeader {
+            TransactionPeriodControl(period: $filter.period)
         }
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            VStack(spacing: 0) {
-                HStack {
-                    Spacer()
-                    FloatingAddButton { router.composer = RecordDraft(kind: .expense, accountID: account.uuid) }
-                }
-                TransactionFilterBar(filter: $filter, labels: Array(Set(records.flatMap(\.labels))).sorted())
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                FilterToolbarButton(count: TransactionFilterSheet.count(filter, part: .details)) { showingFilters = true }
             }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Edit") { editing = true }
+            }
+        }
+        .sheet(isPresented: $showingFilters) {
+            TransactionFilterSheet(filter: $filter, part: .details, labels: Array(Set(records.flatMap(\.labels))).sorted())
+        }
+        .safeAreaInset(edge: .bottom, alignment: .trailing, spacing: 0) {
+            FloatingAddButton { router.composer = RecordDraft(kind: .expense, accountID: account.uuid) }
         }
         .sheet(isPresented: $editing) { AccountEditView(account: account) }
     }

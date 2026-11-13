@@ -11,6 +11,7 @@ struct TransactionsView: View {
 
     @State private var search = ""
     @State private var visibleLimit = 400
+    @State private var showingFilters = false
 
     var body: some View {
         @Bindable var router = router
@@ -26,7 +27,7 @@ struct TransactionsView: View {
                             .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                             .listRowBackground(Color.clear)
                             .listRowSeparator(.hidden)
-                        // The period is on the bar below; these are the rest.
+                        // The period has its own control above; these are the rest.
                         if !router.transactionFilter.accounts.isEmpty || router.transactionFilter.detailCount > 0 {
                             activeFilters
                                 .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 4, trailing: 0))
@@ -73,18 +74,22 @@ struct TransactionsView: View {
             }
             .searchable(text: $search, prompt: Text("Notes, labels, amounts"))
             .navigationTitle("Transactions")
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                VStack(spacing: 0) {
-                    HStack {
-                        Spacer()
-                        FloatingAddButton { router.compose() }
-                    }
-                    TransactionFilterBar(
-                        filter: $router.transactionFilter,
-                        accounts: accounts.filter { !$0.isArchived },
-                        labels: snapshot.allLabels
-                    )
+            // The period, pinned under the title; the other filters behind the
+            // toolbar button. The bottom is left to the tab bar and +.
+            .pinnedHeader {
+                TransactionPeriodControl(period: $router.transactionFilter.period)
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    FilterToolbarButton(count: TransactionFilterSheet.count(router.transactionFilter, part: .all)) { showingFilters = true }
                 }
+            }
+            .sheet(isPresented: $showingFilters) {
+                TransactionFilterSheet(filter: $router.transactionFilter, part: .all,
+                                       accounts: accounts.filter { !$0.isArchived }, labels: snapshot.allLabels)
+            }
+            .safeAreaInset(edge: .bottom, alignment: .trailing, spacing: 0) {
+                FloatingAddButton { router.compose() }
             }
             .onChange(of: router.transactionFilter) { _, _ in visibleLimit = 400 }
         }

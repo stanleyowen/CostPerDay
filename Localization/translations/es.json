@@ -22,10 +22,6 @@
   "one": "%lld cuenta creada",
   "other": "%lld cuentas creadas"
  },
- "%lld active": {
-  "one": "%lld activo",
-  "other": "%lld activos"
- },
  "%lld already present, skipped": {
   "one": "%lld ya existente, omitida",
   "other": "%lld ya existentes, omitidas"
@@ -192,6 +188,7 @@
  "Choose": "Elegir",
  "Choose CSV file": "Elegir archivo CSV",
  "Choose Transaction, pick your cards, and select Run Immediately.": "Elija Transacción, seleccione sus tarjetas y active Ejecutar inmediatamente.",
+ "Choose a period": "Elegir un periodo",
  "Choose an account.": "Elija una cuenta.",
  "Choose another file": "Elegir otro archivo",
  "Choose from your transactions": "Elegir entre sus transacciones",
@@ -227,6 +224,8 @@
  "Current": "Actual",
  "Current balance": "Saldo actual",
  "Custom categories": "Categorías personalizadas",
+ "Custom range": "Rango personalizado",
+ "Custom range…": "Rango personalizado…",
  "Cyan": "Cian",
  "Date": "Fecha",
  "Day": "Día",
@@ -282,6 +281,7 @@
  "Export failed": "Error al exportar",
  "Export transactions (CSV)": "Exportar transacciones (CSV)",
  "Eyewear": "Gafas",
+ "Filter": "Filtrar",
  "Finances": "Finanzas",
  "Financial expenses": "Gastos financieros",
  "Financial investments": "Inversiones financieras",
@@ -404,7 +404,6 @@
  "Monitor": "Monitor",
  "Month": "Mes",
  "Monthly": "Mensual",
- "More filters": "Más filtros",
  "Mortgage": "Hipoteca",
  "Most expensive day": "Día más caro",
  "Most recent": "Más recientes",

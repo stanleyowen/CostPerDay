@@ -52,6 +52,7 @@ struct RootView: View {
                 SettingsView()
             }
         }
+        .tabBarMinimizesOnScroll()
         .sensoryFeedback(.selection, trigger: router.tab)
         .overlay(alignment: .top) {
             if isTemporary {

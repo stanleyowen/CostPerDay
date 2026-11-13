@@ -26,12 +26,6 @@
   "one": "Создан %lld счёт",
   "other": "Создано %lld счетов"
  },
- "%lld active": {
-  "one": "%lld активен",
-  "few": "%lld активно",
-  "many": "%lld активно",
-  "other": "%lld активно"
- },
  "%lld already present, skipped": {
   "few": "Уже есть, пропущено: %lld",
   "many": "Уже есть, пропущено: %lld",
@@ -230,6 +224,7 @@
  "Choose": "Выбрать",
  "Choose CSV file": "Выбрать файл CSV",
  "Choose Transaction, pick your cards, and select Run Immediately.": "Выберите «Транзакция», укажите свои карты и выберите «Запускать сразу».",
+ "Choose a period": "Выбрать период",
  "Choose an account.": "Выберите счёт.",
  "Choose another file": "Выбрать другой файл",
  "Choose from your transactions": "Выбрать из ваших операций",
@@ -265,6 +260,8 @@
  "Current": "Текущий",
  "Current balance": "Текущий баланс",
  "Custom categories": "Пользовательские категории",
+ "Custom range": "Произвольный период",
+ "Custom range…": "Произвольный период…",
  "Cyan": "Голубой",
  "Date": "Дата",
  "Day": "День",
@@ -320,6 +317,7 @@
  "Export failed": "Не удалось выполнить экспорт",
  "Export transactions (CSV)": "Экспорт операций (CSV)",
  "Eyewear": "Очки",
+ "Filter": "Фильтр",
  "Finances": "Финансы",
  "Financial expenses": "Финансовые расходы",
  "Financial investments": "Финансовые вложения",
@@ -446,7 +444,6 @@
  "Monitor": "Монитор",
  "Month": "Месяц",
  "Monthly": "Ежемесячно",
- "More filters": "Другие фильтры",
  "Mortgage": "Ипотека",
  "Most expensive day": "Самый затратный день",
  "Most recent": "Сначала новые",
