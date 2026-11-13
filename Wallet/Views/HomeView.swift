@@ -46,16 +46,6 @@ struct HomeView: View {
             .defaultScrollAnchor(DebugFlags.scrollAnchor)
             .background(Color(.systemGroupedBackground))
             .navigationTitle(greeting)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink {
-                        BudgetsView()
-                    } label: {
-                        Image(systemName: "target")
-                    }
-                    .accessibilityLabel(Text("Budgets"))
-                }
-            }
             .overlay(alignment: .bottomTrailing) {
                 if !accounts.isEmpty {
                     FloatingAddButton { router.compose() }
