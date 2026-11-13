@@ -518,8 +518,8 @@ private struct MonthCard: View {
 
 // MARK: - Donut
 
-/// This month's spending by group. Tap a slice or legend row to focus it; tap the
-/// centre to open the full report.
+/// This month's spending by group. No legend: tapping a slice shows its name,
+/// amount and share in the centre; tapping it again goes back to the total.
 struct SpendingDonutCard: View {
     let report: Report
     let currency: String
@@ -567,6 +567,9 @@ struct SpendingDonutCard: View {
                                     .font(.system(.title3, design: .rounded).weight(.bold).monospacedDigit())
                                     .minimumScaleFactor(0.6)
                                     .lineLimit(1)
+                                Text((slice.total / max(report.expense, 0.01)).formatted(.percent.precision(.fractionLength(0))))
+                                    .font(.caption.weight(.semibold).monospacedDigit())
+                                    .foregroundStyle(group.tint)
                             } else {
                                 Text("Spent").font(.caption).foregroundStyle(.secondary)
                                 Text(Money.compact(report.expense, code: currency))
@@ -585,36 +588,6 @@ struct SpendingDonutCard: View {
             .padding(.vertical, 4)
             .sensoryFeedback(.selection, trigger: selected)
 
-            VStack(spacing: 2) {
-                ForEach(slices) { slice in
-                    let group = RecordGroup(rawValue: slice.key) ?? .other
-                    let isSelected = selected == slice.key
-                    Button {
-                        withAnimation(.snappy) { selected = isSelected ? nil : slice.key }
-                    } label: {
-                        HStack(spacing: 10) {
-                            Circle().fill(group.tint).frame(width: 10, height: 10)
-                            Text(group.label)
-                                .font(.subheadline.weight(isSelected ? .semibold : .regular))
-                                .lineLimit(1)
-                            Spacer(minLength: 8)
-                            Text((slice.total / max(report.expense, 0.01)).formatted(.percent.precision(.fractionLength(0))))
-                                .font(.caption.weight(.semibold).monospacedDigit())
-                                .foregroundStyle(.secondary)
-                            Text(Money.compact(slice.total, code: currency))
-                                .font(.subheadline.weight(.semibold).monospacedDigit())
-                                .frame(minWidth: 72, alignment: .trailing)
-                        }
-                        .foregroundStyle(selected == nil || isSelected ? .primary : .secondary)
-                        .padding(.vertical, 7)
-                        .padding(.horizontal, 8)
-                        .background(isSelected ? group.tint.opacity(0.12) : .clear, in: .rect(cornerRadius: 10, style: .continuous))
-                        .contentShape(.rect)
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityAddTraits(isSelected ? .isSelected : [])
-                }
-            }
             if let selected {
                 Button {
                     var filter = TransactionFilter()
@@ -627,6 +600,7 @@ struct SpendingDonutCard: View {
                     Label("Show these transactions", systemImage: "list.bullet")
                         .font(.subheadline.weight(.semibold))
                 }
+                .frame(maxWidth: .infinity)
                 .transition(.opacity)
             }
         }
