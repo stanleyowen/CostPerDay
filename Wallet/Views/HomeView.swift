@@ -197,6 +197,44 @@ private struct AccountPager: View {
 
     private static let perPage = 4
     private static let spacing: CGFloat = 12
+    /// The screen margin the first and last pages line up with.
+    private static let margin: CGFloat = 16
+    private static let gap: CGFloat = 12
+    /// How far a centred page sits in from each screen edge; what's left after the
+    /// gap is the sliver of the neighbouring page that shows.
+    private static let peekInset: CGFloat = 36
+
+    static func pageWidth(container: CGFloat, pages: Int) -> CGFloat {
+        container - 2 * (pages > 1 ? peekInset : margin)
+    }
+
+    /// One page per swipe. The first page lines up with the screen margin, the last
+    /// with the trailing margin, and the ones between sit centred with a neighbour
+    /// peeking in on each side — the natural result of centring and clamping.
+    private struct PeekPaging: ScrollTargetBehavior {
+        let current: Int
+        let pages: Int
+
+        func updateTarget(_ target: inout ScrollTarget, context: TargetContext) {
+            let container = context.containerSize.width
+            let width = AccountPager.pageWidth(container: container, pages: pages)
+            let step = width + AccountPager.gap
+            let centring = (container - width) / 2
+            let maxOffset = max(0, context.contentSize.width - container)
+
+            // Where the gesture wanted to land, as the nearest page…
+            let proposedCentre = context.originalTarget.rect.minX + container / 2
+            var index = Int(((proposedCentre - AccountPager.margin - width / 2) / step).rounded())
+            // …but never more than one page from where it started, and a flick
+            // always moves at least one.
+            let velocity = context.velocity.dx
+            if index == current, abs(velocity) > 0.3 { index += velocity > 0 ? 1 : -1 }
+            index = min(max(index, current - 1, 0), min(current + 1, pages - 1))
+
+            let offset = AccountPager.margin + CGFloat(index) * step - centring
+            target.rect.origin.x = min(max(offset, 0), maxOffset)
+        }
+    }
 
     private enum Slot: Identifiable {
         case account(Account)
@@ -222,26 +260,31 @@ private struct AccountPager: View {
 
         VStack(spacing: 12) {
             ScrollView(.horizontal, showsIndicators: false) {
-                // The gap between pages matches the screen margin, so the next page
-                // waits just off-screen rather than peeking in.
-                HStack(alignment: .top, spacing: 16) {
+                HStack(alignment: .top, spacing: Self.gap) {
                     ForEach(pages.indices, id: \.self) { index in
                         grid(pages[index])
                             .frame(height: height, alignment: .top)
-                            .containerRelativeFrame(.horizontal)
+                            .containerRelativeFrame(.horizontal) { width, _ in
+                                Self.pageWidth(container: width, pages: pages.count)
+                            }
                             .scrollTransition(axis: .horizontal) { content, phase in
+                                // Neighbours recede toward the outside edge, so the
+                                // sliver that peeks in stays put.
                                 content
-                                    .scaleEffect(1 - abs(phase.value) * 0.06)
-                                    .opacity(1 - abs(phase.value) * 0.45)
+                                    .scaleEffect(1 - abs(phase.value) * 0.05,
+                                                 anchor: phase.value > 0 ? .leading : .trailing)
+                                    .opacity(1 - abs(phase.value) * 0.4)
                             }
                             .id(index)
                     }
                 }
+                .padding(.horizontal, Self.margin)
                 .scrollTargetLayout()
             }
-            .scrollTargetBehavior(.viewAligned(limitBehavior: .always))
-            .scrollPosition(id: $page)
-            .scrollClipDisabled()
+            .scrollTargetBehavior(PeekPaging(current: current, pages: pages.count))
+            .scrollPosition(id: $page, anchor: .center)
+            // Run edge to edge so neighbouring pages can peek in from the screen sides.
+            .padding(.horizontal, -Self.margin)
             .sensoryFeedback(.selection, trigger: current)
 
             if pages.count > 1 {
