@@ -20,6 +20,9 @@
  "%lld accounts created": {
   "other": "Đã tạo %lld tài khoản"
  },
+ "%lld active": {
+  "other": "%lld đang bật"
+ },
  "%lld already present, skipped": {
   "other": "Bỏ qua %lld mục đã có"
  },
@@ -56,6 +59,9 @@
  },
  "%lld transfers have no matching account in the export, so they're kept as money moving in or out of Wallet.": {
   "other": "%lld giao dịch chuyển khoản không có tài khoản tương ứng trong tệp xuất, nên được giữ lại dưới dạng tiền chuyển vào hoặc ra khỏi Wallet."
+ },
+ "%lld weeks": {
+  "other": "%lld tuần"
  },
  "%lld years": {
   "other": "%lld năm"
@@ -202,7 +208,6 @@
  "Current": "Hiện tại",
  "Current balance": "Số dư hiện tại",
  "Custom categories": "Danh mục tùy chỉnh",
- "Custom range": "Khoảng tùy chỉnh",
  "Cyan": "Xanh lơ",
  "Date": "Ngày",
  "Day": "Ngày",
@@ -258,7 +263,6 @@
  "Export failed": "Xuất thất bại",
  "Export transactions (CSV)": "Xuất giao dịch (CSV)",
  "Eyewear": "Mắt kính",
- "Filter": "Bộ lọc",
  "Finances": "Tài chính",
  "Financial expenses": "Chi phí tài chính",
  "Financial investments": "Đầu tư tài chính",
@@ -345,7 +349,6 @@
  "Laptop": "Máy tính xách tay",
  "Large Appliance": "Thiết bị lớn",
  "Largest expenses": "Khoản chi lớn nhất",
- "Last 30 days": "30 ngày qua",
  "Last 90 days": "90 ngày qua",
  "Last month": "Tháng trước",
  "Last year": "Năm trước",
@@ -380,6 +383,7 @@
  "Monitor": "Màn hình",
  "Month": "Tháng",
  "Monthly": "Hằng tháng",
+ "More filters": "Bộ lọc khác",
  "Mortgage": "Vay thế chấp",
  "Most expensive day": "Ngày chi tiêu nhiều nhất",
  "Most recent": "Mới nhất",
@@ -409,6 +413,7 @@
  "No transactions yet": "Chưa có giao dịch",
  "No transactions yet. Tap + to add your first.": "Chưa có giao dịch. Chạm vào + để thêm giao dịch đầu tiên.",
  "None": "Không có",
+ "None selected means every account.": "Nếu không chọn tài khoản nào, tất cả tài khoản sẽ được tính.",
  "Note": "Ghi chú",
  "Note (optional)": "Ghi chú (không bắt buộc)",
  "Notes": "Ghi chú",

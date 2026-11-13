@@ -2,9 +2,7 @@ import SwiftUI
 
 /// What the Transactions list is narrowed to. Empty sets mean "any".
 struct TransactionFilter: Equatable {
-    var period: PeriodPreset = .all
-    var customStart: Date = Calendar.current.date(byAdding: .month, value: -1, to: .now) ?? .now
-    var customEnd: Date = .now
+    var period: TransactionPeriod = .all
     var kinds: Set<RecordKind> = []
     var accounts: Set<UUID> = []
     /// Category keys, or `group:<raw>` for a whole group.
@@ -14,19 +12,29 @@ struct TransactionFilter: Equatable {
     var weekday: Int?
     var trackedOnly = false
 
-    /// Not `self != TransactionFilter()`: the custom-range dates default to "now",
-    /// so two untouched filters made a moment apart would never compare equal.
     var isActive: Bool { activeCount > 0 }
 
     var activeCount: Int {
-        (period == .all ? 0 : 1) + (kinds.isEmpty ? 0 : 1) + (accounts.isEmpty ? 0 : 1)
-            + (categories.isEmpty ? 0 : 1) + (labels.isEmpty ? 0 : 1) + (trackedOnly ? 1 : 0) + (weekday == nil ? 0 : 1)
+        (period == .all ? 0 : 1) + (accounts.isEmpty ? 0 : 1) + detailCount
+    }
+
+    /// Filters beyond period and accounts — the "More filters" row of the bar.
+    var detailCount: Int {
+        (kinds.isEmpty ? 0 : 1) + (categories.isEmpty ? 0 : 1) + (labels.isEmpty ? 0 : 1)
+            + (trackedOnly ? 1 : 0) + (weekday == nil ? 0 : 1)
+    }
+
+    /// Everything except the period and accounts back to "any".
+    mutating func clearDetails() {
+        kinds = []
+        categories = []
+        labels = []
+        weekday = nil
+        trackedOnly = false
     }
 
     func interval(now: Date = .now, calendar: Calendar = .current) -> DateInterval? {
-        period == .custom
-            ? DateInterval(start: customStart.startOfDay, end: calendar.date(byAdding: .day, value: 1, to: customEnd.startOfDay) ?? customEnd)
-            : period.interval(now: now, calendar: calendar)
+        period.interval(now: now, calendar: calendar)
     }
 
     func matches(_ flow: Flow, interval: DateInterval?) -> Bool {
@@ -52,128 +60,90 @@ struct TransactionFilter: Equatable {
     }
 }
 
-enum PeriodPreset: String, CaseIterable, Identifiable {
-    case all, today, thisWeek, thisMonth, lastMonth, last30, last90, thisYear, lastYear, custom
-
-    var id: String { rawValue }
-
-    var label: String {
-        switch self {
-        case .all: String(localized: "All time", comment: "Period filter")
-        case .today: String(localized: "Today", comment: "Period filter")
-        case .thisWeek: String(localized: "This week", comment: "Period filter")
-        case .thisMonth: String(localized: "This month", comment: "Period filter")
-        case .lastMonth: String(localized: "Last month", comment: "Period filter")
-        case .last30: String(localized: "Last 30 days", comment: "Period filter")
-        case .last90: String(localized: "Last 90 days", comment: "Period filter")
-        case .thisYear: String(localized: "This year", comment: "Period filter")
-        case .lastYear: String(localized: "Last year", comment: "Period filter")
-        case .custom: String(localized: "Custom range", comment: "Period filter")
-        }
-    }
-
-    func interval(now: Date = .now, calendar: Calendar = .current) -> DateInterval? {
-        let today = now.startOfDay
-        let tomorrow = calendar.date(byAdding: .day, value: 1, to: today) ?? now
-        switch self {
-        case .all, .custom: return nil
-        case .today: return DateInterval(start: today, end: tomorrow)
-        case .thisWeek: return calendar.dateInterval(of: .weekOfYear, for: now)
-        case .thisMonth: return calendar.dateInterval(of: .month, for: now)
-        case .lastMonth:
-            guard let anchor = calendar.date(byAdding: .month, value: -1, to: now) else { return nil }
-            return calendar.dateInterval(of: .month, for: anchor)
-        case .last30: return DateInterval(start: calendar.date(byAdding: .day, value: -29, to: today) ?? today, end: tomorrow)
-        case .last90: return DateInterval(start: calendar.date(byAdding: .day, value: -89, to: today) ?? today, end: tomorrow)
-        case .thisYear: return calendar.dateInterval(of: .year, for: now)
-        case .lastYear:
-            guard let anchor = calendar.date(byAdding: .year, value: -1, to: now) else { return nil }
-            return calendar.dateInterval(of: .year, for: anchor)
-        }
-    }
-}
-
-/// Every filter dimension in one sheet.
+/// The filters behind the bar's rows: which accounts, or everything else (type,
+/// categories, labels, items). The period lives on the bar itself.
 struct TransactionFilterSheet: View {
+    enum Part { case accounts, details }
+
     @Binding var filter: TransactionFilter
-    let accounts: [Account]
-    let labels: [String]
+    let part: Part
+    var accounts: [Account] = []
+    var labels: [String] = []
 
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
             Form {
-                Section("Period") {
-                    Picker("Period", selection: $filter.period) {
-                        ForEach(PeriodPreset.allCases) { Text($0.label).tag($0) }
-                    }
-                    if filter.period == .custom {
-                        DatePicker("From", selection: $filter.customStart, displayedComponents: .date)
-                        DatePicker("To", selection: $filter.customEnd, in: filter.customStart..., displayedComponents: .date)
-                    }
-                }
-
-                Section("Type") {
-                    ForEach(RecordKind.allCases) { kind in
-                        toggleRow(kind.label, symbol: kind.symbol, tint: kind.tint, isOn: filter.kinds.contains(kind)) {
-                            filter.kinds.formSymmetricDifference([kind])
-                        }
-                    }
-                }
-
-                if !accounts.isEmpty {
-                    Section("Accounts") {
+                if part == .accounts {
+                    Section {
                         ForEach(accounts) { account in
                             toggleRow(account.displayName, symbol: account.kind.symbol, tint: account.tint.color, isOn: filter.accounts.contains(account.uuid)) {
                                 filter.accounts.formSymmetricDifference([account.uuid])
                             }
                         }
+                    } footer: {
+                        Text("None selected means every account.", comment: "Transaction filter: accounts footer")
                     }
-                }
-
-                Section("Categories") {
-                    ForEach(RecordGroup.allCases) { group in
-                        DisclosureGroup {
-                            ForEach(RecordCategory.inGroup(group)) { category in
-                                toggleRow(category.label, symbol: category.symbol, tint: category.tint, isOn: filter.categories.contains(category.rawValue)) {
-                                    filter.categories.formSymmetricDifference([category.rawValue])
-                                }
-                            }
-                        } label: {
-                            toggleRow(group.label, symbol: group.symbol, tint: group.tint, isOn: filter.categories.contains("group:" + group.rawValue)) {
-                                filter.categories.formSymmetricDifference(["group:" + group.rawValue])
-                            }
-                        }
-                    }
-                }
-
-                if !labels.isEmpty {
-                    Section("Labels") {
-                        ForEach(labels, id: \.self) { label in
-                            toggleRow(label, symbol: "tag.fill", tint: LabelTint.color(for: label), isOn: filter.labels.contains(label)) {
-                                filter.labels.formSymmetricDifference([label])
-                            }
-                        }
-                    }
-                }
-
-                Section {
-                    Toggle("Only transactions linked to items", isOn: $filter.trackedOnly)
+                } else {
+                    details
                 }
             }
-            .navigationTitle("Filter")
+            .navigationTitle(part == .accounts ? String(localized: "Accounts") : String(localized: "More filters", comment: "Transaction filter sheet title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Reset") { filter = TransactionFilter() }
-                        .disabled(!filter.isActive)
+                    Button("Reset") {
+                        if part == .accounts { filter.accounts = [] } else { filter.clearDetails() }
+                    }
+                    .disabled(part == .accounts ? filter.accounts.isEmpty : filter.detailCount == 0)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }.fontWeight(.semibold)
                 }
             }
             .sensoryFeedback(.selection, trigger: filter)
+        }
+    }
+
+    @ViewBuilder
+    private var details: some View {
+        Section("Type") {
+            ForEach(RecordKind.allCases) { kind in
+                toggleRow(kind.label, symbol: kind.symbol, tint: kind.tint, isOn: filter.kinds.contains(kind)) {
+                    filter.kinds.formSymmetricDifference([kind])
+                }
+            }
+        }
+
+        Section("Categories") {
+            ForEach(RecordGroup.allCases) { group in
+                DisclosureGroup {
+                    ForEach(RecordCategory.inGroup(group)) { category in
+                        toggleRow(category.label, symbol: category.symbol, tint: category.tint, isOn: filter.categories.contains(category.rawValue)) {
+                            filter.categories.formSymmetricDifference([category.rawValue])
+                        }
+                    }
+                } label: {
+                    toggleRow(group.label, symbol: group.symbol, tint: group.tint, isOn: filter.categories.contains("group:" + group.rawValue)) {
+                        filter.categories.formSymmetricDifference(["group:" + group.rawValue])
+                    }
+                }
+            }
+        }
+
+        if !labels.isEmpty {
+            Section("Labels") {
+                ForEach(labels, id: \.self) { label in
+                    toggleRow(label, symbol: "tag.fill", tint: LabelTint.color(for: label), isOn: filter.labels.contains(label)) {
+                        filter.labels.formSymmetricDifference([label])
+                    }
+                }
+            }
+        }
+
+        Section {
+            Toggle("Only transactions linked to items", isOn: $filter.trackedOnly)
         }
     }
 

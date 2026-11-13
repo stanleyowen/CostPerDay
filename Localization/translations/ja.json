@@ -20,6 +20,9 @@
  "%lld accounts created": {
   "other": "%lld 件の口座を作成"
  },
+ "%lld active": {
+  "other": "%lld 件適用中"
+ },
  "%lld already present, skipped": {
   "other": "既存の %lld 件をスキップ"
  },
@@ -56,6 +59,9 @@
  },
  "%lld transfers have no matching account in the export, so they're kept as money moving in or out of Wallet.": {
   "other": "%lld 件の振替は書き出しデータ内に対応する口座がないため、Wallet 外との入出金として保持されます。"
+ },
+ "%lld weeks": {
+  "other": "%lld 週間"
  },
  "%lld years": {
   "other": "%lld 年"
@@ -202,7 +208,6 @@
  "Current": "現在",
  "Current balance": "現在の残高",
  "Custom categories": "カスタムカテゴリ",
- "Custom range": "期間を指定",
  "Cyan": "シアン",
  "Date": "日付",
  "Day": "曜日",
@@ -258,7 +263,6 @@
  "Export failed": "書き出しに失敗しました",
  "Export transactions (CSV)": "取引を書き出す（CSV）",
  "Eyewear": "眼鏡類",
- "Filter": "フィルタ",
  "Finances": "家計",
  "Financial expenses": "金融費用",
  "Financial investments": "金融投資",
@@ -345,7 +349,6 @@
  "Laptop": "ノートパソコン",
  "Large Appliance": "大型家電",
  "Largest expenses": "高額な支出",
- "Last 30 days": "過去30日間",
  "Last 90 days": "過去90日間",
  "Last month": "先月",
  "Last year": "昨年",
@@ -380,6 +383,7 @@
  "Monitor": "モニター",
  "Month": "月",
  "Monthly": "毎月",
+ "More filters": "その他のフィルタ",
  "Mortgage": "住宅ローン",
  "Most expensive day": "支出が最も多い日",
  "Most recent": "新しい順",
@@ -409,6 +413,7 @@
  "No transactions yet": "取引はまだありません",
  "No transactions yet. Tap + to add your first.": "取引はまだありません。+ をタップして最初の取引を追加してください。",
  "None": "なし",
+ "None selected means every account.": "何も選択しない場合は、すべての口座が対象になります。",
  "Note": "メモ",
  "Note (optional)": "メモ（任意）",
  "Notes": "メモ",

@@ -22,6 +22,10 @@
   "one": "%lld compte créé",
   "other": "%lld comptes créés"
  },
+ "%lld active": {
+  "one": "%lld actif",
+  "other": "%lld actifs"
+ },
  "%lld already present, skipped": {
   "one": "%lld déjà présente, ignorée",
   "other": "%lld déjà présentes, ignorées"
@@ -70,6 +74,10 @@
  "%lld transfers have no matching account in the export, so they're kept as money moving in or out of Wallet.": {
   "one": "%lld virement n'a pas de compte correspondant dans l'export ; il est donc conservé comme un flux entrant ou sortant de Wallet.",
   "other": "%lld virements n'ont pas de compte correspondant dans l'export ; ils sont donc conservés comme des flux entrants ou sortants de Wallet."
+ },
+ "%lld weeks": {
+  "one": "%lld semaine",
+  "other": "%lld semaines"
  },
  "%lld years": {
   "one": "%lld an",
@@ -219,7 +227,6 @@
  "Current": "En cours",
  "Current balance": "Solde actuel",
  "Custom categories": "Catégories personnalisées",
- "Custom range": "Période personnalisée",
  "Cyan": "Cyan",
  "Date": "Date",
  "Day": "Jour",
@@ -275,7 +282,6 @@
  "Export failed": "Échec de l'exportation",
  "Export transactions (CSV)": "Exporter les transactions (CSV)",
  "Eyewear": "Lunettes",
- "Filter": "Filtrer",
  "Finances": "Finances",
  "Financial expenses": "Frais financiers",
  "Financial investments": "Placements financiers",
@@ -364,7 +370,6 @@
  "Laptop": "Ordinateur portable",
  "Large Appliance": "Gros électroménager",
  "Largest expenses": "Plus grosses dépenses",
- "Last 30 days": "30 derniers jours",
  "Last 90 days": "90 derniers jours",
  "Last month": "Mois dernier",
  "Last year": "Année dernière",
@@ -399,6 +404,7 @@
  "Monitor": "Écran",
  "Month": "Mois",
  "Monthly": "Mensuel",
+ "More filters": "Autres filtres",
  "Mortgage": "Crédit immobilier",
  "Most expensive day": "Jour le plus coûteux",
  "Most recent": "Plus récent",
@@ -428,6 +434,7 @@
  "No transactions yet": "Aucune transaction pour l'instant",
  "No transactions yet. Tap + to add your first.": "Aucune transaction pour l'instant. Touchez + pour ajouter la première.",
  "None": "Aucune",
+ "None selected means every account.": "Si aucun n'est sélectionné, tous les comptes sont inclus.",
  "Note": "Note",
  "Note (optional)": "Note (facultatif)",
  "Notes": "Notes",

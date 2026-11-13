@@ -20,6 +20,9 @@
  "%lld accounts created": {
   "other": "已创建 %lld 个账户"
  },
+ "%lld active": {
+  "other": "%lld 项已启用"
+ },
  "%lld already present, skipped": {
   "other": "%lld 条已存在，已跳过"
  },
@@ -56,6 +59,9 @@
  },
  "%lld transfers have no matching account in the export, so they're kept as money moving in or out of Wallet.": {
   "other": "有 %lld 笔转账在导出文件中找不到对应的账户，因此将保留为转入或转出 Wallet 的款项。"
+ },
+ "%lld weeks": {
+  "other": "%lld 周"
  },
  "%lld years": {
   "other": "%lld 年"
@@ -202,7 +208,6 @@
  "Current": "本期",
  "Current balance": "当前余额",
  "Custom categories": "自定义类别",
- "Custom range": "自定义范围",
  "Cyan": "青色",
  "Date": "日期",
  "Day": "星期",
@@ -258,7 +263,6 @@
  "Export failed": "导出失败",
  "Export transactions (CSV)": "导出交易（CSV）",
  "Eyewear": "眼镜",
- "Filter": "筛选",
  "Finances": "财务",
  "Financial expenses": "财务支出",
  "Financial investments": "金融投资",
@@ -345,7 +349,6 @@
  "Laptop": "笔记本电脑",
  "Large Appliance": "大型家电",
  "Largest expenses": "最大笔支出",
- "Last 30 days": "过去 30 天",
  "Last 90 days": "过去 90 天",
  "Last month": "上个月",
  "Last year": "去年",
@@ -380,6 +383,7 @@
  "Monitor": "显示器",
  "Month": "月",
  "Monthly": "每月",
+ "More filters": "更多筛选",
  "Mortgage": "房贷",
  "Most expensive day": "支出最多的一天",
  "Most recent": "最近添加",
@@ -409,6 +413,7 @@
  "No transactions yet": "尚无交易",
  "No transactions yet. Tap + to add your first.": "尚无交易。轻点 + 添加第一笔。",
  "None": "无",
+ "None selected means every account.": "未选择时包含所有账户。",
  "Note": "备注",
  "Note (optional)": "备注（可选）",
  "Notes": "备注",

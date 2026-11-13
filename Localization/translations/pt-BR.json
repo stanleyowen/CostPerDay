@@ -22,6 +22,10 @@
   "one": "%lld conta criada",
   "other": "%lld contas criadas"
  },
+ "%lld active": {
+  "one": "%lld ativo",
+  "other": "%lld ativos"
+ },
  "%lld already present, skipped": {
   "one": "%lld já existente, ignorada",
   "other": "%lld já existentes, ignoradas"
@@ -70,6 +74,10 @@
  "%lld transfers have no matching account in the export, so they're kept as money moving in or out of Wallet.": {
   "one": "%lld transferência não tem conta correspondente na exportação e, por isso, é mantida como dinheiro entrando no Wallet ou saindo dele.",
   "other": "%lld transferências não têm conta correspondente na exportação e, por isso, são mantidas como dinheiro entrando no Wallet ou saindo dele."
+ },
+ "%lld weeks": {
+  "one": "%lld semana",
+  "other": "%lld semanas"
  },
  "%lld years": {
   "one": "%lld ano",
@@ -219,7 +227,6 @@
  "Current": "Atual",
  "Current balance": "Saldo atual",
  "Custom categories": "Categorias personalizadas",
- "Custom range": "Período personalizado",
  "Cyan": "Ciano",
  "Date": "Data",
  "Day": "Dia",
@@ -275,7 +282,6 @@
  "Export failed": "Falha na exportação",
  "Export transactions (CSV)": "Exportar transações (CSV)",
  "Eyewear": "Óculos",
- "Filter": "Filtrar",
  "Finances": "Finanças",
  "Financial expenses": "Despesas financeiras",
  "Financial investments": "Investimentos financeiros",
@@ -364,7 +370,6 @@
  "Laptop": "Notebook",
  "Large Appliance": "Eletrodoméstico grande",
  "Largest expenses": "Maiores despesas",
- "Last 30 days": "Últimos 30 dias",
  "Last 90 days": "Últimos 90 dias",
  "Last month": "Mês passado",
  "Last year": "Ano passado",
@@ -399,6 +404,7 @@
  "Monitor": "Monitor",
  "Month": "Mês",
  "Monthly": "Mensal",
+ "More filters": "Mais filtros",
  "Mortgage": "Financiamento imobiliário",
  "Most expensive day": "Dia mais caro",
  "Most recent": "Mais recentes",
@@ -428,6 +434,7 @@
  "No transactions yet": "Ainda não há transações",
  "No transactions yet. Tap + to add your first.": "Ainda não há transações. Toque em + para adicionar a primeira.",
  "None": "Nenhuma",
+ "None selected means every account.": "Sem seleção, todas as contas são incluídas.",
  "Note": "Nota",
  "Note (optional)": "Nota (opcional)",
  "Notes": "Observações",

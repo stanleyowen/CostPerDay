@@ -248,10 +248,8 @@ private struct ReportsContent: View {
     /// The same narrowing, expressed as a Transactions filter.
     private func transactionFilter(period: ReportPeriod) -> TransactionFilter {
         var filter = TransactionFilter()
-        filter.period = .custom
         let interval = focus.day.map { DateInterval(start: $0, duration: 86_400) } ?? period.interval
-        filter.customStart = interval.start
-        filter.customEnd = interval.end.addingTimeInterval(-1)
+        filter.period = .custom(start: interval.start, end: interval.end.addingTimeInterval(-1))
         if let category = focus.category { filter.categories = [category] }
         if let label = focus.label { filter.labels = [label] }
         if let accountFilter { filter.accounts = [accountFilter] }

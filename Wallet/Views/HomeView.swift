@@ -68,6 +68,10 @@ struct HomeView: View {
             .navigationDestination(item: $openedAccount) { AccountDetailView(account: $0) }
             .sensoryFeedback(.selection, trigger: selectedAccounts)
             .task {
+                // `-openAccount`: the first account's page, for screenshots; inert in Release.
+                if DebugFlags.has("-openAccount") {
+                    openedAccount = accounts.filter { !$0.isArchived }.min { $0.sortOrder < $1.sortOrder }
+                }
                 // `-selectAccounts <n>`: pre-select the first n cards for screenshots; inert in Release.
                 if let count = DebugFlags.value(after: "-selectAccounts").flatMap(Int.init) {
                     let active = accounts.filter { !$0.isArchived }.sorted { ($0.sortOrder, $0.createdAt) < ($1.sortOrder, $1.createdAt) }
@@ -330,7 +334,7 @@ private struct AccountPager: View {
             .sensoryFeedback(.selection, trigger: current)
 
             if pages.count > 1 {
-                PageDots(count: pages.count, current: current) { index in
+                PageIndicator(count: pages.count, current: current) { index in
                     withAnimation(.smooth(duration: 0.4)) { page = index }
                 }
             }
@@ -409,7 +413,7 @@ private struct AccountPager: View {
 /// Page indicator: the current page stretches into a pill in the accent colour.
 /// Tapping a dot jumps to that page; VoiceOver skips it, since every card is
 /// reachable on its own.
-private struct PageDots: View {
+struct PageIndicator: View {
     let count: Int
     let current: Int
     let onSelect: (Int) -> Void
@@ -579,7 +583,7 @@ private struct MonthCard: View {
     private func show(_ kind: RecordKind) {
         var filter = TransactionFilter()
         filter.kinds = [kind]
-        filter.period = .thisMonth
+        filter.period = .calendar(.month, offset: 0)
         filter.accounts = accounts
         router.showTransactions(filter)
     }
@@ -697,9 +701,7 @@ struct SpendingDonutCard: View {
                     var filter = TransactionFilter()
                     filter.categories = ["group:" + selected]
                     filter.accounts = accounts
-                    filter.period = .custom
-                    filter.customStart = report.period.interval.start
-                    filter.customEnd = report.period.interval.end.addingTimeInterval(-1)
+                    filter.period = .custom(start: report.period.interval.start, end: report.period.interval.end.addingTimeInterval(-1))
                     router.showTransactions(filter)
                 } label: {
                     Label("Show these transactions", systemImage: "list.bullet")

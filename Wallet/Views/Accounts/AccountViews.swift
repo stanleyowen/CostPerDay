@@ -351,6 +351,9 @@ struct AccountDetailView: View {
     @Query private var accounts: [Account]
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
     @State private var editing = false
+    /// The bar at the bottom narrows this account's transactions like the
+    /// Transactions tab's does (accounts aside: this is one account).
+    @State private var filter = TransactionFilter()
     @Environment(AppRouter.self) private var router
 
     init(account: Account) {
@@ -363,6 +366,8 @@ struct AccountDetailView: View {
         let ledger = LedgerSnapshot(accounts: accounts, records: records, baseCurrency: baseCurrency)
         let balance = ledger.balance(of: account)
         let series = balanceSeries(ledger: ledger)
+        let interval = filter.interval()
+        let shown = filter.isActive ? records.filter { filter.matches($0.flow, interval: interval) } : records
 
         List {
             Section {
@@ -385,8 +390,10 @@ struct AccountDetailView: View {
 
             if records.isEmpty {
                 ContentUnavailableView("No transactions", systemImage: "list.bullet.rectangle", description: Text("Transactions in this account will appear here."))
+            } else if shown.isEmpty {
+                ContentUnavailableView("Nothing in this period", systemImage: "calendar", description: Text("Try an earlier period or a longer range."))
             } else {
-                ForEach(dayGroups) { group in
+                ForEach(dayGroups(shown)) { group in
                     Section {
                         ForEach(group.records) { record in
                             let flow = record.flow
@@ -406,8 +413,14 @@ struct AccountDetailView: View {
         .toolbar {
             Button("Edit") { editing = true }
         }
-        .safeAreaInset(edge: .bottom, alignment: .trailing) {
-            FloatingAddButton { router.composer = RecordDraft(kind: .expense, accountID: account.uuid) }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            VStack(spacing: 0) {
+                HStack {
+                    Spacer()
+                    FloatingAddButton { router.composer = RecordDraft(kind: .expense, accountID: account.uuid) }
+                }
+                TransactionFilterBar(filter: $filter, labels: Array(Set(records.flatMap(\.labels))).sorted())
+            }
         }
         .sheet(isPresented: $editing) { AccountEditView(account: account) }
     }
@@ -420,7 +433,7 @@ struct AccountDetailView: View {
     }
 
     /// Capped to the most recent 300 so a long-lived account still opens instantly.
-    private var dayGroups: [DayGroup] {
+    private func dayGroups(_ records: [Record]) -> [DayGroup] {
         Dictionary(grouping: records.prefix(300)) { $0.date.startOfDay }
             .map { DayGroup(day: $0.key, records: $0.value.sorted { $0.date > $1.date }) }
             .sorted { $0.day > $1.day }

@@ -20,6 +20,9 @@
  "%lld accounts created": {
   "other": "已建立 %lld 個帳戶"
  },
+ "%lld active": {
+  "other": "%lld 項已啟用"
+ },
  "%lld already present, skipped": {
   "other": "%lld 筆已存在，已略過"
  },
@@ -56,6 +59,9 @@
  },
  "%lld transfers have no matching account in the export, so they're kept as money moving in or out of Wallet.": {
   "other": "有 %lld 筆轉帳在匯出檔中找不到對應的帳戶，因此將保留為轉入或轉出 Wallet 的款項。"
+ },
+ "%lld weeks": {
+  "other": "%lld 週"
  },
  "%lld years": {
   "other": "%lld 年"
@@ -202,7 +208,6 @@
  "Current": "本期",
  "Current balance": "目前餘額",
  "Custom categories": "自訂類別",
- "Custom range": "自訂範圍",
  "Cyan": "青色",
  "Date": "日期",
  "Day": "星期",
@@ -258,7 +263,6 @@
  "Export failed": "匯出失敗",
  "Export transactions (CSV)": "匯出交易（CSV）",
  "Eyewear": "眼鏡",
- "Filter": "篩選",
  "Finances": "財務",
  "Financial expenses": "財務支出",
  "Financial investments": "金融投資",
@@ -345,7 +349,6 @@
  "Laptop": "筆記型電腦",
  "Large Appliance": "大型家電",
  "Largest expenses": "最大筆支出",
- "Last 30 days": "過去 30 天",
  "Last 90 days": "過去 90 天",
  "Last month": "上個月",
  "Last year": "去年",
@@ -380,6 +383,7 @@
  "Monitor": "螢幕",
  "Month": "月",
  "Monthly": "每月",
+ "More filters": "更多篩選",
  "Mortgage": "房貸",
  "Most expensive day": "支出最多的日子",
  "Most recent": "最近新增",
@@ -409,6 +413,7 @@
  "No transactions yet": "尚無交易",
  "No transactions yet. Tap + to add your first.": "尚無交易。點一下 + 新增第一筆。",
  "None": "無",
+ "None selected means every account.": "未選擇時包含所有帳戶。",
  "Note": "備註",
  "Note (optional)": "備註（選填）",
  "Notes": "備註",

@@ -20,6 +20,9 @@
  "%lld accounts created": {
   "other": "%lld akun dibuat"
  },
+ "%lld active": {
+  "other": "%lld aktif"
+ },
  "%lld already present, skipped": {
   "other": "%lld sudah ada, dilewati"
  },
@@ -56,6 +59,9 @@
  },
  "%lld transfers have no matching account in the export, so they're kept as money moving in or out of Wallet.": {
   "other": "%lld transfer tidak memiliki akun yang cocok dalam file ekspor, sehingga dicatat sebagai uang yang masuk ke atau keluar dari Wallet."
+ },
+ "%lld weeks": {
+  "other": "%lld minggu"
  },
  "%lld years": {
   "other": "%lld tahun"
@@ -202,7 +208,6 @@
  "Current": "Saat ini",
  "Current balance": "Saldo saat ini",
  "Custom categories": "Kategori khusus",
- "Custom range": "Rentang khusus",
  "Cyan": "Sian",
  "Date": "Tanggal",
  "Day": "Hari",
@@ -258,7 +263,6 @@
  "Export failed": "Ekspor gagal",
  "Export transactions (CSV)": "Ekspor transaksi (CSV)",
  "Eyewear": "Kacamata",
- "Filter": "Filter",
  "Finances": "Keuangan",
  "Financial expenses": "Biaya keuangan",
  "Financial investments": "Investasi keuangan",
@@ -345,7 +349,6 @@
  "Laptop": "Laptop",
  "Large Appliance": "Peralatan Besar",
  "Largest expenses": "Pengeluaran terbesar",
- "Last 30 days": "30 hari terakhir",
  "Last 90 days": "90 hari terakhir",
  "Last month": "Bulan lalu",
  "Last year": "Tahun lalu",
@@ -380,6 +383,7 @@
  "Monitor": "Monitor",
  "Month": "Bulan",
  "Monthly": "Bulanan",
+ "More filters": "Filter lainnya",
  "Mortgage": "KPR",
  "Most expensive day": "Hari termahal",
  "Most recent": "Terbaru",
@@ -409,6 +413,7 @@
  "No transactions yet": "Belum ada transaksi",
  "No transactions yet. Tap + to add your first.": "Belum ada transaksi. Ketuk + untuk menambahkan transaksi pertama Anda.",
  "None": "Tidak ada",
+ "None selected means every account.": "Jika tidak ada yang dipilih, semua akun disertakan.",
  "Note": "Catatan",
  "Note (optional)": "Catatan (opsional)",
  "Notes": "Catatan",

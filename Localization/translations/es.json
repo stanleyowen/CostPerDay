@@ -22,6 +22,10 @@
   "one": "%lld cuenta creada",
   "other": "%lld cuentas creadas"
  },
+ "%lld active": {
+  "one": "%lld activo",
+  "other": "%lld activos"
+ },
  "%lld already present, skipped": {
   "one": "%lld ya existente, omitida",
   "other": "%lld ya existentes, omitidas"
@@ -70,6 +74,10 @@
  "%lld transfers have no matching account in the export, so they're kept as money moving in or out of Wallet.": {
   "one": "%lld transferencia no tiene una cuenta correspondiente en la exportación, por lo que se conserva como dinero que entra en Wallet o sale de él.",
   "other": "%lld transferencias no tienen una cuenta correspondiente en la exportación, por lo que se conservan como dinero que entra en Wallet o sale de él."
+ },
+ "%lld weeks": {
+  "one": "%lld semana",
+  "other": "%lld semanas"
  },
  "%lld years": {
   "one": "%lld año",
@@ -219,7 +227,6 @@
  "Current": "Actual",
  "Current balance": "Saldo actual",
  "Custom categories": "Categorías personalizadas",
- "Custom range": "Rango personalizado",
  "Cyan": "Cian",
  "Date": "Fecha",
  "Day": "Día",
@@ -275,7 +282,6 @@
  "Export failed": "Error al exportar",
  "Export transactions (CSV)": "Exportar transacciones (CSV)",
  "Eyewear": "Gafas",
- "Filter": "Filtrar",
  "Finances": "Finanzas",
  "Financial expenses": "Gastos financieros",
  "Financial investments": "Inversiones financieras",
@@ -364,7 +370,6 @@
  "Laptop": "Computadora portátil",
  "Large Appliance": "Electrodoméstico grande",
  "Largest expenses": "Mayores gastos",
- "Last 30 days": "Últimos 30 días",
  "Last 90 days": "Últimos 90 días",
  "Last month": "Mes pasado",
  "Last year": "Año pasado",
@@ -399,6 +404,7 @@
  "Monitor": "Monitor",
  "Month": "Mes",
  "Monthly": "Mensual",
+ "More filters": "Más filtros",
  "Mortgage": "Hipoteca",
  "Most expensive day": "Día más caro",
  "Most recent": "Más recientes",
@@ -428,6 +434,7 @@
  "No transactions yet": "Aún no hay transacciones",
  "No transactions yet. Tap + to add your first.": "Aún no hay transacciones. Toque + para añadir la primera.",
  "None": "Ninguna",
+ "None selected means every account.": "Si no selecciona ninguna, se incluyen todas las cuentas.",
  "Note": "Nota",
  "Note (optional)": "Nota (opcional)",
  "Notes": "Notas",

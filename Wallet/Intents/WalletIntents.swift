@@ -24,12 +24,12 @@ enum IntentPeriod: String, AppEnum {
         .today: "Today", .week: "This Week", .month: "This Month", .year: "This Year",
     ]
 
-    var preset: PeriodPreset {
+    var preset: TransactionPeriod {
         switch self {
-        case .today: .today
-        case .week: .thisWeek
-        case .month: .thisMonth
-        case .year: .thisYear
+        case .today: .calendar(.day, offset: 0)
+        case .week: .calendar(.week, offset: 0)
+        case .month: .calendar(.month, offset: 0)
+        case .year: .calendar(.year, offset: 0)
         }
     }
 }
@@ -286,7 +286,7 @@ struct SpendingSummaryIntent: AppIntent {
         }
         let amount = Money.exact(total, code: baseCurrency)
         let scope = category?.name ?? String(localized: "everything", comment: "Spending summary scope when no category is given")
-        return .result(value: total, dialog: "\(period.preset.label): \(amount) on \(scope).")
+        return .result(value: total, dialog: "\(period.preset.label()): \(amount) on \(scope).")
     }
 }
 

@@ -10,7 +10,6 @@ struct TransactionsView: View {
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
 
     @State private var search = ""
-    @State private var showingFilters = false
     @State private var visibleLimit = 400
 
     var body: some View {
@@ -27,7 +26,8 @@ struct TransactionsView: View {
                             .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                             .listRowBackground(Color.clear)
                             .listRowSeparator(.hidden)
-                        if router.transactionFilter.isActive {
+                        // The period is on the bar below; these are the rest.
+                        if !router.transactionFilter.accounts.isEmpty || router.transactionFilter.detailCount > 0 {
                             activeFilters
                                 .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 4, trailing: 0))
                                 .listRowBackground(Color.clear)
@@ -73,30 +73,18 @@ struct TransactionsView: View {
             }
             .searchable(text: $search, prompt: Text("Notes, labels, amounts"))
             .navigationTitle("Transactions")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showingFilters = true
-                    } label: {
-                        Image(systemName: router.transactionFilter.isActive ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
-                    }
-                    .accessibilityLabel(Text("Filter"))
-                    .badge(router.transactionFilter.activeCount)
-                    // A toolbar badge is drawn by the bar button underneath and isn't
-                    // refreshed when the count changes ("Clear all" left the old
-                    // number up). Tying the button's identity to the count rebuilds
-                    // it, badge included, whenever the count moves.
-                    .id(router.transactionFilter.activeCount)
-                }
-            }
             .safeAreaInset(edge: .bottom, spacing: 0) {
-                HStack {
-                    Spacer()
-                    FloatingAddButton { router.compose() }
+                VStack(spacing: 0) {
+                    HStack {
+                        Spacer()
+                        FloatingAddButton { router.compose() }
+                    }
+                    TransactionFilterBar(
+                        filter: $router.transactionFilter,
+                        accounts: accounts.filter { !$0.isArchived },
+                        labels: snapshot.allLabels
+                    )
                 }
-            }
-            .sheet(isPresented: $showingFilters) {
-                TransactionFilterSheet(filter: $router.transactionFilter, accounts: accounts, labels: snapshot.allLabels)
             }
             .onChange(of: router.transactionFilter) { _, _ in visibleLimit = 400 }
         }
@@ -175,9 +163,6 @@ struct TransactionsView: View {
         let filter = router.transactionFilter
         return ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                if filter.period != .all {
-                    Chip(title: filter.period.label, systemImage: "calendar", isSelected: true) { router.transactionFilter.period = .all }
-                }
                 ForEach(Array(filter.kinds), id: \.self) { kind in
                     Chip(title: kind.label, systemImage: "xmark", isSelected: true, tint: kind.tint) { router.transactionFilter.kinds.remove(kind) }
                 }
@@ -199,7 +184,12 @@ struct TransactionsView: View {
                 if filter.trackedOnly {
                     Chip(title: String(localized: "Linked to items"), systemImage: "xmark", isSelected: true, tint: Brand.accent) { router.transactionFilter.trackedOnly = false }
                 }
-                Button("Clear all") { withAnimation(.snappy) { router.transactionFilter = TransactionFilter() } }
+                Button("Clear all") {
+                    withAnimation(.snappy) {
+                        router.transactionFilter.accounts = []
+                        router.transactionFilter.clearDetails()
+                    }
+                }
                     .font(.subheadline.weight(.semibold))
             }
             .padding(.horizontal, 16)

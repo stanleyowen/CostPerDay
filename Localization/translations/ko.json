@@ -20,6 +20,9 @@
  "%lld accounts created": {
   "other": "계좌 %lld개 생성됨"
  },
+ "%lld active": {
+  "other": "%lld개 적용 중"
+ },
  "%lld already present, skipped": {
   "other": "%lld건은 이미 있어 건너뜀"
  },
@@ -56,6 +59,9 @@
  },
  "%lld transfers have no matching account in the export, so they're kept as money moving in or out of Wallet.": {
   "other": "이체 %lld건은 내보낸 파일에 일치하는 계좌가 없어 Wallet 외부와 주고받은 금액으로 유지됩니다."
+ },
+ "%lld weeks": {
+  "other": "%lld주"
  },
  "%lld years": {
   "other": "%lld년"
@@ -202,7 +208,6 @@
  "Current": "현재",
  "Current balance": "현재 잔액",
  "Custom categories": "사용자 카테고리",
- "Custom range": "사용자 지정 기간",
  "Cyan": "시안",
  "Date": "날짜",
  "Day": "일",
@@ -258,7 +263,6 @@
  "Export failed": "내보내기에 실패했습니다",
  "Export transactions (CSV)": "거래 내보내기(CSV)",
  "Eyewear": "안경류",
- "Filter": "필터",
  "Finances": "재정",
  "Financial expenses": "금융 비용",
  "Financial investments": "금융 투자",
@@ -345,7 +349,6 @@
  "Laptop": "노트북",
  "Large Appliance": "대형 가전",
  "Largest expenses": "가장 큰 지출",
- "Last 30 days": "최근 30일",
  "Last 90 days": "최근 90일",
  "Last month": "지난달",
  "Last year": "작년",
@@ -380,6 +383,7 @@
  "Monitor": "모니터",
  "Month": "월",
  "Monthly": "매월",
+ "More filters": "추가 필터",
  "Mortgage": "주택담보대출",
  "Most expensive day": "지출이 가장 많은 날",
  "Most recent": "최신순",
@@ -409,6 +413,7 @@
  "No transactions yet": "아직 거래 없음",
  "No transactions yet. Tap + to add your first.": "아직 거래가 없습니다. +를 탭하여 첫 거래를 추가하십시오.",
  "None": "없음",
+ "None selected means every account.": "아무것도 선택하지 않으면 모든 계좌가 포함됩니다.",
  "Note": "메모",
  "Note (optional)": "메모(선택 사항)",
  "Notes": "메모",
