@@ -547,7 +547,8 @@ struct SpendingDonutCard: View {
     var title = String(localized: "Spending by category", comment: "Chart title")
 
     @Environment(AppRouter.self) private var router
-    @State private var selectedAngle: Double?
+    /// Raw touch angles go here, not into view state: only a change of slice updates the card.
+    @State private var angleSink = SelectionSink<Double>()
     @State private var selected: String?
     @State private var lastHit: String?
 
@@ -569,7 +570,14 @@ struct SpendingDonutCard: View {
                     .foregroundStyle(group.tint)
                     .opacity(selected == nil || selected == slice.key ? 1 : 0.35)
                 }
-                .chartAngleSelection(value: $selectedAngle)
+                .chartAngleSelection(value: angleSink.binding { angle in
+                    guard let angle else { lastHit = nil; return }
+                    let hit = slice(at: angle)
+                    guard hit != lastHit else { return }
+                    let isNewGesture = lastHit == nil
+                    lastHit = hit
+                    withAnimation(.snappy) { selected = isNewGesture && selected == hit ? nil : hit }
+                })
                 .chartBackground { proxy in
                     GeometryReader { geo in
                         if let frame = proxy.plotFrame {
@@ -596,14 +604,6 @@ struct SpendingDonutCard: View {
                     }
                 }
                 .frame(width: 140, height: 140)
-                .onChange(of: selectedAngle) { _, angle in
-                    guard let angle else { lastHit = nil; return }
-                    let hit = slice(at: angle)
-                    guard hit != lastHit else { return }
-                    let isNewGesture = lastHit == nil
-                    lastHit = hit
-                    withAnimation(.snappy) { selected = isNewGesture && selected == hit ? nil : hit }
-                }
                 .sensoryFeedback(.selection, trigger: selected)
 
                 VStack(alignment: .leading, spacing: 7) {

@@ -198,7 +198,8 @@ private struct SectorDonutCard: View {
     let stats: Stats
     let currency: String
 
-    @State private var selectedAngle: Double?
+    /// Raw touch angles go here, not into view state: only a change of slice updates the card.
+    @State private var angleSink = SelectionSink<Double>()
     @State private var selected: Sector?
     /// The slice under the finger during the current gesture; nil between gestures.
     @State private var lastHit: Sector?
@@ -225,7 +226,16 @@ private struct SectorDonutCard: View {
                 .foregroundStyle(slice.sector.tint)
                 .opacity(selected == nil || selected == slice.sector ? 1 : 0.35)
             }
-            .chartAngleSelection(value: $selectedAngle)
+            .chartAngleSelection(value: angleSink.binding { angle in
+                guard let angle else { lastHit = nil; return }
+                let hit = sector(at: angle)
+                guard hit != lastHit else { return }
+                // A fresh tap on the slice that's already focused clears the focus;
+                // dragging across slices just moves it.
+                let isNewGesture = lastHit == nil
+                lastHit = hit
+                withAnimation(.snappy) { selected = isNewGesture && selected == hit ? nil : hit }
+            })
             .chartBackground { proxy in
                 GeometryReader { geo in
                     if let frame = proxy.plotFrame {
@@ -264,16 +274,6 @@ private struct SectorDonutCard: View {
                 }
             }
             .frame(height: 230)
-            .onChange(of: selectedAngle) { _, angle in
-                guard let angle else { lastHit = nil; return }
-                let hit = sector(at: angle)
-                guard hit != lastHit else { return }
-                // A fresh tap on the slice that's already focused clears the focus;
-                // dragging across slices just moves it.
-                let isNewGesture = lastHit == nil
-                lastHit = hit
-                withAnimation(.snappy) { selected = isNewGesture && selected == hit ? nil : hit }
-            }
             .sensoryFeedback(.selection, trigger: selected)
 
             FlowLegend(slices: stats.bySector, selected: selected, currency: currency) { sector in

@@ -606,7 +606,8 @@ private struct BreakdownCard: View {
     let accountFilter: UUID?
     let onSelect: (String) -> Void
 
-    @State private var selectedAngle: Double?
+    /// Raw touch angles go here, not into view state: only a change of slice updates the card.
+    @State private var angleSink = SelectionSink<Double>()
     @State private var lastHit: String?
 
     /// Groups only when nothing is focused and the user asked for groups; inside a
@@ -647,14 +648,13 @@ private struct BreakdownCard: View {
                 .cornerRadius(3)
                 .foregroundStyle(display(slice.key).tint)
             }
-            .chartAngleSelection(value: $selectedAngle)
-            .onChange(of: selectedAngle) { _, angle in
+            .chartAngleSelection(value: angleSink.binding { angle in
                 // One selection per tap: the first slice touched in each gesture.
                 guard let angle else { lastHit = nil; return }
                 guard lastHit == nil, let hit = slice(at: angle, in: Array(slices.prefix(8))) else { return }
                 lastHit = hit.key
                 onSelect(key(for: hit))
-            }
+            })
             .frame(height: 170)
             .chartBackground { proxy in
                 GeometryReader { geo in
