@@ -173,15 +173,4 @@ extension View {
             }
         }
     }
-
-    /// The floating tab bar folds away while scrolling down (iOS 26), so lists get
-    /// the screen; scrolling up brings it back.
-    @ViewBuilder
-    func tabBarMinimizesOnScroll() -> some View {
-        if #available(iOS 26, *) {
-            tabBarMinimizeBehavior(.onScrollDown)
-        } else {
-            self
-        }
-    }
 }
