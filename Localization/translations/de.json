@@ -228,10 +228,6 @@
  "Delete": "Löschen",
  "Delete %@?": "%@ löschen?",
  "Delete account": "Konto löschen",
- "Delete account and %lld transactions": {
-  "one": "Konto und %lld Buchung löschen",
-  "other": "Konto und %lld Buchungen löschen"
- },
  "Delete budget": "Budget löschen",
  "Delete this transaction?": "Diese Buchung löschen?",
  "Deleted %@": "%@ gelöscht",
@@ -350,6 +346,10 @@
  "Investments": "Investitionen",
  "Item": "Artikel",
  "Items": "Artikel",
+ "Its %lld transactions will be deleted too.": {
+  "one": "Außerdem wird %lld Buchung gelöscht.",
+  "other": "Außerdem werden %lld Buchungen gelöscht."
+ },
  "Jewellery": "Schmuck",
  "Jewels, accessories": "Schmuck, Accessoires",
  "Kids": "Kinder",

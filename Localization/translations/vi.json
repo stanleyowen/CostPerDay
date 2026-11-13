@@ -211,9 +211,6 @@
  "Delete": "Xóa",
  "Delete %@?": "Xóa %@?",
  "Delete account": "Xóa tài khoản",
- "Delete account and %lld transactions": {
-  "other": "Xóa tài khoản và %lld giao dịch"
- },
  "Delete budget": "Xóa ngân sách",
  "Delete this transaction?": "Xóa giao dịch này?",
  "Deleted %@": "Đã xóa %@",
@@ -331,6 +328,9 @@
  "Investments": "Đầu tư",
  "Item": "Món đồ",
  "Items": "Món đồ",
+ "Its %lld transactions will be deleted too.": {
+  "other": "%lld giao dịch của tài khoản này cũng sẽ bị xóa."
+ },
  "Jewellery": "Trang sức",
  "Jewels, accessories": "Trang sức, phụ kiện",
  "Kids": "Con cái",

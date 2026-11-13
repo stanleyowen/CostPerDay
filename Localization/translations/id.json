@@ -211,9 +211,6 @@
  "Delete": "Hapus",
  "Delete %@?": "Hapus %@?",
  "Delete account": "Hapus akun",
- "Delete account and %lld transactions": {
-  "other": "Hapus akun dan %lld transaksi"
- },
  "Delete budget": "Hapus anggaran",
  "Delete this transaction?": "Hapus transaksi ini?",
  "Deleted %@": "%@ telah dihapus",
@@ -331,6 +328,9 @@
  "Investments": "Investasi",
  "Item": "Barang",
  "Items": "Barang",
+ "Its %lld transactions will be deleted too.": {
+  "other": "%lld transaksinya juga akan dihapus."
+ },
  "Jewellery": "Perhiasan",
  "Jewels, accessories": "Perhiasan, aksesori",
  "Kids": "Anak",

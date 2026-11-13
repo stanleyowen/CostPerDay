@@ -71,9 +71,9 @@
   "one": "Added %lld transaction.",
   "other": "Added %lld transactions."
  },
- "Delete account and %lld transactions": {
-  "one": "Delete account and %lld transaction",
-  "other": "Delete account and %lld transactions"
+ "Its %lld transactions will be deleted too.": {
+  "one": "Its %lld transaction will be deleted too.",
+  "other": "Its %lld transactions will be deleted too."
  },
  "Import %lld transactions": {
   "one": "Import %lld transaction",

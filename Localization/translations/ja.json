@@ -211,9 +211,6 @@
  "Delete": "削除",
  "Delete %@?": "%@ を削除しますか？",
  "Delete account": "口座を削除",
- "Delete account and %lld transactions": {
-  "other": "口座と %lld 件の取引を削除"
- },
  "Delete budget": "予算を削除",
  "Delete this transaction?": "この取引を削除しますか？",
  "Deleted %@": "%@ を削除しました",
@@ -331,6 +328,9 @@
  "Investments": "投資",
  "Item": "項目",
  "Items": "項目",
+ "Its %lld transactions will be deleted too.": {
+  "other": "この口座の %lld 件の取引も削除されます。"
+ },
  "Jewellery": "宝飾品",
  "Jewels, accessories": "宝飾品・アクセサリー",
  "Kids": "子ども",

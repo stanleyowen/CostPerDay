@@ -21,6 +21,8 @@ struct AccountDeletionTests {
         try context.save()
 
         #expect(LedgerActions.records(touching: doomed, in: context).count == 4)
+        // The alert's count: everything but the transfer from Bank, which is kept.
+        #expect(LedgerActions.recordsDeleted(with: doomed, in: context) == 3)
         LedgerActions.delete(doomed, in: context)
 
         let accounts = try context.fetch(FetchDescriptor<Account>())

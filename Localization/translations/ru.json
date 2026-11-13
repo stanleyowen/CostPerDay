@@ -262,12 +262,6 @@
  "Delete": "Удалить",
  "Delete %@?": "Удалить %@?",
  "Delete account": "Удалить счёт",
- "Delete account and %lld transactions": {
-  "few": "Удалить счёт и %lld операции",
-  "many": "Удалить счёт и %lld операций",
-  "one": "Удалить счёт и %lld операцию",
-  "other": "Удалить счёт и %lld операций"
- },
  "Delete budget": "Удалить бюджет",
  "Delete this transaction?": "Удалить эту операцию?",
  "Deleted %@": "Удалено: %@",
@@ -388,6 +382,12 @@
  "Investments": "Инвестиции",
  "Item": "Предмет",
  "Items": "Предметы",
+ "Its %lld transactions will be deleted too.": {
+  "one": "Также будет удалена %lld операция.",
+  "few": "Также будут удалены %lld операции.",
+  "many": "Также будут удалены %lld операций.",
+  "other": "Также будут удалены %lld операции."
+ },
  "Jewellery": "Украшения",
  "Jewels, accessories": "Украшения, аксессуары",
  "Kids": "Дети",

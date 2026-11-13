@@ -211,9 +211,6 @@
  "Delete": "刪除",
  "Delete %@?": "刪除 %@？",
  "Delete account": "刪除帳戶",
- "Delete account and %lld transactions": {
-  "other": "刪除帳戶及 %lld 筆交易"
- },
  "Delete budget": "刪除預算",
  "Delete this transaction?": "要刪除此交易嗎？",
  "Deleted %@": "已刪除 %@",
@@ -331,6 +328,9 @@
  "Investments": "投資",
  "Item": "物品",
  "Items": "物品",
+ "Its %lld transactions will be deleted too.": {
+  "other": "此帳戶的 %lld 筆交易也將被刪除。"
+ },
  "Jewellery": "首飾",
  "Jewels, accessories": "珠寶、飾品",
  "Kids": "兒童",

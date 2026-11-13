@@ -22,6 +22,8 @@ struct AccountEditView: View {
     @State private var choosingCurrency = false
     @State private var confirmingDelete = false
     @State private var recordCount = 0
+    /// Records the delete would remove (transfers with other accounts survive).
+    @State private var deletedCount = 0
     @State private var saveError: String?
     @FocusState private var nameFocused: Bool
 
@@ -148,11 +150,11 @@ struct AccountEditView: View {
             .sheet(isPresented: $choosingCurrency) {
                 CurrencyPickerView(selection: $draft.currencyCode)
             }
-            .confirmationDialog(Text("Delete \(draft.name)?"), isPresented: $confirmingDelete, titleVisibility: .visible) {
-                Button("Delete account and \(recordCount) transactions", role: .destructive, action: deleteAccount)
+            .alert(Text("Delete \(draft.name)?"), isPresented: $confirmingDelete) {
+                Button("Delete", role: .destructive, action: deleteAccount)
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("Transfers to and from other accounts are kept, marked as coming from outside Wallet. This can't be undone.")
+                Text(LedgerActions.deleteWarning(deleting: deletedCount))
             }
             .alert("Couldn't save", isPresented: Binding(get: { saveError != nil }, set: { if !$0 { saveError = nil } })) {
                 Button("OK", role: .cancel) {}
@@ -179,6 +181,7 @@ struct AccountEditView: View {
         let id = account.uuid
         let records = LedgerActions.records(touching: account, in: context)
         recordCount = records.count
+        deletedCount = LedgerActions.recordsDeleted(with: account, in: context)
         let balance = Ledger.balances(accounts: [AccountRef(account)], flows: records.map(\.flow))[id] ?? account.initialBalance
         recordedDelta = balance - account.initialBalance
         balanceText = balance
@@ -268,18 +271,17 @@ struct AccountsView: View {
         }
         .sheet(item: $editing) { AccountEditView(account: $0) }
         .sheet(isPresented: $adding) { AccountEditView(account: nil) }
-        .confirmationDialog(
+        .alert(
             Text("Delete \(deleting?.account.displayName ?? "")?"),
             isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
-            titleVisibility: .visible,
             presenting: deleting
         ) { target in
-            Button("Delete account and \(target.count) transactions", role: .destructive) {
+            Button("Delete", role: .destructive) {
                 withAnimation { LedgerActions.delete(target.account, in: context) }
             }
             Button("Cancel", role: .cancel) {}
-        } message: { _ in
-            Text("Transfers to and from other accounts are kept, marked as coming from outside Wallet. This can't be undone.")
+        } message: { target in
+            Text(LedgerActions.deleteWarning(deleting: target.count))
         }
     }
 
@@ -306,7 +308,7 @@ struct AccountsView: View {
             // Tinted rather than `role: .destructive`, which would start animating
             // the row away before the confirmation is answered.
             Button("Delete", systemImage: "trash") {
-                deleting = (account, LedgerActions.records(touching: account, in: context).count)
+                deleting = (account, LedgerActions.recordsDeleted(with: account, in: context))
             }
             .tint(.red)
             Button("Edit", systemImage: "pencil") { editing = account }.tint(.blue)

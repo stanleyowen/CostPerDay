@@ -26,6 +26,22 @@ enum LedgerActions {
         return (try? context.fetch(FetchDescriptor<Record>(predicate: #Predicate { $0.accountID == id || $0.toAccountID == id }))) ?? []
     }
 
+    /// How many records deleting `account` removes: its income and expenses, and
+    /// transfers whose other side is outside Wallet. Transfers with another tracked
+    /// account are kept, so they don't count.
+    static func recordsDeleted(with account: Account, in context: ModelContext) -> Int {
+        records(touching: account, in: context).filter { record in
+            record.kind != .transfer || record.accountID == nil || record.toAccountID == nil
+        }.count
+    }
+
+    /// The message for the delete-account alert.
+    static func deleteWarning(deleting count: Int) -> String {
+        let kept = String(localized: "Transfers to and from other accounts are kept, marked as coming from outside Wallet. This can't be undone.")
+        guard count > 0 else { return kept }
+        return String(localized: "Its \(count) transactions will be deleted too.", comment: "Delete-account alert; followed by a sentence about kept transfers") + " " + kept
+    }
+
     /// Deletes an account with its income and expenses. Transfers survive as
     /// transfers to or from outside Wallet, so the other account's balance holds.
     static func delete(_ account: Account, in context: ModelContext) {
