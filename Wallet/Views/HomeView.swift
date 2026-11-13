@@ -362,10 +362,41 @@ private struct NetWorthHero: View {
     var body: some View {
         let series = sparkline()
         VStack(alignment: .leading, spacing: 16) {
+            if series.count > 2 {
+                // Scrub the line to read the balance on any of the last 30 days.
+                TrendChart(series: series, showsAxis: false, plotHeight: 54, spacing: 16) { focused in
+                    header(focused: focused)
+                }
+            } else {
+                header(focused: nil)
+            }
+
+            HStack(spacing: 10) {
+                pill(symbol: "arrow.down.left", title: String(localized: "Income"), value: report.income, tint: .income)
+                pill(symbol: "arrow.up.right", title: String(localized: "Spent"), value: report.expense, tint: Brand.amber)
+            }
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(HeroBackground(showsCurve: false))
+        .clipShape(.rect(cornerRadius: 28, style: .continuous))
+        .environment(\.colorScheme, .dark)
+    }
+
+    /// "Total balance" and today's figure, or the scrubbed day and its balance.
+    private func header(focused: TrendPoint?) -> some View {
+        let value = focused?.value ?? ledger.netWorth
+        return VStack(alignment: .leading, spacing: 6) {
             HStack {
-                Text("Total balance")
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.white.opacity(0.7))
+                Group {
+                    if let focused {
+                        Text(focused.date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated)))
+                    } else {
+                        Text("Total balance")
+                    }
+                }
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(.white.opacity(0.7))
                 Spacer()
                 Button {
                     withAnimation(.snappy) { hideBalances.toggle() }
@@ -382,33 +413,16 @@ private struct NetWorthHero: View {
             }
             .padding(.bottom, -10)
 
-            Text(Money.exact(ledger.netWorth, code: currency))
+            Text(Money.exact(value, code: currency))
                 .font(.system(size: 42, weight: .bold, design: .rounded))
                 .monospacedDigit()
                 .foregroundStyle(.white)
-                .contentTransition(.numericText(value: ledger.netWorth))
+                // Roll the digits for real changes, but follow a scrub instantly.
+                .contentTransition(focused == nil ? .numericText(value: value) : .identity)
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
                 .sensitive()
-
-            if series.count > 2 {
-                TrendChart(series: series, showsAxis: false)
-                    .frame(height: 54)
-                    .allowsHitTesting(false)
-                    .accessibilityHidden(true)
-                    .sensitive()
-            }
-
-            HStack(spacing: 10) {
-                pill(symbol: "arrow.down.left", title: String(localized: "Income"), value: report.income, tint: .income)
-                pill(symbol: "arrow.up.right", title: String(localized: "Spent"), value: report.expense, tint: Brand.amber)
-            }
         }
-        .padding(20)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(HeroBackground(showsCurve: false))
-        .clipShape(.rect(cornerRadius: 28, style: .continuous))
-        .environment(\.colorScheme, .dark)
     }
 
     private func pill(symbol: String, title: String, value: Double, tint: Color) -> some View {

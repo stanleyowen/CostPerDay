@@ -900,26 +900,22 @@ private struct NetWorthTrendCard: View {
     let ledger: LedgerSnapshot
     let period: ReportPeriod
     let currency: String
-    @State private var selected: Date?
 
     var body: some View {
         let buckets = period.buckets().filter { $0.start <= Date.now }
         let series = Ledger.netWorthSeries(accounts: ledger.refs, flows: ledger.flows, rates: ledger.rates, buckets: buckets)
-        let chart = TrendChart(series: series, currency: currency, selection: $selected)
         if series.count > 1 {
-            VStack(alignment: .leading, spacing: 12) {
+            TrendChart(series: series, currency: currency, plotHeight: 170) { focused in
                 HStack(alignment: .top) {
                     CardHeader(title: String(localized: "Balance trend", comment: "Chart title"), subtitle: String(localized: "All accounts, at the end of each period", comment: "Chart subtitle"))
-                    if let focused = chart.focused {
+                    if let focused {
                         VStack(alignment: .trailing, spacing: 1) {
                             Text(Money.string(focused.value, code: currency)).font(.subheadline.weight(.bold).monospacedDigit())
                             Text(focused.date.formatted(.dateTime.day().month(.abbreviated).year())).font(.caption2).foregroundStyle(.secondary)
                         }
+                        .sensitive()
                     }
                 }
-                chart
-                    .frame(height: 170)
-                    .sensitive()
             }
             .card()
         }

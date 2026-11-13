@@ -323,7 +323,6 @@ struct AccountDetailView: View {
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
     @State private var editing = false
     @State private var composing = false
-    @State private var selectedDate: Date?
 
     init(account: Account) {
         self.account = account
@@ -428,17 +427,12 @@ struct AccountDetailView: View {
     }
 
     private func balanceChart(_ series: [(date: Date, value: Double)]) -> some View {
-        let chart = TrendChart(series: series, tint: account.tint.color, lineStyle: AnyShapeStyle(account.tint.color),
-                               currency: account.currencyCode, selection: $selectedDate)
-        return VStack(alignment: .leading, spacing: 4) {
-            Text(chart.focused.map { "\($0.date.formatted(.dateTime.day().month())) · \(Money.exact($0.value, code: account.currencyCode))" } ?? String(localized: "Last 90 days", comment: "Chart caption"))
+        TrendChart(series: series, tint: account.tint.color, lineColors: [account.tint.color],
+                   currency: account.currencyCode, plotHeight: 130, spacing: 4) { focused in
+            Text(focused.map { "\($0.date.formatted(.dateTime.day().month())) · \(Money.exact($0.value, code: account.currencyCode))" } ?? String(localized: "Last 90 days", comment: "Chart caption"))
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.secondary)
-                .contentTransition(.opacity)
-            chart
-                .frame(height: 130)
                 .sensitive()
         }
     }
-
 }
