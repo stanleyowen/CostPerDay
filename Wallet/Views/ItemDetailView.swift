@@ -294,13 +294,7 @@ private struct CostCurveCard: View {
     let tint: Color
     let currency: String
 
-    @State private var selectedDay: Int?
-
-    private struct Point: Identifiable {
-        let day: Int
-        let cost: Double
-        var id: Int { day }
-    }
+    @State private var scrub = ScrubState<Int>()
 
     /// Show a bit past whichever comes later — today or the planned end of life — so
     /// the moment the curve crosses the planned line is always in view.
@@ -308,17 +302,7 @@ private struct CostCurveCard: View {
 
     /// Begin where the curve enters the visible range, so it sweeps in from the top
     /// instead of sitting flat against a capped axis or leaving the left side empty.
-    private var start: Int { min(max(1, Int((item.netCost / yMax).rounded(.up))), horizon - 1) }
-
-    private var points: [Point] {
-        let samples = 90
-        let start = self.start
-        let span = Double(horizon - start)
-        return (0...samples).map { i in
-            let day = start + Int((span * Double(i) / Double(samples)).rounded())
-            return Point(day: day, cost: cost(onDay: day))
-        }
-    }
+    private func start(yMax: Double) -> Int { min(max(1, Int((item.netCost / yMax).rounded(.up))), horizon - 1) }
 
     private func cost(onDay day: Int) -> Double { item.netCost / Double(max(1, day)) }
 
@@ -327,13 +311,23 @@ private struct CostCurveCard: View {
     private var yMax: Double { max(item.plannedCostPerDay * 4, cost(onDay: max(daysOwned, 30)) * 1.5, 0.01) }
 
     var body: some View {
+        let yMax = self.yMax
+        let horizon = self.horizon
+        let start = start(yMax: yMax)
+        let samples = 90
+        let span = Double(horizon - start)
+        let points = (0...samples).map { i in
+            let day = start + Int((span * Double(i) / Double(samples)).rounded())
+            return CostCurvePlot.Point(day: day, cost: cost(onDay: day))
+        }
+
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top) {
                 CardHeader(
                     title: String(localized: "Cost per day over time", comment: "Chart title"),
                     subtitle: String(localized: "Drag across the chart to see the cost on any day.", comment: "Chart hint")
                 )
-                if let selectedDay {
+                if let selectedDay = scrub.value {
                     VStack(alignment: .trailing, spacing: 1) {
                         Text(Money.perDay(cost(onDay: selectedDay), code: currency))
                             .font(.system(.headline, design: .rounded).monospacedDigit())
@@ -345,75 +339,139 @@ private struct CostCurveCard: View {
                 }
             }
 
-            Chart {
-                ForEach(points) { point in
-                    AreaMark(x: .value("Owned for", point.day), y: .value("Cost per day", min(point.cost, yMax)))
-                        .foregroundStyle(LinearGradient(colors: [tint.opacity(0.25), tint.opacity(0.02)], startPoint: .top, endPoint: .bottom))
-                        .interpolationMethod(.monotone)
-                    LineMark(x: .value("Owned for", point.day), y: .value("Cost per day", min(point.cost, yMax)))
-                        .foregroundStyle(tint)
-                        .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
-                        .interpolationMethod(.monotone)
-                }
-
-                RuleMark(y: .value("Planned", item.plannedCostPerDay))
-                    .foregroundStyle(Color.secondary)
-                    .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
-                    .annotation(position: .top, alignment: .trailing) {
-                        Text(CostMode.planned.label)
-                            .font(.caption2.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                    }
-
-                RuleMark(x: .value("Owned for", item.plannedDays))
-                    .foregroundStyle(Brand.paidOff.opacity(0.5))
-                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 3]))
-
-                PointMark(x: .value("Owned for", daysOwned), y: .value("Cost per day", min(cost(onDay: daysOwned), yMax)))
-                    .symbolSize(140)
-                    .foregroundStyle(item.isRetired ? Color.secondary : tint)
-                    .annotation(position: .top, spacing: 6) {
-                        Text("Today")
-                            .font(.caption2.weight(.bold))
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(.regularMaterial, in: .capsule)
-                    }
-
-                if let selectedDay {
-                    RuleMark(x: .value("Owned for", selectedDay))
-                        .foregroundStyle(.primary.opacity(0.35))
-                    PointMark(x: .value("Owned for", selectedDay), y: .value("Cost per day", min(cost(onDay: selectedDay), yMax)))
-                        .symbolSize(80)
-                        .foregroundStyle(.primary)
-                }
-            }
-            .chartYScale(domain: 0...yMax)
-            .chartXScale(domain: start...horizon)
-            .chartXSelection(value: $selectedDay)
-            .chartYAxis {
-                AxisMarks(position: .leading, values: .automatic(desiredCount: 4)) { value in
-                    AxisGridLine().foregroundStyle(.quaternary)
-                    AxisValueLabel {
-                        if let amount = value.as(Double.self) {
-                            Text(Money.string(amount, code: currency)).font(.caption2)
-                        }
-                    }
-                }
-            }
-            .chartXAxis {
-                AxisMarks(values: .automatic(desiredCount: 4)) { value in
-                    AxisValueLabel {
-                        if let day = value.as(Int.self) {
-                            Text(Duration.fromDays(max(day, 1))).font(.caption2)
-                        }
-                    }
-                }
-            }
+            CostCurvePlot(
+                points: points, netCost: item.netCost, yMax: yMax, start: start, horizon: horizon,
+                plannedCostPerDay: item.plannedCostPerDay, plannedDays: item.plannedDays, daysOwned: daysOwned,
+                isRetired: item.isRetired, tint: tint, currency: currency, scrub: scrub
+            )
+            .equatable()
             .frame(height: 200)
-            .sensoryFeedback(.selection, trigger: selectedDay.map { $0 / 30 })
-            .animation(.snappy(duration: 0.2), value: selectedDay)
+            .sensoryFeedback(.selection, trigger: scrub.value.map { $0 / 30 })
         }
         .card()
+    }
+}
+
+/// The cost curve's marks. Equatable on everything they draw, so scrubbing (which
+/// only changes the `ScrubState` held by reference) never re-evaluates them; the
+/// readout above and the indicator layer are what update.
+private struct CostCurvePlot: View, Equatable {
+    struct Point: Identifiable, Equatable {
+        let day: Int
+        let cost: Double
+        var id: Int { day }
+    }
+
+    let points: [Point]
+    let netCost: Double
+    let yMax: Double
+    let start: Int
+    let horizon: Int
+    let plannedCostPerDay: Double
+    let plannedDays: Int
+    let daysOwned: Int
+    let isRetired: Bool
+    let tint: Color
+    let currency: String
+    let scrub: ScrubState<Int>
+
+    nonisolated static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.points == rhs.points && lhs.netCost == rhs.netCost && lhs.yMax == rhs.yMax && lhs.start == rhs.start
+            && lhs.horizon == rhs.horizon && lhs.plannedCostPerDay == rhs.plannedCostPerDay && lhs.plannedDays == rhs.plannedDays
+            && lhs.daysOwned == rhs.daysOwned && lhs.isRetired == rhs.isRetired && lhs.tint == rhs.tint
+            && lhs.currency == rhs.currency && lhs.scrub === rhs.scrub
+    }
+
+    private func cost(onDay day: Int) -> Double { netCost / Double(max(1, day)) }
+
+    var body: some View {
+        let start = self.start, horizon = self.horizon
+        Chart {
+            ForEach(points) { point in
+                AreaMark(x: .value("Owned for", point.day), y: .value("Cost per day", min(point.cost, yMax)))
+                    .foregroundStyle(LinearGradient(colors: [tint.opacity(0.25), tint.opacity(0.02)], startPoint: .top, endPoint: .bottom))
+                    .interpolationMethod(.monotone)
+                LineMark(x: .value("Owned for", point.day), y: .value("Cost per day", min(point.cost, yMax)))
+                    .foregroundStyle(tint)
+                    .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
+                    .interpolationMethod(.monotone)
+            }
+
+            RuleMark(y: .value("Planned", plannedCostPerDay))
+                .foregroundStyle(Color.secondary)
+                .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
+                .annotation(position: .top, alignment: .trailing) {
+                    Text(CostMode.planned.label)
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+
+            RuleMark(x: .value("Owned for", plannedDays))
+                .foregroundStyle(Brand.paidOff.opacity(0.5))
+                .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 3]))
+
+            PointMark(x: .value("Owned for", daysOwned), y: .value("Cost per day", min(cost(onDay: daysOwned), yMax)))
+                .symbolSize(140)
+                .foregroundStyle(isRetired ? Color.secondary : tint)
+                .annotation(position: .top, spacing: 6) {
+                    Text("Today")
+                        .font(.caption2.weight(.bold))
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(.regularMaterial, in: .capsule)
+                }
+        }
+        .chartYScale(domain: 0...yMax)
+        .chartXScale(domain: start...horizon)
+        .chartXSelection(value: scrub.binding { (day: Int) in min(max(day, start), horizon) })
+        .chartYAxis {
+            AxisMarks(position: .leading, values: .automatic(desiredCount: 4)) { value in
+                AxisGridLine().foregroundStyle(.quaternary)
+                AxisValueLabel {
+                    if let amount = value.as(Double.self) {
+                        Text(Money.string(amount, code: currency)).font(.caption2)
+                    }
+                }
+            }
+        }
+        .chartXAxis {
+            AxisMarks(values: .automatic(desiredCount: 4)) { value in
+                AxisValueLabel {
+                    if let day = value.as(Int.self) {
+                        Text(Duration.fromDays(max(day, 1))).font(.caption2)
+                    }
+                }
+            }
+        }
+        .chartOverlay { proxy in
+            CostCurveIndicator(proxy: proxy, scrub: scrub, netCost: netCost, yMax: yMax)
+        }
+    }
+}
+
+/// The rule and dot under the finger — the only part of the chart a scrub redraws.
+private struct CostCurveIndicator: View {
+    let proxy: ChartProxy
+    let scrub: ScrubState<Int>
+    let netCost: Double
+    let yMax: Double
+
+    var body: some View {
+        GeometryReader { geo in
+            if let day = scrub.value, let frame = proxy.plotFrame,
+               let x = proxy.position(forX: day),
+               let y = proxy.position(forY: min(netCost / Double(max(1, day)), yMax)) {
+                let plot = geo[frame]
+                Rectangle()
+                    .fill(.primary.opacity(0.35))
+                    .frame(width: 1, height: plot.height)
+                    .position(x: plot.minX + x, y: plot.midY)
+                Circle()
+                    .fill(.primary)
+                    .frame(width: 10, height: 10)
+                    .position(x: plot.minX + x, y: plot.minY + y)
+            }
+        }
+        .allowsHitTesting(false)
     }
 }
