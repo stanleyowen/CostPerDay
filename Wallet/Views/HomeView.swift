@@ -536,75 +536,90 @@ struct SpendingDonutCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             CardHeader(title: title, subtitle: report.period.title)
-            HStack(spacing: 16) {
-                Chart(slices) { slice in
-                    let group = RecordGroup(rawValue: slice.key) ?? .other
-                    SectorMark(
-                        angle: .value("Spent", slice.total),
-                        innerRadius: .ratio(0.62),
-                        outerRadius: .ratio(selected == slice.key ? 1 : 0.9),
-                        angularInset: 1.5
-                    )
-                    .cornerRadius(4)
-                    .foregroundStyle(group.tint)
-                    .opacity(selected == nil || selected == slice.key ? 1 : 0.35)
-                }
-                .chartAngleSelection(value: angleSink.binding { angle in
-                    guard let angle else { lastHit = nil; return }
-                    let hit = slice(at: angle)
-                    guard hit != lastHit else { return }
-                    let isNewGesture = lastHit == nil
-                    lastHit = hit
-                    withAnimation(.snappy) { selected = isNewGesture && selected == hit ? nil : hit }
-                })
-                .chartBackground { proxy in
-                    GeometryReader { geo in
-                        if let frame = proxy.plotFrame {
-                            let rect = geo[frame]
-                            VStack(spacing: 0) {
-                                if let selected, let slice = slices.first(where: { $0.key == selected }) {
-                                    Image(systemName: (RecordGroup(rawValue: selected) ?? .other).symbol)
-                                        .font(.caption)
-                                        .foregroundStyle((RecordGroup(rawValue: selected) ?? .other).tint)
-                                    Text((slice.total / max(report.expense, 1)).formatted(.percent.precision(.fractionLength(0))))
-                                        .font(.system(.headline, design: .rounded).weight(.bold))
-                                } else {
-                                    Text("Spent").font(.caption2).foregroundStyle(.secondary)
-                                    Text(Money.compact(report.expense, code: currency))
-                                        .font(.system(.subheadline, design: .rounded).weight(.bold).monospacedDigit())
-                                        .minimumScaleFactor(0.6)
-                                        .lineLimit(1)
-                                }
-                            }
-                            .frame(width: rect.width * 0.55)
-                            .position(x: rect.midX, y: rect.midY)
-                        }
-                    }
-                }
-                .frame(width: 140, height: 140)
-                .sensoryFeedback(.selection, trigger: selected)
-
-                VStack(alignment: .leading, spacing: 7) {
-                    ForEach(slices.prefix(5)) { slice in
-                        let group = RecordGroup(rawValue: slice.key) ?? .other
-                        Button {
-                            withAnimation(.snappy) { selected = selected == slice.key ? nil : slice.key }
-                        } label: {
-                            HStack(spacing: 6) {
-                                Circle().fill(group.tint).frame(width: 8, height: 8)
+            Chart(slices) { slice in
+                let group = RecordGroup(rawValue: slice.key) ?? .other
+                SectorMark(
+                    angle: .value("Spent", slice.total),
+                    innerRadius: .ratio(0.62),
+                    outerRadius: .ratio(selected == slice.key ? 1 : 0.9),
+                    angularInset: 1.5
+                )
+                .cornerRadius(4)
+                .foregroundStyle(group.tint)
+                .opacity(selected == nil || selected == slice.key ? 1 : 0.35)
+            }
+            .chartAngleSelection(value: angleSink.binding { angle in
+                guard let angle else { lastHit = nil; return }
+                let hit = slice(at: angle)
+                guard hit != lastHit else { return }
+                let isNewGesture = lastHit == nil
+                lastHit = hit
+                withAnimation(.snappy) { selected = isNewGesture && selected == hit ? nil : hit }
+            })
+            .chartBackground { proxy in
+                GeometryReader { geo in
+                    if let frame = proxy.plotFrame {
+                        let rect = geo[frame]
+                        VStack(spacing: 0) {
+                            if let selected, let slice = slices.first(where: { $0.key == selected }) {
+                                let group = RecordGroup(rawValue: selected) ?? .other
+                                Image(systemName: group.symbol)
+                                    .font(.subheadline)
+                                    .foregroundStyle(group.tint)
                                 Text(group.label)
-                                    .font(.caption.weight(.medium))
-                                    .lineLimit(1)
-                                    .foregroundStyle(selected == nil || selected == slice.key ? .primary : .secondary)
-                                Spacer(minLength: 4)
-                                Text(Money.compact(slice.total, code: currency))
-                                    .font(.caption.monospacedDigit())
+                                    .font(.caption)
                                     .foregroundStyle(.secondary)
+                                    .lineLimit(1)
+                                Text(Money.compact(slice.total, code: currency))
+                                    .font(.system(.title3, design: .rounded).weight(.bold).monospacedDigit())
+                                    .minimumScaleFactor(0.6)
+                                    .lineLimit(1)
+                            } else {
+                                Text("Spent").font(.caption).foregroundStyle(.secondary)
+                                Text(Money.compact(report.expense, code: currency))
+                                    .font(.system(.title2, design: .rounded).weight(.bold).monospacedDigit())
+                                    .minimumScaleFactor(0.6)
+                                    .lineLimit(1)
                             }
-                            .contentShape(.rect)
                         }
-                        .buttonStyle(.plain)
+                        .frame(width: rect.width * 0.55)
+                        .position(x: rect.midX, y: rect.midY)
                     }
+                }
+            }
+            .frame(width: 220, height: 220)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 4)
+            .sensoryFeedback(.selection, trigger: selected)
+
+            VStack(spacing: 2) {
+                ForEach(slices) { slice in
+                    let group = RecordGroup(rawValue: slice.key) ?? .other
+                    let isSelected = selected == slice.key
+                    Button {
+                        withAnimation(.snappy) { selected = isSelected ? nil : slice.key }
+                    } label: {
+                        HStack(spacing: 10) {
+                            Circle().fill(group.tint).frame(width: 10, height: 10)
+                            Text(group.label)
+                                .font(.subheadline.weight(isSelected ? .semibold : .regular))
+                                .lineLimit(1)
+                            Spacer(minLength: 8)
+                            Text((slice.total / max(report.expense, 0.01)).formatted(.percent.precision(.fractionLength(0))))
+                                .font(.caption.weight(.semibold).monospacedDigit())
+                                .foregroundStyle(.secondary)
+                            Text(Money.compact(slice.total, code: currency))
+                                .font(.subheadline.weight(.semibold).monospacedDigit())
+                                .frame(minWidth: 72, alignment: .trailing)
+                        }
+                        .foregroundStyle(selected == nil || isSelected ? .primary : .secondary)
+                        .padding(.vertical, 7)
+                        .padding(.horizontal, 8)
+                        .background(isSelected ? group.tint.opacity(0.12) : .clear, in: .rect(cornerRadius: 10, style: .continuous))
+                        .contentShape(.rect)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(isSelected ? .isSelected : [])
                 }
             }
             if let selected {
