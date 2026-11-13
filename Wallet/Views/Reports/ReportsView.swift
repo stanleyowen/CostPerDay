@@ -8,6 +8,25 @@ import Charts
 struct ReportsView: View {
     @Query(sort: \Record.date, order: .reverse) private var records: [Record]
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
+    @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
+
+    /// The ledger snapshot is the expensive part (reading every record out of
+    /// SwiftData), and it doesn't depend on the filter or period. Building it here,
+    /// above the view that owns that state, means a tap on a chart only reruns the
+    /// cheap report maths — the snapshot is rebuilt only when the data changes.
+    var body: some View {
+        ReportsContent(
+            records: records,
+            accounts: accounts,
+            ledger: LedgerSnapshot(accounts: accounts, records: records, baseCurrency: baseCurrency)
+        )
+    }
+}
+
+private struct ReportsContent: View {
+    let records: [Record]
+    let accounts: [Account]
+    let ledger: LedgerSnapshot
     @Environment(AppRouter.self) private var router
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
     @AppStorage("reportRange") private var rangeRaw = ReportRange.month.rawValue
@@ -30,7 +49,6 @@ struct ReportsView: View {
     private var range: ReportRange { ReportRange(rawValue: rangeRaw) ?? .month }
 
     var body: some View {
-        let ledger = LedgerSnapshot(accounts: accounts, records: records, baseCurrency: baseCurrency)
         let earliest = ledger.flows.last?.date
         let period = ReportPeriod.containing(anchor, range: range, earliest: earliest)
         let report = Report.build(flows: ledger.flows, period: period, excludedAccounts: ledger.excludedFromStats, accountFilter: accountFilter, focus: focus)
