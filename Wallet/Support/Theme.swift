@@ -1,8 +1,9 @@
 import SwiftUI
 
-/// The visual identity, in one place. Wallet's mark is a wallet in a warm
-/// ember-to-amber gradient on deep ink; the falling "price ÷ days" curve from the
-/// ownership tracker lives on in the hero cards and onboarding.
+/// The visual identity, in one place. Wallet's mark is a classic leather wallet
+/// (`BrandMark`); the interface accent is a warm ember-to-amber gradient on deep
+/// ink, and the falling "price ÷ days" curve from the ownership tracker lives on in
+/// the hero cards and onboarding.
 enum Brand {
     static let ember = Color(red: 1.000, green: 0.373, blue: 0.227) // #FF5F3A
     static let amber = Color(red: 1.000, green: 0.698, blue: 0.247) // #FFB23F
@@ -46,77 +47,115 @@ struct BrandCurve: Shape {
     }
 }
 
-/// The app's mark: two cards rising out of an ember→amber wallet, closed by an ink
-/// clasp holding a white "today" dot. Geometry matches `Design/make_icon.py`, so the
-/// mark reads the same in the app and on the home screen.
+/// The app's mark: a classic brown leather bifold with saddle stitching and a snap
+/// strap, three cards (coral, gold, white) fanned out of the top, on warm cream.
+/// Geometry and colours match `Design/make_icon.py`, so the mark reads the same in
+/// the app and on the home screen.
 struct BrandMark: View {
     var size: CGFloat = 64
     /// 0…1, for drawing the mark in on first appearance: the cards slide up into
-    /// place, then the dot pops onto the clasp.
+    /// place, then the snap pops onto the strap.
     var drawProgress: CGFloat = 1
 
-    /// Shared with the icon script — all in unit coordinates.
+    /// Shared with the icon script — all in unit coordinates, angles clockwise.
     enum Geometry {
-        static let backCard = CGRect(x: 0.25, y: 0.19, width: 0.44, height: 0.28)
-        static let backAngle: Double = -10
-        static let frontCard = CGRect(x: 0.31, y: 0.24, width: 0.44, height: 0.28)
-        static let frontAngle: Double = 7
-        static let cardRadius: CGFloat = 0.045
+        /// Back to front.
+        static let cards: [(rect: CGRect, angle: Double)] = [
+            (CGRect(x: 0.23, y: 0.17, width: 0.44, height: 0.28), -14),
+            (CGRect(x: 0.29, y: 0.19, width: 0.44, height: 0.28), -2),
+            (CGRect(x: 0.34, y: 0.23, width: 0.44, height: 0.28), 9),
+        ]
+        static let cardRadius: CGFloat = 0.035
         /// The magnetic stripe, as a fraction of the card's height.
-        static let stripe: ClosedRange<CGFloat> = 0.232...0.375
-        static let body = CGRect(x: 0.17, y: 0.41, width: 0.66, height: 0.40)
-        static let bodyRadius: CGFloat = 0.11
-        static let seamY: CGFloat = 0.47
-        static let clasp = CGRect(x: 0.58, y: 0.535, width: 0.31, height: 0.16)
-        static let dot = CGPoint(x: 0.735, y: 0.615)
-        static let dotRadius: CGFloat = 0.045
+        static let stripe: ClosedRange<CGFloat> = 0.22...0.38
+        static let body = CGRect(x: 0.16, y: 0.38, width: 0.68, height: 0.42)
+        static let bodyRadius: CGFloat = 0.09
+        /// The body's stitching; its right edge is left out because the strap covers it.
+        static let bodyStitch = CGRect(x: 0.19, y: 0.41, width: 0.62, height: 0.36)
+        static let bodyStitchRadius: CGFloat = 0.07
+        static let strap = CGRect(x: 0.60, y: 0.50, width: 0.30, height: 0.18)
+        static let strapStitch = CGRect(x: 0.625, y: 0.522, width: 0.25, height: 0.136)
+        static let strapStitchRadius: CGFloat = 0.065
+        static let snap = CGPoint(x: 0.755, y: 0.59)
+        static let snapRadius: CGFloat = 0.042
+        static let snapFace = CGPoint(x: 0.755, y: 0.585)
+        static let snapFaceRadius: CGFloat = 0.03
+        static let backgroundCenter = UnitPoint(x: 0.5, y: 0.35)
+        static let backgroundRadius: CGFloat = 0.9
         static let cornerRadius: CGFloat = 0.2237
     }
 
-    private static let backCardColor = Color(red: 0.486, green: 0.424, blue: 0.690)
+    private enum Palette {
+        static let background = [rgb(255, 244, 226), rgb(246, 222, 186)]
+        /// Fill and stripe, back to front.
+        static let cards = [(rgb(255, 120, 92), rgb(210, 80, 60)),
+                            (rgb(255, 206, 84), rgb(220, 160, 40)),
+                            (rgb(250, 250, 252), rgb(40, 168, 160))]
+        static let body = [rgb(178, 110, 62), rgb(130, 74, 38)]
+        static let bodyShadow = rgb(90, 50, 20)
+        static let stitch = rgb(236, 196, 150)
+        static let strap = [rgb(150, 88, 46), rgb(112, 62, 30)]
+        static let strapShadow = rgb(60, 30, 10)
+        static let strapStitch = rgb(226, 184, 138)
+        static let snapRim = rgb(210, 170, 90)
+        static let snapFace = rgb(244, 214, 140)
+
+        static func rgb(_ r: Double, _ g: Double, _ b: Double) -> Color {
+            Color(red: r / 255, green: g / 255, blue: b / 255)
+        }
+    }
 
     var body: some View {
         let g = Geometry.self
         let rise = min(1, drawProgress / 0.75)
-        // Cards start tucked down inside the wallet and rise as the mark draws in.
+        // Cards start tucked down inside the wallet and rise as the mark draws in,
+        // the back ones a little later than the front.
         let drop = (1 - rise) * 0.2 * size
+        let snapIn = drawProgress >= 1
 
         ZStack(alignment: .topLeading) {
             RoundedRectangle(cornerRadius: size * g.cornerRadius, style: .continuous)
-                .fill(Brand.night)
+                .fill(RadialGradient(colors: Palette.background, center: g.backgroundCenter,
+                                     startRadius: 0, endRadius: g.backgroundRadius * size))
 
-            card(g.backCard, angle: g.backAngle, fill: Self.backCardColor, stripe: Self.backCardColor.mix(with: .black, by: 0.25))
-                .offset(y: drop * 1.2)
-            card(g.frontCard, angle: g.frontAngle, fill: Color(white: 0.98), stripe: Brand.ember.mix(with: .white, by: 0.1))
-                .offset(y: drop)
-
-            RoundedRectangle(cornerRadius: size * g.bodyRadius, style: .continuous)
-                .fill(Brand.ember.opacity(0.5))
-                .frame(width: g.body.width * size, height: g.body.height * size)
-                .blur(radius: size * 0.05)
-                .offset(x: g.body.minX * size, y: (g.body.minY + 0.02) * size)
+            ForEach(g.cards.indices, id: \.self) { i in
+                card(g.cards[i].rect, angle: g.cards[i].angle, fill: Palette.cards[i].0, stripe: Palette.cards[i].1)
+                    .offset(y: drop * (1 + 0.15 * CGFloat(g.cards.count - 1 - i)))
+            }
 
             RoundedRectangle(cornerRadius: size * g.bodyRadius, style: .continuous)
-                .fill(LinearGradient(colors: [Brand.amber, Brand.ember], startPoint: .top, endPoint: .bottom))
+                .fill(LinearGradient(colors: Palette.body, startPoint: .top, endPoint: .bottom))
                 .frame(width: g.body.width * size, height: g.body.height * size)
+                .shadow(color: Palette.bodyShadow.opacity(0.35), radius: size * 0.035, y: size * 0.025)
                 .offset(x: g.body.minX * size, y: g.body.minY * size)
 
-            Capsule()
-                .fill(Brand.amber.mix(with: .white, by: 0.45))
-                .frame(width: (g.body.width - g.bodyRadius * 1.4) * size, height: 0.012 * size)
-                .offset(x: (g.body.minX + g.bodyRadius * 0.7) * size, y: (g.seamY - 0.006) * size)
+            Stitches(rect: g.bodyStitch, radius: g.bodyStitchRadius, dash: 0.028, gap: 0.02, skipRight: true)
+                .stroke(Palette.stitch, lineWidth: 0.008 * size)
+                .frame(width: size, height: size)
 
             Capsule()
-                .fill(Brand.ink)
-                .frame(width: g.clasp.width * size, height: g.clasp.height * size)
-                .offset(x: g.clasp.minX * size, y: g.clasp.minY * size)
+                .fill(LinearGradient(colors: Palette.strap, startPoint: .top, endPoint: .bottom))
+                .frame(width: g.strap.width * size, height: g.strap.height * size)
+                .shadow(color: Palette.strapShadow.opacity(0.35), radius: size * 0.012, y: size * 0.01)
+                .offset(x: g.strap.minX * size, y: g.strap.minY * size)
 
-            Circle()
-                .fill(.white)
-                .frame(width: g.dotRadius * 2 * size, height: g.dotRadius * 2 * size)
-                .position(x: g.dot.x * size, y: g.dot.y * size)
-                .scaleEffect(drawProgress >= 1 ? 1 : 0.01, anchor: UnitPoint(x: g.dot.x, y: g.dot.y))
-                .animation(.spring(duration: 0.4, bounce: 0.5), value: drawProgress >= 1)
+            Stitches(rect: g.strapStitch, radius: g.strapStitchRadius, dash: 0.02, gap: 0.016)
+                .stroke(Palette.strapStitch, lineWidth: 0.006 * size)
+                .frame(width: size, height: size)
+
+            ZStack(alignment: .topLeading) {
+                Circle()
+                    .fill(Palette.snapRim)
+                    .frame(width: g.snapRadius * 2 * size, height: g.snapRadius * 2 * size)
+                    .position(x: g.snap.x * size, y: g.snap.y * size)
+                Circle()
+                    .fill(Palette.snapFace)
+                    .frame(width: g.snapFaceRadius * 2 * size, height: g.snapFaceRadius * 2 * size)
+                    .position(x: g.snapFace.x * size, y: g.snapFace.y * size)
+            }
+            .frame(width: size, height: size)
+            .scaleEffect(snapIn ? 1 : 0.01, anchor: UnitPoint(x: g.snap.x, y: g.snap.y))
+            .animation(.spring(duration: 0.4, bounce: 0.5), value: snapIn)
         }
         .frame(width: size, height: size)
         .clipShape(.rect(cornerRadius: size * g.cornerRadius, style: .continuous))
@@ -135,9 +174,52 @@ struct BrandMark: View {
             }
             .clipShape(.rect(cornerRadius: g.cardRadius * size, style: .continuous))
             .frame(width: rect.width * size, height: rect.height * size)
-            .shadow(color: .black.opacity(0.3), radius: size * 0.012, y: size * 0.01)
+            .shadow(color: .black.opacity(0.3), radius: size * 0.012, y: size * 0.008)
             .rotationEffect(.degrees(angle))
             .offset(x: rect.minX * size, y: rect.minY * size)
+    }
+
+    /// Saddle stitching: dashes along a rounded rect's straight edges, in unit
+    /// coordinates of the shape's frame. Each edge holds a whole number of dash+gap
+    /// steps, stretched to fit, with half a gap at each end — the same layout as
+    /// `stitch_dashes` in the icon script.
+    private struct Stitches: Shape {
+        var rect: CGRect
+        var radius: CGFloat
+        var dash: CGFloat
+        var gap: CGFloat
+        var skipRight = false
+
+        func path(in frame: CGRect) -> Path {
+            let r = rect, k = radius
+            var edges: [(CGPoint, CGPoint)] = [
+                (CGPoint(x: r.minX + k, y: r.minY), CGPoint(x: r.maxX - k, y: r.minY)),
+                (CGPoint(x: r.maxX - k, y: r.maxY), CGPoint(x: r.minX + k, y: r.maxY)),
+                (CGPoint(x: r.minX, y: r.maxY - k), CGPoint(x: r.minX, y: r.minY + k)),
+            ]
+            if !skipRight {
+                edges.append((CGPoint(x: r.maxX, y: r.minY + k), CGPoint(x: r.maxX, y: r.maxY - k)))
+            }
+            var path = Path()
+            for (a, b) in edges {
+                let length = hypot(b.x - a.x, b.y - a.y)
+                let n = Int(length / (dash + gap))
+                guard n > 0 else { continue }
+                let step = length / CGFloat(n)
+                for i in 0..<n {
+                    let t0 = (CGFloat(i) * step + gap / 2) / length
+                    let t1 = (CGFloat(i) * step + gap / 2 + dash) / length
+                    path.move(to: point(a, b, t0, in: frame))
+                    path.addLine(to: point(a, b, t1, in: frame))
+                }
+            }
+            return path
+        }
+
+        private func point(_ a: CGPoint, _ b: CGPoint, _ t: CGFloat, in frame: CGRect) -> CGPoint {
+            CGPoint(x: frame.minX + (a.x + (b.x - a.x) * t) * frame.width,
+                    y: frame.minY + (a.y + (b.y - a.y) * t) * frame.height)
+        }
     }
 }
 
