@@ -115,8 +115,9 @@ Run the **Wallet** scheme. Debug builds accept a few launch arguments:
 | `-importWalletCSV <path>` | Imports a BudgetBakers CSV export on launch |
 | `-skipOnboarding`, `-initialTab <tab>`, `-openComposer`, `-scrollAnchor center\|bottom` | For scripted simulator screenshots |
 
-> The bundle identifier is still `com.stanley.Dayrate`, so existing installs of
-> the app's earlier versions (Dayrate, Tally) upgrade in place and keep their data.
+> The bundle identifier is `com.stanley.wallet`. Builds of the earlier versions
+> (Dayrate, Tally) used `com.stanley.Dayrate` and install as a separate app; move
+> data across with a backup export and restore.
 
 ## How it's built
 

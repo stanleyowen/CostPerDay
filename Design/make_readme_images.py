@@ -2,7 +2,7 @@
 
 Screenshots are taken from a simulator seeded with `-seedSampleData` (never real
 data), e.g.:
-    xcrun simctl launch <sim> com.stanley.Dayrate -seedSampleData -skipOnboarding -initialTab reports
+    xcrun simctl launch <sim> com.stanley.wallet -seedSampleData -skipOnboarding -initialTab reports
     xcrun simctl io <sim> screenshot shots/reports.png
 
 Usage: python3 Design/make_readme_images.py <shots_dir> Design/screenshots

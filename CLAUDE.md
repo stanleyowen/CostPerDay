@@ -40,7 +40,7 @@ The Xcode project uses file-system-synchronized groups, so new Swift files under
 ## Architecture
 
 **Persistence & data-safety invariants** — these exist to protect users' on-disk data; don't "clean them up":
-- The bundle ID is still `com.stanley.Dayrate` (and the test bundle `com.stanley.WalletTests`). Changing it installs a separate app with an empty store; existing Dayrate/Tally installs upgrade in place only because it was kept.
+- The bundle ID is `com.stanley.wallet` (test bundle `com.stanley.WalletTests`); it was deliberately moved off the old `com.stanley.Dayrate`, so this installs as a separate app from old Dayrate/Tally builds (move data across with a backup). Don't change it again: a new bundle ID means a new, empty store.
 - In user-facing text, "Wallet" is this app; the BudgetBakers app is always called "BudgetBakers" (or "BudgetBakers Wallet") so the two never read as the same thing.
 - Transactions are the `@Model` class `Record` (not `Transaction`, which collides with SwiftUI). `RecordCategory`, `RecordKind`, `AccountKind`, `BudgetPeriod` raw values are persisted: add cases, never rename them.
 - Records point at accounts by `accountID`/`toAccountID` UUIDs, not relationships (cheap date/account predicates, no surprise cascades). The only relationship is `Record.item` ↔ `Gadget.records` (nullify both ways — deleting either side never deletes money history). Deleting an account deletes its income/expense records and turns its transfers into "outside Wallet" transfers (`AccountEditView.deleteAccount`).
