@@ -290,7 +290,6 @@
  "Groups": "Nhóm",
  "Health and beauty": "Sức khỏe và làm đẹp",
  "Health care, doctor": "Y tế, bác sĩ",
- "Hide balances": "Ẩn số dư",
  "Highest cost per day": "Chi phí mỗi ngày cao nhất",
  "Hobbies": "Sở thích",
  "Holiday, trips, hotels": "Kỳ nghỉ, du lịch, khách sạn",
@@ -521,7 +520,6 @@
  "Show %lld transactions": {
   "other": "Hiển thị %lld giao dịch"
  },
- "Show balances": "Hiện số dư",
  "Show in Transactions": "Xem trong Giao dịch",
  "Show introduction": "Hiển thị phần giới thiệu",
  "Show more": "Xem thêm",
@@ -670,7 +668,7 @@
  "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
   "other": "%lld món đồ của bạn hiện đang được định giá theo %@. Tỷ giá này thể hiện lại chúng bằng %@. Giá đã nhập ban đầu vẫn không thay đổi; chỉ phần quy đổi được điều chỉnh."
  },
- "Your data never leaves this device. With app lock on, the app is also hidden in the app switcher. Hidden balances are revealed with a tap.": "Dữ liệu của bạn không bao giờ rời khỏi thiết bị này. Khi bật khóa ứng dụng, nội dung ứng dụng cũng được ẩn trong trình chuyển đổi ứng dụng. Số dư bị ẩn sẽ hiện ra khi bạn chạm vào.",
+ "Your data never leaves this device. With app lock on, the app is also hidden in the app switcher.": "Dữ liệu của bạn không bao giờ rời khỏi thiết bị này. Khi bật khóa ứng dụng, nội dung ứng dụng cũng được ẩn trong trình chuyển đổi ứng dụng.",
  "Your items cost you": "Các món đồ của bạn tiêu tốn",
  "Your library is stored locally, never on a server. Export a backup or restore one anytime from Settings.": "Thư viện của bạn được lưu trên thiết bị, không bao giờ trên máy chủ. Bạn có thể xuất hoặc khôi phục bản sao lưu bất cứ lúc nào trong Cài đặt.",
  "Zero": "0",

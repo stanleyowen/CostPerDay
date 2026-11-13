@@ -93,7 +93,6 @@ struct RecordDetailView: View {
                 .foregroundStyle(flow.kind == .income ? AnyShapeStyle(Color.income) : AnyShapeStyle(.primary))
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
-                .sensitive()
             if flow.currencyCode != baseCurrency, flow.kind != .transfer {
                 Text(verbatim: "≈ \(Money.exact(flow.baseAmount, code: baseCurrency))")
                     .font(.subheadline.monospacedDigit())

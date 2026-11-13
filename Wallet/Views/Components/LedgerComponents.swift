@@ -1,36 +1,5 @@
 import SwiftUI
 
-// MARK: - Privacy
-
-/// When "Hide balances" is on, sensitive figures are blurred until tapped — so the
-/// app can be opened on a train without broadcasting your net worth.
-struct SensitiveAmount: ViewModifier {
-    @AppStorage("hideBalances") private var hideBalances = false
-    @State private var revealed = false
-
-    func body(content: Content) -> some View {
-        let hidden = hideBalances && !revealed
-        content
-            .blur(radius: hidden ? 9 : 0)
-            .overlay {
-                if hidden {
-                    Color.clear.contentShape(.rect)
-                        .onTapGesture { withAnimation(.snappy) { revealed = true } }
-                }
-            }
-            .accessibilityHidden(hidden)
-            .task(id: revealed) {
-                guard revealed else { return }
-                try? await Task.sleep(for: .seconds(8))
-                withAnimation(.snappy) { revealed = false }
-            }
-    }
-}
-
-extension View {
-    func sensitive() -> some View { modifier(SensitiveAmount()) }
-}
-
 // MARK: - Transaction row
 
 /// One line in any transaction list: category tile, what it was, where, how much.
@@ -187,7 +156,6 @@ struct AccountCard: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
                 .contentTransition(.numericText(value: balance))
-                .sensitive()
         }
         .padding(compact ? 12 : 14)
         .frame(width: width, height: height, alignment: .leading)
@@ -310,7 +278,6 @@ struct FigureColumn: View {
                 .foregroundStyle(tint)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
-                .sensitive()
         }
         .accessibilityElement(children: .combine)
     }

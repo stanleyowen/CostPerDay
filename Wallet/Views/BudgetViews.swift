@@ -51,7 +51,6 @@ struct BudgetRow: View {
                 Text("\(Money.string(status.spent, code: currency)) of \(Money.string(status.limit, code: currency))")
                     .font(.caption.weight(.medium).monospacedDigit())
                     .foregroundStyle(.secondary)
-                    .sensitive()
             }
             GeometryReader { geo in
                 ZStack(alignment: .leading) {

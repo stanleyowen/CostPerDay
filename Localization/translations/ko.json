@@ -290,7 +290,6 @@
  "Groups": "그룹",
  "Health and beauty": "건강 및 미용",
  "Health care, doctor": "의료, 병원",
- "Hide balances": "잔액 숨기기",
  "Highest cost per day": "하루 비용이 높은 순",
  "Hobbies": "취미",
  "Holiday, trips, hotels": "휴가, 여행, 숙박",
@@ -521,7 +520,6 @@
  "Show %lld transactions": {
   "other": "거래 %lld건 보기"
  },
- "Show balances": "잔액 표시",
  "Show in Transactions": "거래 내역에서 보기",
  "Show introduction": "소개 보기",
  "Show more": "더 보기",
@@ -670,7 +668,7 @@
  "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
   "other": "현재 항목 %1$lld개의 가격은 %2$@을(를) 기준으로 설정되어 있습니다. 이 환율은 해당 항목을 %3$@(으)로 다시 표시합니다. 처음 입력한 가격은 그대로 유지되며 환산만 조정됩니다."
  },
- "Your data never leaves this device. With app lock on, the app is also hidden in the app switcher. Hidden balances are revealed with a tap.": "데이터는 이 기기 밖으로 전송되지 않습니다. 앱 잠금을 켜면 앱 전환기에서도 앱 내용이 가려집니다. 숨겨진 잔액은 탭하면 표시됩니다.",
+ "Your data never leaves this device. With app lock on, the app is also hidden in the app switcher.": "데이터는 이 기기 밖으로 전송되지 않습니다. 앱 잠금을 켜면 앱 전환기에서도 앱 내용이 가려집니다.",
  "Your items cost you": "보유 물품의 비용은",
  "Your library is stored locally, never on a server. Export a backup or restore one anytime from Settings.": "라이브러리는 기기에만 저장되며 서버로 전송되지 않습니다. 언제든지 '설정'에서 백업을 내보내거나 복원하실 수 있습니다.",
  "Zero": "0",

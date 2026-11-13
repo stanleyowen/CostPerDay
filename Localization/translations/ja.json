@@ -290,7 +290,6 @@
  "Groups": "グループ",
  "Health and beauty": "健康・美容",
  "Health care, doctor": "医療・診察",
- "Hide balances": "残高を非表示",
  "Highest cost per day": "1日あたりのコストが高い順",
  "Hobbies": "趣味",
  "Holiday, trips, hotels": "休暇・旅行・ホテル",
@@ -521,7 +520,6 @@
  "Show %lld transactions": {
   "other": "%lld 件の取引を表示"
  },
- "Show balances": "残高を表示",
  "Show in Transactions": "取引に表示",
  "Show introduction": "紹介を表示",
  "Show more": "さらに表示",
@@ -670,7 +668,7 @@
  "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
   "other": "現在、%1$lld 件の項目は %2$@ を基準として価格が設定されています。このレートにより、それらを %3$@ で表示し直します。当初入力された価格は変更されず、換算のみが調整されます。"
  },
- "Your data never leaves this device. With app lock on, the app is also hidden in the app switcher. Hidden balances are revealed with a tap.": "データがこのデバイスの外に送信されることはありません。アプリのロックをオンにすると、App スイッチャーでもアプリの内容が非表示になります。非表示の残高はタップすると表示されます。",
+ "Your data never leaves this device. With app lock on, the app is also hidden in the app switcher.": "データがこのデバイスの外に送信されることはありません。アプリのロックをオンにすると、App スイッチャーでもアプリの内容が非表示になります。",
  "Your items cost you": "所有物のコストは",
  "Your library is stored locally, never on a server. Export a backup or restore one anytime from Settings.": "ライブラリは端末内にのみ保存され、サーバーに送信されることはありません。バックアップの書き出しと復元は「設定」からいつでも行えます。",
  "Zero": "ゼロ",

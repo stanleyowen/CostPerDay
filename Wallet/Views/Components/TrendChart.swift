@@ -47,7 +47,6 @@ struct TrendChart<Readout: View>: View {
             TrendPlot(points: points, tint: tint, lineColors: lineColors, currency: currency, scrub: scrub)
                 .equatable()
                 .frame(height: plotHeight)
-                .sensitive()
         }
         .sensoryFeedback(.selection, trigger: scrub.value?.date)
     }

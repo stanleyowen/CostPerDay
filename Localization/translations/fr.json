@@ -307,7 +307,6 @@
  "Groups": "Groupes",
  "Health and beauty": "Santé et beauté",
  "Health care, doctor": "Soins médicaux, médecin",
- "Hide balances": "Masquer les soldes",
  "Highest cost per day": "Coût par jour le plus élevé",
  "Hobbies": "Passe-temps",
  "Holiday, trips, hotels": "Vacances, voyages, hôtels",
@@ -541,7 +540,6 @@
   "one": "Afficher %lld transaction",
   "other": "Afficher %lld transactions"
  },
- "Show balances": "Afficher les soldes",
  "Show in Transactions": "Afficher dans Transactions",
  "Show introduction": "Afficher la présentation",
  "Show more": "Afficher plus",
@@ -692,7 +690,7 @@
   "one": "Votre %lld article est actuellement valorisé en %@. Ce taux le convertit en %@. Les prix saisis à l'origine restent inchangés ; seule la conversion est ajustée.",
   "other": "Vos %lld articles sont actuellement valorisés en %@. Ce taux les convertit en %@. Les prix saisis à l'origine restent inchangés ; seule la conversion est ajustée."
  },
- "Your data never leaves this device. With app lock on, the app is also hidden in the app switcher. Hidden balances are revealed with a tap.": "Vos données ne quittent jamais cet appareil. Lorsque le verrouillage est activé, l'app est également masquée dans le sélecteur d'apps. Les soldes masqués s'affichent d'un simple toucher.",
+ "Your data never leaves this device. With app lock on, the app is also hidden in the app switcher.": "Vos données ne quittent jamais cet appareil. Lorsque le verrouillage est activé, l'app est également masquée dans le sélecteur d'apps.",
  "Your items cost you": "Vos articles vous coûtent",
  "Your library is stored locally, never on a server. Export a backup or restore one anytime from Settings.": "Votre bibliothèque est stockée localement, jamais sur un serveur. Vous pouvez exporter ou restaurer une sauvegarde à tout moment depuis les Réglages.",
  "Zero": "Zéro",

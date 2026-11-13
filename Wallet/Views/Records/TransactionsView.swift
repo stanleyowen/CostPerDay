@@ -309,7 +309,6 @@ struct DayHeader: View {
                 Text((net < 0 ? "−" : "+") + Money.exact(abs(net), code: currency))
                     .monospacedDigit()
                     .foregroundStyle(net < 0 ? AnyShapeStyle(.secondary) : AnyShapeStyle(Color.income))
-                    .sensitive()
             }
         }
         .font(.footnote.weight(.semibold))

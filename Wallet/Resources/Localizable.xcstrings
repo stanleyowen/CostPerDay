@@ -22046,84 +22046,6 @@
         }
       }
     },
-    "Hide balances": {
-      "comment": "Home screen",
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kontostände ausblenden"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hide balances"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ocultar saldos"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Masquer les soldes"
-          }
-        },
-        "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sembunyikan saldo"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "残高を非表示"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "잔액 숨기기"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ocultar saldos"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Скрыть балансы"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ẩn số dư"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "隐藏余额"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "隱藏餘額"
-          }
-        }
-      }
-    },
     "Highest cost per day": {
       "comment": "Chart title",
       "extractionState": "manual",
@@ -39915,84 +39837,6 @@
         }
       }
     },
-    "Show balances": {
-      "comment": "Home screen",
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kontostände einblenden"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Show balances"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mostrar saldos"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Afficher les soldes"
-          }
-        },
-        "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tampilkan saldo"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "残高を表示"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "잔액 표시"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mostrar saldos"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Показать балансы"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hiện số dư"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "显示余额"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "顯示餘額"
-          }
-        }
-      }
-    },
     "Show in Transactions": {
       "comment": "Reports screen",
       "extractionState": "manual",
@@ -51450,80 +51294,80 @@
         }
       }
     },
-    "Your data never leaves this device. With app lock on, the app is also hidden in the app switcher. Hidden balances are revealed with a tap.": {
+    "Your data never leaves this device. With app lock on, the app is also hidden in the app switcher.": {
       "comment": "Settings",
       "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ihre Daten verlassen niemals dieses Gerät. Bei aktivierter App-Sperre wird die App außerdem im App-Umschalter verborgen. Ausgeblendete Kontostände werden durch Tippen angezeigt."
+            "value": "Ihre Daten verlassen niemals dieses Gerät. Bei aktivierter App-Sperre wird die App außerdem im App-Umschalter verborgen."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your data never leaves this device. With app lock on, the app is also hidden in the app switcher. Hidden balances are revealed with a tap."
+            "value": "Your data never leaves this device. With app lock on, the app is also hidden in the app switcher."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sus datos nunca salen de este dispositivo. Con el bloqueo de la app activado, la app también se oculta en el selector de apps. Los saldos ocultos se muestran con un toque."
+            "value": "Sus datos nunca salen de este dispositivo. Con el bloqueo de la app activado, la app también se oculta en el selector de apps."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vos données ne quittent jamais cet appareil. Lorsque le verrouillage est activé, l'app est également masquée dans le sélecteur d'apps. Les soldes masqués s'affichent d'un simple toucher."
+            "value": "Vos données ne quittent jamais cet appareil. Lorsque le verrouillage est activé, l'app est également masquée dans le sélecteur d'apps."
           }
         },
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Data Anda tidak pernah meninggalkan perangkat ini. Saat kunci aplikasi aktif, aplikasi juga disembunyikan di pengalih app. Saldo yang disembunyikan dapat ditampilkan dengan satu ketukan."
+            "value": "Data Anda tidak pernah meninggalkan perangkat ini. Saat kunci aplikasi aktif, aplikasi juga disembunyikan di pengalih app."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "データがこのデバイスの外に送信されることはありません。アプリのロックをオンにすると、App スイッチャーでもアプリの内容が非表示になります。非表示の残高はタップすると表示されます。"
+            "value": "データがこのデバイスの外に送信されることはありません。アプリのロックをオンにすると、App スイッチャーでもアプリの内容が非表示になります。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "데이터는 이 기기 밖으로 전송되지 않습니다. 앱 잠금을 켜면 앱 전환기에서도 앱 내용이 가려집니다. 숨겨진 잔액은 탭하면 표시됩니다."
+            "value": "데이터는 이 기기 밖으로 전송되지 않습니다. 앱 잠금을 켜면 앱 전환기에서도 앱 내용이 가려집니다."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Seus dados nunca saem deste dispositivo. Com o bloqueio do app ativado, o app também fica oculto no seletor de apps. Os saldos ocultos são revelados com um toque."
+            "value": "Seus dados nunca saem deste dispositivo. Com o bloqueio do app ativado, o app também fica oculto no seletor de apps."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ваши данные никогда не покидают это устройство. При включённой блокировке приложение также скрывается в переключателе приложений. Скрытые балансы отображаются по нажатию."
+            "value": "Ваши данные никогда не покидают это устройство. При включённой блокировке приложение также скрывается в переключателе приложений."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dữ liệu của bạn không bao giờ rời khỏi thiết bị này. Khi bật khóa ứng dụng, nội dung ứng dụng cũng được ẩn trong trình chuyển đổi ứng dụng. Số dư bị ẩn sẽ hiện ra khi bạn chạm vào."
+            "value": "Dữ liệu của bạn không bao giờ rời khỏi thiết bị này. Khi bật khóa ứng dụng, nội dung ứng dụng cũng được ẩn trong trình chuyển đổi ứng dụng."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "您的数据绝不会离开此设备。开启应用锁定后，应用在应用切换器中也会被隐藏。隐藏的余额只需轻点即可显示。"
+            "value": "您的数据绝不会离开此设备。开启应用锁定后，应用在应用切换器中也会被隐藏。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "您的資料絕不會離開此裝置。開啟 App 鎖定後，App 在 App 切換器中也會被隱藏。隱藏的餘額只需點一下即可顯示。"
+            "value": "您的資料絕不會離開此裝置。開啟 App 鎖定後，App 在 App 切換器中也會被隱藏。"
           }
         }
       }

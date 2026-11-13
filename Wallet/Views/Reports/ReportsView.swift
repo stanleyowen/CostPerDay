@@ -428,7 +428,6 @@ private struct SummaryCard: View {
                         .contentTransition(.numericText(value: report.expense))
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
-                        .sensitive()
                 }
                 Spacer()
                 if let change = report.expenseChange {
@@ -471,7 +470,6 @@ private struct DayCard: View {
                 )
                 Text(Money.string(spent, code: currency))
                     .font(.system(.headline, design: .rounded).weight(.bold).monospacedDigit())
-                    .sensitive()
                 Button(action: onClose) {
                     Image(systemName: "xmark.circle.fill")
                         .font(.title3)
@@ -578,7 +576,6 @@ private struct CashFlowChartCard: View {
                 }
             }
             .frame(height: 200)
-            .sensitive()
             Picker("Show", selection: $showsIncome.animation(.snappy)) {
                 Text("Spending").tag(false)
                 Text("Income & spending").tag(true)
@@ -682,7 +679,6 @@ private struct BreakdownCard: View {
                             Text("\(report.expenseCount) expenses").font(.caption2).foregroundStyle(.secondary)
                             Text(Money.compact(report.expense, code: currency))
                                 .font(.system(.headline, design: .rounded).weight(.bold))
-                                .sensitive()
                         }
                         .position(x: rect.midX, y: rect.midY)
                     }
@@ -705,7 +701,6 @@ private struct BreakdownCard: View {
                                         Spacer(minLength: 6)
                                         Text(Money.string(slice.total, code: currency))
                                             .font(.subheadline.weight(.semibold).monospacedDigit())
-                                            .sensitive()
                                     }
                                     HStack(spacing: 8) {
                                         GeometryReader { geo in
@@ -786,7 +781,6 @@ private struct IncomeCard: View {
                         Text(Money.string(slice.total, code: currency))
                             .font(.subheadline.weight(.semibold).monospacedDigit())
                             .foregroundStyle(Color.income)
-                            .sensitive()
                     }
                     .padding(.vertical, 4)
                     .padding(.horizontal, 6)
@@ -906,7 +900,6 @@ private struct WeekdayCard: View {
                 }
             }
             .frame(height: 150)
-            .sensitive()
         }
         .card()
     }
@@ -931,7 +924,6 @@ private struct NetWorthTrendCard: View {
                             Text(Money.string(focused.value, code: currency)).font(.subheadline.weight(.bold).monospacedDigit())
                             Text(focused.date.formatted(.dateTime.day().month(.abbreviated).year())).font(.caption2).foregroundStyle(.secondary)
                         }
-                        .sensitive()
                     }
                 }
             }
@@ -988,7 +980,7 @@ private struct LabelsCard: View {
                             Text(slice.key).font(.subheadline.weight(isSelected ? .bold : .medium)).foregroundStyle(.primary)
                             Text(verbatim: "\(slice.count)×").font(.caption).foregroundStyle(.tertiary)
                             Spacer()
-                            Text(Money.string(slice.total, code: currency)).font(.subheadline.weight(.semibold).monospacedDigit()).sensitive()
+                            Text(Money.string(slice.total, code: currency)).font(.subheadline.weight(.semibold).monospacedDigit())
                         }
                         GeometryReader { geo in
                             Capsule().fill(LabelTint.color(for: slice.key).gradient).frame(width: max(5, geo.size.width * slice.total / maxTotal))
@@ -1030,7 +1022,7 @@ private struct AccountsBreakdownCard: View {
                                 HStack {
                                     Text(account.displayName).font(.subheadline.weight(.medium)).lineLimit(1)
                                     Spacer()
-                                    Text(Money.string(slice.total, code: currency)).font(.subheadline.weight(.semibold).monospacedDigit()).sensitive()
+                                    Text(Money.string(slice.total, code: currency)).font(.subheadline.weight(.semibold).monospacedDigit())
                                 }
                                 GeometryReader { geo in
                                     Capsule().fill(account.tint.color.gradient).frame(width: max(5, geo.size.width * slice.total / maxTotal))
@@ -1125,7 +1117,6 @@ struct CategoryReportView: View {
                                 .contentTransition(.opacity)
                             Text(Money.string(total, code: baseCurrency))
                                 .font(.system(.title, design: .rounded).weight(.bold).monospacedDigit())
-                                .sensitive()
                         }
                         Spacer()
                         Text(verbatim: "\(inPeriod.count)×").font(.headline).foregroundStyle(.secondary)
@@ -1151,7 +1142,6 @@ struct CategoryReportView: View {
                             }
                         }
                         .frame(height: 140)
-                        .sensitive()
                     }
                 }
                 .padding(.vertical, 6)
@@ -1165,7 +1155,7 @@ struct CategoryReportView: View {
                             CategoryTile(symbol: sub.symbol, tint: sub.tint, size: 30)
                             Text(sub.label)
                             Spacer()
-                            Text(Money.string(entry.total, code: baseCurrency)).monospacedDigit().foregroundStyle(.secondary).sensitive()
+                            Text(Money.string(entry.total, code: baseCurrency)).monospacedDigit().foregroundStyle(.secondary)
                         }
                     }
                 }

@@ -290,7 +290,6 @@
  "Groups": "Grup",
  "Health and beauty": "Kesehatan dan kecantikan",
  "Health care, doctor": "Layanan kesehatan, dokter",
- "Hide balances": "Sembunyikan saldo",
  "Highest cost per day": "Biaya per hari tertinggi",
  "Hobbies": "Hobi",
  "Holiday, trips, hotels": "Liburan, perjalanan, hotel",
@@ -521,7 +520,6 @@
  "Show %lld transactions": {
   "other": "Tampilkan %lld transaksi"
  },
- "Show balances": "Tampilkan saldo",
  "Show in Transactions": "Tampilkan di Transaksi",
  "Show introduction": "Tampilkan pengantar",
  "Show more": "Tampilkan lainnya",
@@ -670,7 +668,7 @@
  "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
   "other": "%lld barang Anda saat ini dinilai terhadap %@. Kurs ini menyatakan kembali nilainya dalam %@. Harga yang semula dimasukkan tetap tidak berubah; hanya konversinya yang disesuaikan."
  },
- "Your data never leaves this device. With app lock on, the app is also hidden in the app switcher. Hidden balances are revealed with a tap.": "Data Anda tidak pernah meninggalkan perangkat ini. Saat kunci aplikasi aktif, aplikasi juga disembunyikan di pengalih app. Saldo yang disembunyikan dapat ditampilkan dengan satu ketukan.",
+ "Your data never leaves this device. With app lock on, the app is also hidden in the app switcher.": "Data Anda tidak pernah meninggalkan perangkat ini. Saat kunci aplikasi aktif, aplikasi juga disembunyikan di pengalih app.",
  "Your items cost you": "Barang-barang Anda menghabiskan biaya",
  "Your library is stored locally, never on a server. Export a backup or restore one anytime from Settings.": "Pustaka Anda disimpan secara lokal, tidak pernah di server. Ekspor atau pulihkan cadangan kapan saja melalui Pengaturan.",
  "Zero": "Nol",

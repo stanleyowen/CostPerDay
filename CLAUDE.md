@@ -68,7 +68,7 @@ The Xcode project uses file-system-synchronized groups, so new Swift files under
 
 **Backup** — `Backup.swift` defines a versioned JSON format (`BackupFile`, `formatVersion`, now 3) that is deliberately independent of the SwiftData schema. v3 adds accounts, records (with item links by item identity) and budgets, restored by `Backup.restoreLedger` after items. Restore is additive only (skips entries already present, never overwrites). New fields must be optional so older backups (including Dayrate's) still decode.
 
-**Security** — optional app lock (`Support/AppLock.swift`, `.deviceOwnerAuthentication` so the passcode is always a fallback; toggling it requires authentication), a privacy cover in the app switcher when locked, a "Hide balances" blur (`.sensitive()`), and exports written with complete file protection.
+**Security** — optional app lock (`Support/AppLock.swift`, `.deviceOwnerAuthentication` so the passcode is always a fallback; toggling it requires authentication), a privacy cover in the app switcher when locked, and exports written with complete file protection.
 
 **Exchange rates** — `ExchangeRateService` is an actor with an injectable `URLSession` and `UserDefaults`; it caches per-base snapshots for 12h and serves stale cache as an offline fallback. Tests stub the network via a custom `URLProtocol`.
 

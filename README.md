@@ -81,7 +81,6 @@ one-tap import from BudgetBakers Wallet. No account, no server, no analytics.
 ### 🔒 Private by design
 - Everything lives on your device in SwiftData. The only network request is an optional exchange-rate lookup for foreign-currency entries.
 - An optional **Face ID / Touch ID / passcode lock**, which also hides the app in the app switcher.
-- **Hide balances** blurs every figure until tapped.
 - Exports are written with complete file protection, and CSV cells are escaped against spreadsheet formula injection.
 
 ### 🔁 Coming from BudgetBakers Wallet?

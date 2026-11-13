@@ -12,7 +12,6 @@ struct SettingsView: View {
     @Environment(AppLock.self) private var lock
     @AppStorage(AppLock.enabledKey) private var lockEnabled = false
     @AppStorage(AppLock.graceKey) private var lockGrace: Double = 0
-    @AppStorage("hideBalances") private var hideBalances = false
     @State private var importingWallet = false
     @State private var csvURL: URL?
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
@@ -119,13 +118,10 @@ struct SettingsView: View {
                             SettingLabel("Require unlock", symbol: "timer", tint: .gray)
                         }
                     }
-                    Toggle(isOn: $hideBalances) {
-                        SettingLabel("Hide balances", symbol: "eye.slash.fill", tint: .indigo)
-                    }
                 } header: {
                     Text("Security & privacy")
                 } footer: {
-                    Text("Your data never leaves this device. With app lock on, the app is also hidden in the app switcher. Hidden balances are revealed with a tap.")
+                    Text("Your data never leaves this device. With app lock on, the app is also hidden in the app switcher.")
                 }
 
                 Section {

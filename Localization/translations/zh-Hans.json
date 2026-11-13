@@ -290,7 +290,6 @@
  "Groups": "分组",
  "Health and beauty": "健康与美容",
  "Health care, doctor": "医疗保健",
- "Hide balances": "隐藏余额",
  "Highest cost per day": "每日成本最高",
  "Hobbies": "爱好",
  "Holiday, trips, hotels": "度假、旅行、住宿",
@@ -521,7 +520,6 @@
  "Show %lld transactions": {
   "other": "显示 %lld 笔交易"
  },
- "Show balances": "显示余额",
  "Show in Transactions": "在交易中显示",
  "Show introduction": "显示简介",
  "Show more": "显示更多",
@@ -670,7 +668,7 @@
  "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
   "other": "您的 %lld 件物品当前以 %@ 计价。此汇率会将其改以 %@ 表示。原先输入的价格保持不变，仅调整换算结果。"
  },
- "Your data never leaves this device. With app lock on, the app is also hidden in the app switcher. Hidden balances are revealed with a tap.": "您的数据绝不会离开此设备。开启应用锁定后，应用在应用切换器中也会被隐藏。隐藏的余额只需轻点即可显示。",
+ "Your data never leaves this device. With app lock on, the app is also hidden in the app switcher.": "您的数据绝不会离开此设备。开启应用锁定后，应用在应用切换器中也会被隐藏。",
  "Your items cost you": "您的物品每日花费",
  "Your library is stored locally, never on a server. Export a backup or restore one anytime from Settings.": "您的资料仅存储在本机，绝不会上传至服务器。您可随时在“设置”中导出或恢复备份。",
  "Zero": "零",

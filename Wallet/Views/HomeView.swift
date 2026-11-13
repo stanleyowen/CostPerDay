@@ -11,7 +11,6 @@ struct HomeView: View {
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
     @Query(sort: \Budget.createdAt) private var budgets: [Budget]
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
-    @AppStorage("hideBalances") private var hideBalances = false
 
     @State private var addingAccount = false
     @State private var importing = false
@@ -46,22 +45,6 @@ struct HomeView: View {
             .defaultScrollAnchor(DebugFlags.scrollAnchor)
             .background(Color(.systemGroupedBackground))
             .navigationTitle(greeting)
-            .toolbar {
-                if !accounts.isEmpty {
-                    // Hides every amount in the app, so it lives at screen level rather
-                    // than inside one card. Mirrors the toggle in Settings.
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            withAnimation(.snappy) { hideBalances.toggle() }
-                        } label: {
-                            Image(systemName: hideBalances ? "eye.slash" : "eye")
-                                .contentTransition(.symbolEffect(.replace))
-                        }
-                        .accessibilityLabel(hideBalances ? Text("Show balances") : Text("Hide balances"))
-                        .sensoryFeedback(.selection, trigger: hideBalances)
-                    }
-                }
-            }
             .overlay(alignment: .bottomTrailing) {
                 if !accounts.isEmpty {
                     FloatingAddButton { router.compose() }
@@ -420,7 +403,6 @@ private struct NetWorthHero: View {
                 .contentTransition(focused == nil ? .numericText(value: value) : .identity)
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
-                .sensitive()
         }
     }
 
@@ -440,7 +422,6 @@ private struct NetWorthHero: View {
                     .foregroundStyle(.white)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
-                    .sensitive()
             }
         }
         .padding(.horizontal, 10)
@@ -521,7 +502,6 @@ private struct MonthCard: View {
                 Text(Money.string(value, code: currency))
                     .font(.caption.weight(.semibold).monospacedDigit())
                     .foregroundStyle(.primary)
-                    .sensitive()
                 Image(systemName: "chevron.right").font(.caption2.weight(.bold)).foregroundStyle(.tertiary)
             }
             GeometryReader { geo in
@@ -594,7 +574,6 @@ struct SpendingDonutCard: View {
                                         .font(.system(.subheadline, design: .rounded).weight(.bold).monospacedDigit())
                                         .minimumScaleFactor(0.6)
                                         .lineLimit(1)
-                                        .sensitive()
                                 }
                             }
                             .frame(width: rect.width * 0.55)
@@ -621,7 +600,6 @@ struct SpendingDonutCard: View {
                                 Text(Money.compact(slice.total, code: currency))
                                     .font(.caption.monospacedDigit())
                                     .foregroundStyle(.secondary)
-                                    .sensitive()
                             }
                             .contentShape(.rect)
                         }

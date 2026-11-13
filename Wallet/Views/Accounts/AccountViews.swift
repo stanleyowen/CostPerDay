@@ -253,7 +253,6 @@ struct AccountsView: View {
                     Spacer()
                     Text(Money.exact(ledger.netWorth, code: baseCurrency))
                         .font(.system(.title3, design: .rounded).weight(.bold).monospacedDigit())
-                        .sensitive()
                 }
             }
             Section {
@@ -296,7 +295,6 @@ struct AccountsView: View {
                 Text(Money.exact(ledger.balance(of: account), code: account.currencyCode))
                     .font(.system(.subheadline, design: .rounded).weight(.semibold).monospacedDigit())
                     .foregroundStyle(ledger.balance(of: account) < 0 ? AnyShapeStyle(Brand.expense) : AnyShapeStyle(.primary))
-                    .sensitive()
             }
         }
         .swipeActions(edge: .leading) {
@@ -345,7 +343,6 @@ struct AccountDetailView: View {
                             Text(Money.exact(balance, code: account.currencyCode))
                                 .font(.system(size: 32, weight: .bold, design: .rounded).monospacedDigit())
                                 .contentTransition(.numericText(value: balance))
-                                .sensitive()
                         }
                     }
                     if series.count > 1 {
@@ -432,7 +429,6 @@ struct AccountDetailView: View {
             Text(focused.map { "\($0.date.formatted(.dateTime.day().month())) · \(Money.exact($0.value, code: account.currencyCode))" } ?? String(localized: "Last 90 days", comment: "Chart caption"))
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.secondary)
-                .sensitive()
         }
     }
 }
