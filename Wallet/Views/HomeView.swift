@@ -46,6 +46,22 @@ struct HomeView: View {
             .defaultScrollAnchor(DebugFlags.scrollAnchor)
             .background(Color(.systemGroupedBackground))
             .navigationTitle(greeting)
+            .toolbar {
+                if !accounts.isEmpty {
+                    // Hides every amount in the app, so it lives at screen level rather
+                    // than inside one card. Mirrors the toggle in Settings.
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            withAnimation(.snappy) { hideBalances.toggle() }
+                        } label: {
+                            Image(systemName: hideBalances ? "eye.slash" : "eye")
+                                .contentTransition(.symbolEffect(.replace))
+                        }
+                        .accessibilityLabel(hideBalances ? Text("Show balances") : Text("Hide balances"))
+                        .sensoryFeedback(.selection, trigger: hideBalances)
+                    }
+                }
+            }
             .overlay(alignment: .bottomTrailing) {
                 if !accounts.isEmpty {
                     FloatingAddButton { router.compose() }
@@ -89,7 +105,7 @@ struct HomeView: View {
     private func summary(ledger: LedgerSnapshot, report: Report) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(String(localized: "Summary", comment: "Home section title above the total balance")).font(.headline)
-            NetWorthHero(ledger: ledger, report: report, currency: baseCurrency, hideBalances: $hideBalances)
+            NetWorthHero(ledger: ledger, report: report, currency: baseCurrency)
         }
     }
 
@@ -357,7 +373,6 @@ private struct NetWorthHero: View {
     let ledger: LedgerSnapshot
     let report: Report
     let currency: String
-    @Binding var hideBalances: Bool
 
     var body: some View {
         let series = sparkline()
@@ -387,31 +402,15 @@ private struct NetWorthHero: View {
     private func header(focused: TrendPoint?) -> some View {
         let value = focused?.value ?? ledger.netWorth
         return VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Group {
-                    if let focused {
-                        Text(focused.date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated)))
-                    } else {
-                        Text("Total balance")
-                    }
+            Group {
+                if let focused {
+                    Text(focused.date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated)))
+                } else {
+                    Text("Total balance")
                 }
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(.white.opacity(0.7))
-                Spacer()
-                Button {
-                    withAnimation(.snappy) { hideBalances.toggle() }
-                } label: {
-                    Image(systemName: hideBalances ? "eye.slash.fill" : "eye.fill")
-                        .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.75))
-                        .frame(width: 32, height: 32)
-                        .contentShape(.rect)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(hideBalances ? Text("Show balances") : Text("Hide balances"))
-                .sensoryFeedback(.selection, trigger: hideBalances)
             }
-            .padding(.bottom, -10)
+            .font(.subheadline.weight(.medium))
+            .foregroundStyle(.white.opacity(0.7))
 
             Text(Money.exact(value, code: currency))
                 .font(.system(size: 42, weight: .bold, design: .rounded))
