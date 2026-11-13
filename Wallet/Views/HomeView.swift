@@ -17,7 +17,7 @@ struct HomeView: View {
     /// Accounts tapped on Home. Empty means "all": the summary, month and spending
     /// cards then cover every account; otherwise only the selected ones.
     @State private var selectedAccounts: Set<UUID> = []
-    /// Opened from an account card's context menu (a tap selects it instead).
+    /// Opened by tapping an account card while nothing is selected.
     @State private var openedAccount: Account?
 
     var body: some View {
@@ -235,6 +235,8 @@ private struct AccountPager: View {
     let onAdd: () -> Void
 
     @State private var page: Int? = 0
+    /// The card under a finger, for press feedback.
+    @State private var pressed: UUID?
 
     private static let perPage = 4
     private static let spacing: CGFloat = 12
@@ -336,38 +338,52 @@ private struct AccountPager: View {
         }
     }
 
+    /// Tap opens the account. A long press selects it and starts selection mode,
+    /// where taps add or remove cards; the summary follows the selection.
+    /// Gestures rather than a `Button`: a button would also fire on releasing the
+    /// long press and undo the selection it just made.
+    private func card(_ account: Account) -> some View {
+        let isSelected = selection.contains(account.uuid)
+        let selectTitle = isSelected
+            ? String(localized: "Deselect account", comment: "Home: accessibility action on a selected account card")
+            : String(localized: "Select account", comment: "Home: accessibility action that adds an account card to the summary")
+        return AccountCard(account: account, balance: balance(account), width: nil, compact: true)
+            .overlay {
+                if isSelected {
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .strokeBorder(.white, lineWidth: 3)
+                }
+            }
+            // Once something is picked, the cards left out step back.
+            .opacity(selection.isEmpty || isSelected ? 1 : 0.4)
+            .scaleEffect(pressed == account.uuid ? 0.94 : 1)
+            .animation(.spring(duration: 0.25, bounce: 0.4), value: pressed)
+            .contentShape(.rect(cornerRadius: 18, style: .continuous))
+            .onTapGesture {
+                if selection.isEmpty { onOpen(account) } else { toggle(account) }
+            }
+            .onLongPressGesture(minimumDuration: 0.35) {
+                toggle(account)
+            } onPressingChanged: { isPressing in
+                pressed = isPressing ? account.uuid : nil
+            }
+            .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
+            .accessibilityAction(named: Text(selectTitle)) { toggle(account) }
+    }
+
+    private func toggle(_ account: Account) {
+        withAnimation(.snappy) {
+            if selection.contains(account.uuid) { selection.remove(account.uuid) } else { selection.insert(account.uuid) }
+        }
+    }
+
     private func grid(_ slots: [Slot]) -> some View {
         let column = GridItem(.flexible(), spacing: Self.spacing)
         return LazyVGrid(columns: [column, column], spacing: Self.spacing) {
             ForEach(slots) { slot in
                 switch slot {
                 case .account(let account):
-                    let isSelected = selection.contains(account.uuid)
-                    Button {
-                        withAnimation(.snappy) {
-                            if isSelected { selection.remove(account.uuid) } else { selection.insert(account.uuid) }
-                        }
-                    } label: {
-                        AccountCard(account: account, balance: balance(account), width: nil, compact: true)
-                            .overlay {
-                                if isSelected {
-                                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                        .strokeBorder(.white, lineWidth: 3)
-                                }
-                            }
-                            // Once something is picked, the cards left out step back.
-                            .opacity(selection.isEmpty || isSelected ? 1 : 0.4)
-                    }
-                    .buttonStyle(PressableStyle())
-                    .contextMenu {
-                        Button {
-                            onOpen(account)
-                        } label: {
-                            Label(String(localized: "Open account", comment: "Home: context menu item on an account card"), systemImage: "arrow.up.forward.square")
-                        }
-                    }
-                    .accessibilityAddTraits(isSelected ? .isSelected : [])
-                    .accessibilityAction(named: Text(String(localized: "Open account", comment: "Home: context menu item on an account card"))) { onOpen(account) }
+                    card(account)
                 case .add:
                     Button(action: onAdd) {
                         HStack(spacing: 8) {
