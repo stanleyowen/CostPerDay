@@ -14,6 +14,9 @@
  "%@: %@": "%@: %@",
  "%@: %@ on %@.": "%1$@: %2$@ untuk %3$@.",
  "%lld": "%lld",
+ "%lld accounts": {
+  "other": "%lld akun"
+ },
  "%lld accounts created": {
   "other": "%lld akun dibuat"
  },
@@ -167,6 +170,7 @@
  "Choose it below. Nothing is imported until you confirm.": "Pilih file di bawah. Tidak ada yang diimpor sebelum Anda mengonfirmasi.",
  "Choose two different accounts.": "Pilih dua akun yang berbeda.",
  "Choose where the money went.": "Pilih tujuan uang tersebut.",
+ "Clear": "Hapus pilihan",
  "Clear a filter above, or try another period.": "Hapus filter di atas, atau coba periode lain.",
  "Clear all": "Hapus semua",
  "Clothes & shoes": "Pakaian & sepatu",
@@ -413,6 +417,7 @@
  "One account, or your total across all of them.": "Satu akun, atau total dari semua akun Anda.",
  "Only expenses in the selected categories count toward this budget.": "Hanya pengeluaran dalam kategori yang dipilih yang dihitung dalam anggaran ini.",
  "Only transactions linked to items": "Hanya transaksi yang tertaut ke barang",
+ "Open account": "Buka akun",
  "Opens Settings, where the language for this application can be changed independently of the system language.": "Membuka Pengaturan, tempat bahasa aplikasi ini dapat diubah secara terpisah dari bahasa sistem.",
  "Opens Wallet ready to record a transaction.": "Membuka Wallet dalam keadaan siap mencatat transaksi.",
  "Opens Wallet with the entry keypad ready.": "Membuka Wallet dengan papan tombol input yang siap digunakan.",

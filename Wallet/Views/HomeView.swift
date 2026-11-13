@@ -14,11 +14,23 @@ struct HomeView: View {
 
     @State private var addingAccount = false
     @State private var importing = false
+    /// Accounts tapped on Home. Empty means "all": the summary, month and spending
+    /// cards then cover every account; otherwise only the selected ones.
+    @State private var selectedAccounts: Set<UUID> = []
+    /// Opened from an account card's context menu (a tap selects it instead).
+    @State private var openedAccount: Account?
 
     var body: some View {
         let ledger = LedgerSnapshot(accounts: accounts, records: records, baseCurrency: baseCurrency)
         let month = ReportPeriod.containing(.now, range: .month)
-        let report = Report.build(flows: ledger.flows, period: month, excludedAccounts: ledger.excludedFromStats)
+        // Drop selections of accounts that have since been archived or deleted.
+        let scope = selectedAccounts.intersection(ledger.activeAccounts.map(\.uuid))
+        let report = Report.build(
+            flows: scope.isEmpty ? ledger.flows : ledger.flows.filter { $0.accountID.map(scope.contains) ?? false },
+            period: month,
+            // Picking an account excluded from stats is an explicit request to see it.
+            excludedAccounts: ledger.excludedFromStats.subtracting(scope)
+        )
 
         NavigationStack {
             ScrollView {
@@ -27,10 +39,10 @@ struct HomeView: View {
                         WelcomeCard(onImport: { importing = true }, onAddAccount: { addingAccount = true })
                     } else {
                         accountsGrid(ledger)
-                        summary(ledger: ledger, report: report)
-                        MonthCard(report: report, currency: baseCurrency)
+                        summary(ledger: ledger, report: report, scope: scope)
+                        MonthCard(report: report, currency: baseCurrency, accounts: scope)
                         if !report.expenseByGroup.isEmpty {
-                            SpendingDonutCard(report: report, currency: baseCurrency)
+                            SpendingDonutCard(report: report, currency: baseCurrency, accounts: scope)
                         }
                         if !budgets.isEmpty {
                             BudgetsCard(budgets: budgets, flows: ledger.flows, excluded: ledger.excludedFromStats, currency: baseCurrency)
@@ -54,6 +66,15 @@ struct HomeView: View {
             .sheet(isPresented: $importing) { WalletImportView() }
             .navigationDestination(for: Record.self) { RecordDetailView(record: $0) }
             .navigationDestination(for: Account.self) { AccountDetailView(account: $0) }
+            .navigationDestination(item: $openedAccount) { AccountDetailView(account: $0) }
+            .sensoryFeedback(.selection, trigger: selectedAccounts)
+            .task {
+                // `-selectAccounts <n>`: pre-select the first n cards for screenshots; inert in Release.
+                if let count = DebugFlags.value(after: "-selectAccounts").flatMap(Int.init) {
+                    let active = accounts.filter { !$0.isArchived }.sorted { ($0.sortOrder, $0.createdAt) < ($1.sortOrder, $1.createdAt) }
+                    selectedAccounts = Set(active.prefix(count).map(\.uuid))
+                }
+            }
         }
     }
 
@@ -79,16 +100,34 @@ struct HomeView: View {
                     Text("See all").font(.subheadline.weight(.medium))
                 }
             }
-            AccountPager(accounts: ledger.activeAccounts, balance: ledger.balance(of:)) { addingAccount = true }
+            AccountPager(
+                accounts: ledger.activeAccounts,
+                balance: ledger.balance(of:),
+                selection: $selectedAccounts,
+                onOpen: { openedAccount = $0 },
+                onAdd: { addingAccount = true }
+            )
         }
     }
 
     // MARK: Summary
 
-    private func summary(ledger: LedgerSnapshot, report: Report) -> some View {
+    private func summary(ledger: LedgerSnapshot, report: Report, scope: Set<UUID>) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(String(localized: "Summary", comment: "Home section title above the total balance")).font(.headline)
-            NetWorthHero(ledger: ledger, report: report, currency: baseCurrency)
+            HStack {
+                Text(String(localized: "Summary", comment: "Home section title above the total balance")).font(.headline)
+                Spacer()
+                if !scope.isEmpty {
+                    Button {
+                        withAnimation(.snappy) { selectedAccounts = [] }
+                    } label: {
+                        Text(String(localized: "Clear", comment: "Home: button that deselects the account cards so the summary covers every account"))
+                            .font(.subheadline.weight(.medium))
+                    }
+                    .transition(.opacity)
+                }
+            }
+            NetWorthHero(ledger: ledger, report: report, scope: scope, currency: baseCurrency)
         }
     }
 
@@ -190,6 +229,9 @@ struct HomeView: View {
 private struct AccountPager: View {
     let accounts: [Account]
     let balance: (Account) -> Double
+    /// Tapping a card adds it to or removes it from this set.
+    @Binding var selection: Set<UUID>
+    let onOpen: (Account) -> Void
     let onAdd: () -> Void
 
     @State private var page: Int? = 0
@@ -300,10 +342,32 @@ private struct AccountPager: View {
             ForEach(slots) { slot in
                 switch slot {
                 case .account(let account):
-                    NavigationLink(value: account) {
+                    let isSelected = selection.contains(account.uuid)
+                    Button {
+                        withAnimation(.snappy) {
+                            if isSelected { selection.remove(account.uuid) } else { selection.insert(account.uuid) }
+                        }
+                    } label: {
                         AccountCard(account: account, balance: balance(account), width: nil, compact: true)
+                            .overlay {
+                                if isSelected {
+                                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                        .strokeBorder(.white, lineWidth: 3)
+                                }
+                            }
+                            // Once something is picked, the cards left out step back.
+                            .opacity(selection.isEmpty || isSelected ? 1 : 0.4)
                     }
                     .buttonStyle(PressableStyle())
+                    .contextMenu {
+                        Button {
+                            onOpen(account)
+                        } label: {
+                            Label(String(localized: "Open account", comment: "Home: context menu item on an account card"), systemImage: "arrow.up.forward.square")
+                        }
+                    }
+                    .accessibilityAddTraits(isSelected ? .isSelected : [])
+                    .accessibilityAction(named: Text(String(localized: "Open account", comment: "Home: context menu item on an account card"))) { onOpen(account) }
                 case .add:
                     Button(action: onAdd) {
                         HStack(spacing: 8) {
@@ -355,6 +419,8 @@ private struct PageDots: View {
 private struct NetWorthHero: View {
     let ledger: LedgerSnapshot
     let report: Report
+    /// The selected accounts; empty means every account.
+    let scope: Set<UUID>
     let currency: String
 
     var body: some View {
@@ -381,15 +447,28 @@ private struct NetWorthHero: View {
         .environment(\.colorScheme, .dark)
     }
 
+    /// What the balance covers: everything, one account by name, or a count.
+    private var scopeTitle: String {
+        if scope.isEmpty { return String(localized: "Total balance") }
+        if scope.count == 1, let account = ledger.account(scope.first) { return account.displayName }
+        return String(localized: "\(scope.count) accounts", comment: "Home: the balance of several selected accounts")
+    }
+
+    private var balance: Double {
+        scope.isEmpty
+            ? ledger.netWorth
+            : ledger.accounts.filter { scope.contains($0.uuid) }.reduce(0) { $0 + ledger.balanceInBase(of: $1) }
+    }
+
     /// "Total balance" and today's figure, or the scrubbed day and its balance.
     private func header(focused: TrendPoint?) -> some View {
-        let value = focused?.value ?? ledger.netWorth
+        let value = focused?.value ?? balance
         return VStack(alignment: .leading, spacing: 6) {
             Group {
                 if let focused {
                     Text(focused.date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated)))
                 } else {
-                    Text("Total balance")
+                    Text(scopeTitle)
                 }
             }
             .font(.subheadline.weight(.medium))
@@ -439,7 +518,8 @@ private struct NetWorthHero: View {
                   let next = calendar.date(byAdding: .day, value: 1, to: day) else { return nil }
             return DateInterval(start: day, end: next)
         }
-        return Ledger.netWorthSeries(accounts: ledger.refs, flows: ledger.flows, rates: ledger.rates, buckets: buckets)
+        let accounts = scope.isEmpty ? ledger.refs : ledger.refs.filter { scope.contains($0.id) }
+        return Ledger.netWorthSeries(accounts: accounts, flows: ledger.flows, rates: ledger.rates, buckets: buckets)
     }
 }
 
@@ -448,6 +528,8 @@ private struct NetWorthHero: View {
 private struct MonthCard: View {
     let report: Report
     let currency: String
+    /// The selected accounts, carried into the drill-down; empty means all.
+    var accounts: Set<UUID> = []
     @Environment(AppRouter.self) private var router
 
     var body: some View {
@@ -483,6 +565,7 @@ private struct MonthCard: View {
         var filter = TransactionFilter()
         filter.kinds = [kind]
         filter.period = .thisMonth
+        filter.accounts = accounts
         router.showTransactions(filter)
     }
 
@@ -523,6 +606,8 @@ private struct MonthCard: View {
 struct SpendingDonutCard: View {
     let report: Report
     let currency: String
+    /// The selected accounts, carried into the drill-down; empty means all.
+    var accounts: Set<UUID> = []
     var title = String(localized: "Spending by category", comment: "Chart title")
 
     @Environment(AppRouter.self) private var router
@@ -589,11 +674,14 @@ struct SpendingDonutCard: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 4)
             .sensoryFeedback(.selection, trigger: selected)
+            // A different set of accounts may not have the focused slice at all.
+            .onChange(of: accounts) { selected = nil }
 
             if let selected {
                 Button {
                     var filter = TransactionFilter()
                     filter.categories = ["group:" + selected]
+                    filter.accounts = accounts
                     filter.period = .custom
                     filter.customStart = report.period.interval.start
                     filter.customEnd = report.period.interval.end.addingTimeInterval(-1)

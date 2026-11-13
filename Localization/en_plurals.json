@@ -86,5 +86,9 @@
  "Show %lld transactions": {
   "one": "Show %lld transaction",
   "other": "Show %lld transactions"
+ },
+ "%lld accounts": {
+  "one": "%lld account",
+  "other": "%lld accounts"
  }
 }

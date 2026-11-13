@@ -14,6 +14,12 @@
  "%@: %@": "%@: %@",
  "%@: %@ on %@.": "%@: %@ на %@.",
  "%lld": "%lld",
+ "%lld accounts": {
+  "one": "%lld счёт",
+  "few": "%lld счёта",
+  "many": "%lld счетов",
+  "other": "%lld счёта"
+ },
  "%lld accounts created": {
   "few": "Создано %lld счёта",
   "many": "Создано %lld счетов",
@@ -215,6 +221,7 @@
  "Choose it below. Nothing is imported until you confirm.": "Выберите его ниже. Ничего не будет импортировано без вашего подтверждения.",
  "Choose two different accounts.": "Выберите два разных счёта.",
  "Choose where the money went.": "Укажите, куда поступили деньги.",
+ "Clear": "Сбросить",
  "Clear a filter above, or try another period.": "Снимите один из фильтров выше или выберите другой период.",
  "Clear all": "Очистить всё",
  "Clothes & shoes": "Одежда и обувь",
@@ -467,6 +474,7 @@
  "One account, or your total across all of them.": "Один счёт или общий итог по всем счетам.",
  "Only expenses in the selected categories count toward this budget.": "В этом бюджете учитываются только расходы по выбранным категориям.",
  "Only transactions linked to items": "Только операции, привязанные к предметам",
+ "Open account": "Открыть счёт",
  "Opens Settings, where the language for this application can be changed independently of the system language.": "Открывает «Настройки», где язык этого приложения можно изменить независимо от языка системы.",
  "Opens Wallet ready to record a transaction.": "Открывает Wallet для записи операции.",
  "Opens Wallet with the entry keypad ready.": "Открывает Wallet сразу с клавиатурой ввода.",

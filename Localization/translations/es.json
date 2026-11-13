@@ -14,6 +14,10 @@
  "%@: %@": "%@: %@",
  "%@: %@ on %@.": "%@: %@ en %@.",
  "%lld": "%lld",
+ "%lld accounts": {
+  "one": "%lld cuenta",
+  "other": "%lld cuentas"
+ },
  "%lld accounts created": {
   "one": "%lld cuenta creada",
   "other": "%lld cuentas creadas"
@@ -183,6 +187,7 @@
  "Choose it below. Nothing is imported until you confirm.": "Selecciónelo a continuación. No se importará nada hasta que lo confirme.",
  "Choose two different accounts.": "Elija dos cuentas distintas.",
  "Choose where the money went.": "Elija adónde fue el dinero.",
+ "Clear": "Borrar",
  "Clear a filter above, or try another period.": "Quite un filtro de arriba o pruebe otro período.",
  "Clear all": "Borrar todo",
  "Clothes & shoes": "Ropa y calzado",
@@ -431,6 +436,7 @@
  "One account, or your total across all of them.": "Una cuenta o el total de todas ellas.",
  "Only expenses in the selected categories count toward this budget.": "Solo los gastos de las categorías seleccionadas cuentan para este presupuesto.",
  "Only transactions linked to items": "Solo transacciones vinculadas a artículos",
+ "Open account": "Abrir cuenta",
  "Opens Settings, where the language for this application can be changed independently of the system language.": "Abre Ajustes, donde puede cambiarse el idioma de esta aplicación con independencia del idioma del sistema.",
  "Opens Wallet ready to record a transaction.": "Abre Wallet listo para registrar una transacción.",
  "Opens Wallet with the entry keypad ready.": "Abre Wallet con el teclado de entrada listo.",

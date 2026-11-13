@@ -14,6 +14,9 @@
  "%@: %@": "%@：%@",
  "%@: %@ on %@.": "%1$@の%3$@の支出：%2$@。",
  "%lld": "%lld",
+ "%lld accounts": {
+  "other": "%lld 口座"
+ },
  "%lld accounts created": {
   "other": "%lld 件の口座を作成"
  },
@@ -167,6 +170,7 @@
  "Choose it below. Nothing is imported until you confirm.": "以下から選択してください。確認するまでは何も読み込まれません。",
  "Choose two different accounts.": "異なる2つの口座を選択してください。",
  "Choose where the money went.": "支払先を選択してください。",
+ "Clear": "クリア",
  "Clear a filter above, or try another period.": "上のフィルタを解除するか、別の期間をお試しください。",
  "Clear all": "すべて消去",
  "Clothes & shoes": "衣類・靴",
@@ -413,6 +417,7 @@
  "One account, or your total across all of them.": "1つの口座、またはすべての口座の合計。",
  "Only expenses in the selected categories count toward this budget.": "選択したカテゴリの支出のみがこの予算の対象になります。",
  "Only transactions linked to items": "項目にリンクされた取引のみ",
+ "Open account": "口座を開く",
  "Opens Settings, where the language for this application can be changed independently of the system language.": "設定を開きます。設定では、システムの言語とは別に、このアプリケーションの言語を変更できます。",
  "Opens Wallet ready to record a transaction.": "取引を記録できる状態で Wallet を開きます。",
  "Opens Wallet with the entry keypad ready.": "入力用キーパッドを表示した状態で Wallet を開きます。",

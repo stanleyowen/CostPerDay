@@ -14,6 +14,9 @@
  "%@: %@": "%@：%@",
  "%@: %@ on %@.": "%1$@：%3$@支出 %2$@。",
  "%lld": "%lld",
+ "%lld accounts": {
+  "other": "%lld 個帳戶"
+ },
  "%lld accounts created": {
   "other": "已建立 %lld 個帳戶"
  },
@@ -167,6 +170,7 @@
  "Choose it below. Nothing is imported until you confirm.": "請在下方選擇檔案。在您確認之前不會匯入任何資料。",
  "Choose two different accounts.": "請選擇兩個不同的帳戶。",
  "Choose where the money went.": "請選擇款項的去向。",
+ "Clear": "清除",
  "Clear a filter above, or try another period.": "清除上方的篩選條件，或試試其他期間。",
  "Clear all": "全部清除",
  "Clothes & shoes": "服飾鞋履",
@@ -413,6 +417,7 @@
  "One account, or your total across all of them.": "單一帳戶，或所有帳戶的總額。",
  "Only expenses in the selected categories count toward this budget.": "只有所選類別中的支出會計入此預算。",
  "Only transactions linked to items": "僅顯示已連結物品的交易",
+ "Open account": "打開帳戶",
  "Opens Settings, where the language for this application can be changed independently of the system language.": "開啟「設定」，可在其中將本應用程式的語言設定為不同於系統語言。",
  "Opens Wallet ready to record a transaction.": "開啟 Wallet 並準備記錄交易。",
  "Opens Wallet with the entry keypad ready.": "開啟 Wallet 並顯示輸入鍵盤。",
