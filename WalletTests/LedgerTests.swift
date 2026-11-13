@@ -163,33 +163,47 @@ struct ReportTests {
 struct AmountInputTests {
     let us = Locale(identifier: "en_US")
     let de = Locale(identifier: "de_DE")
+    let india = Locale(identifier: "en_IN")
 
     @Test("Keeps digits and one separator, within the currency's decimals")
     func sanitize() {
         #expect(AmountInput.sanitize("12.345", fractionDigits: 2, locale: us) == "12.34")
         #expect(AmountInput.sanitize("12.5", fractionDigits: 0, locale: us) == "125")
         #expect(AmountInput.sanitize(".5", fractionDigits: 2, locale: us) == "0.5")
+        #expect(AmountInput.sanitize("12.", fractionDigits: 2, locale: us) == "12.")
         #expect(AmountInput.sanitize("0005", fractionDigits: 2, locale: us) == "5")
-        #expect(AmountInput.sanitize("1,234.50", fractionDigits: 2, locale: us) == "1234.50")
         #expect(AmountInput.sanitize("12a3", fractionDigits: 2, locale: us) == "123")
         #expect(AmountInput.sanitize("", fractionDigits: 2, locale: us) == "")
     }
 
-    @Test("Uses the locale's decimal separator")
-    func locales() {
-        #expect(AmountInput.sanitize("12.5", fractionDigits: 2, locale: de) == "12,5")
-        #expect(AmountInput.value(of: "12,5", locale: de) == 12.5)
-        #expect(AmountInput.text(for: 1234.5, fractionDigits: 2, locale: de) == "1234,5")
+    @Test("Groups thousands as you type, the locale's way")
+    func grouping() {
+        #expect(AmountInput.sanitize("1234", fractionDigits: 2, locale: us) == "1,234")
+        #expect(AmountInput.sanitize("1234567", fractionDigits: 0, locale: us) == "1,234,567")
+        // Typing on after a grouped value regroups it.
+        #expect(AmountInput.sanitize("1,2345", fractionDigits: 2, locale: us) == "12,345")
+        #expect(AmountInput.sanitize("1,234.56", fractionDigits: 2, locale: us) == "1,234.56")
+        #expect(AmountInput.sanitize("1234,5", fractionDigits: 2, locale: de) == "1.234,5")
+        #expect(AmountInput.sanitize("1234567", fractionDigits: 0, locale: india) == "12,34,567")
+        // Long enough to overflow an Int stays exact.
+        #expect(AmountInput.sanitize("12345678901234567890", fractionDigits: 0, locale: us) == "12,345,678,901,234,567,890")
     }
 
-    @Test("Reads and shows stored amounts")
+    @Test("Reads grouped text back as a number")
     func values() {
         #expect(AmountInput.value(of: "", locale: us) == nil)
         #expect(AmountInput.value(of: "4.13", locale: us) == 4.13)
         #expect(AmountInput.value(of: "0.", locale: us) == 0)
+        #expect(AmountInput.value(of: "1,234.5", locale: us) == 1234.5)
+        #expect(AmountInput.value(of: "1.234,5", locale: de) == 1234.5)
+    }
+
+    @Test("Shows stored amounts grouped, without trailing zeros")
+    func display() {
         #expect(AmountInput.text(for: 0, fractionDigits: 2, locale: us) == "")
-        #expect(AmountInput.text(for: 1250, fractionDigits: 2, locale: us) == "1250")
+        #expect(AmountInput.text(for: 1250, fractionDigits: 2, locale: us) == "1,250")
         #expect(AmountInput.text(for: 4.13, fractionDigits: 2, locale: us) == "4.13")
+        #expect(AmountInput.text(for: 1234.5, fractionDigits: 2, locale: de) == "1.234,5")
     }
 }
 

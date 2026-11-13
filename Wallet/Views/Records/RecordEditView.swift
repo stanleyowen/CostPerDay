@@ -195,7 +195,8 @@ struct RecordEditView: View {
     /// The amount, typed on the system decimal keyboard.
     private var amountDisplay: some View {
         // Shrinks as the number grows, so long amounts still fit on one line.
-        let size: CGFloat = amountText.count > 9 ? 36 : amountText.count > 6 ? 44 : 54
+        // (Counted with the grouping separators, which take room too.)
+        let size: CGFloat = amountText.count > 12 ? 36 : amountText.count > 9 ? 44 : 54
         return VStack(spacing: 4) {
             HStack(alignment: .firstTextBaseline, spacing: 6) {
                 Text(verbatim: draft.kind == .expense ? "−" : draft.kind == .income ? "+" : "")
