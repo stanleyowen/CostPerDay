@@ -184,42 +184,19 @@ struct AccountCard: View {
 
 // MARK: - Controls
 
-/// Expense / Income / Transfer. A control, so the selection is the brand accent
-/// like every other selection; coral and green stay reserved for money itself.
+/// Expense / Income / Transfer, as the standard iOS segmented control.
 struct KindPicker: View {
     @Binding var kind: RecordKind
     var allowsTransfer = true
-    @Namespace private var namespace
 
     var body: some View {
-        HStack(spacing: 0) {
+        Picker("Type", selection: $kind.animation(.snappy(duration: 0.25))) {
             ForEach(RecordKind.allCases.filter { allowsTransfer || $0 != .transfer }) { option in
-                let selected = option == kind
-                Button {
-                    withAnimation(.snappy(duration: 0.25)) { kind = option }
-                } label: {
-                    Text(option.label)
-                        .font(.subheadline.weight(.semibold))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                        .padding(.vertical, 8)
-                        .frame(maxWidth: .infinity)
-                        .foregroundStyle(selected ? AnyShapeStyle(.white) : AnyShapeStyle(.secondary))
-                        .background {
-                            if selected {
-                                Capsule()
-                                    .fill(Brand.accent.gradient)
-                                    .matchedGeometryEffect(id: "kind", in: namespace)
-                            }
-                        }
-                        .contentShape(.capsule)
-                }
-                .buttonStyle(.plain)
-                .accessibilityAddTraits(selected ? .isSelected : [])
+                Text(option.label).tag(option)
             }
         }
-        .padding(3)
-        .background(Color(.tertiarySystemFill), in: .capsule)
+        .pickerStyle(.segmented)
+        .labelsHidden()
         .sensoryFeedback(.selection, trigger: kind)
     }
 }
