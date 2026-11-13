@@ -389,6 +389,16 @@ struct AccountDetailView: View {
                 .padding(.vertical, 6)
             }
 
+            if !records.isEmpty {
+                // Below the balance (always the whole history), right above the
+                // transactions it narrows. Scrolls with the list, like Reports'.
+                Section {
+                    TransactionPeriodControl(period: $filter.period)
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                        .listRowBackground(Color.clear)
+                }
+            }
+
             if records.isEmpty {
                 ContentUnavailableView("No transactions", systemImage: "list.bullet.rectangle", description: Text("Transactions in this account will appear here."))
             } else if shown.isEmpty {
@@ -411,9 +421,6 @@ struct AccountDetailView: View {
         }
         .navigationTitle(account.displayName)
         .navigationBarTitleDisplayMode(.inline)
-        .pinnedHeader {
-            TransactionPeriodControl(period: $filter.period)
-        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 FilterToolbarButton(count: TransactionFilterSheet.count(filter, part: .details)) { showingFilters = true }

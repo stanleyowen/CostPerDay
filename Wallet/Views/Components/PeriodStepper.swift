@@ -153,24 +153,3 @@ private struct CustomRangeSheet: View {
         }
     }
 }
-
-extension View {
-    /// Pins a control under the navigation bar while the content scrolls beneath
-    /// it — on iOS 26 as part of the bar's own glass edge, earlier on the screen's
-    /// background.
-    @ViewBuilder
-    func pinnedHeader<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
-        if #available(iOS 26, *) {
-            safeAreaBar(edge: .top) {
-                content().padding(.horizontal, 16).padding(.bottom, 6)
-            }
-        } else {
-            safeAreaInset(edge: .top, spacing: 0) {
-                content()
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 6)
-                    .background(Color(.systemGroupedBackground))
-            }
-        }
-    }
-}

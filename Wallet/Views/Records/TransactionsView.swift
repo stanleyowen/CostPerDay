@@ -22,6 +22,11 @@ struct TransactionsView: View {
             List {
                 if !records.isEmpty {
                     Section {
+                        // Scrolls with the list, like Reports' period control.
+                        TransactionPeriodControl(period: $router.transactionFilter.period)
+                            .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
                         summary(snapshot)
                             // Flush with the day sections below.
                             .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
@@ -74,11 +79,8 @@ struct TransactionsView: View {
             }
             .searchable(text: $search, prompt: Text("Notes, labels, amounts"))
             .navigationTitle("Transactions")
-            // The period, pinned under the title; the other filters behind the
-            // toolbar button. The bottom is left to the tab bar and +.
-            .pinnedHeader {
-                TransactionPeriodControl(period: $router.transactionFilter.period)
-            }
+            // The period is at the top of the list; the other filters are behind
+            // the toolbar button. The bottom is left to the tab bar and +.
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     FilterToolbarButton(count: TransactionFilterSheet.count(router.transactionFilter, part: .all)) { showingFilters = true }
