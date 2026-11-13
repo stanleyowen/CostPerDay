@@ -108,7 +108,7 @@ extension ItemFields {
 /// this instead of the live `Item`, so Cancel is a true no-op — nothing was ever
 /// written to the persisted record — regardless of when SwiftData's autosave happens
 /// to run in the background.
-struct ItemDraft: ItemFields {
+struct ItemDraft: ItemFields, Equatable {
     var name: String
     var brand: String
     var categoryKey: String

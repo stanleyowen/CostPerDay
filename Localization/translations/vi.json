@@ -219,6 +219,8 @@
  "Deselect account": "Bỏ chọn tài khoản",
  "Desktop": "Máy tính để bàn",
  "Details": "Chi tiết",
+ "Discard Changes": "Hủy thay đổi",
+ "Discard unsaved changes?": "Hủy các thay đổi chưa lưu?",
  "Dismiss": "Đóng",
  "Distribution across areas of life": "Phân bổ theo lĩnh vực đời sống",
  "Distribution across categories": "Phân bổ theo danh mục",
@@ -335,6 +337,7 @@
  },
  "Jewellery": "Trang sức",
  "Jewels, accessories": "Trang sức, phụ kiện",
+ "Keep Editing": "Tiếp tục chỉnh sửa",
  "Kids": "Con cái",
  "Labels": "Nhãn",
  "Labels cut across categories — a shop, a trip, a person you split costs with.": "Nhãn áp dụng xuyên suốt các danh mục — chẳng hạn một cửa hàng, một chuyến đi, hoặc một người cùng chia sẻ chi phí với bạn.",
@@ -670,6 +673,7 @@
  "Yearly": "Hằng năm",
  "Yellow": "Vàng",
  "Yesterday": "Hôm qua",
+ "You have changes that haven't been saved. If you leave now, they'll be lost.": "Bạn có các thay đổi chưa được lưu. Nếu rời đi bây giờ, chúng sẽ bị mất.",
  "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
   "other": "%lld món đồ của bạn hiện đang được định giá theo %@. Tỷ giá này thể hiện lại chúng bằng %@. Giá đã nhập ban đầu vẫn không thay đổi; chỉ phần quy đổi được điều chỉnh."
  },

@@ -43,6 +43,9 @@ struct RecordEditView: View {
     @State private var isItemPurchase: Bool
     @State private var choosingItem = false
     @State private var deleteRequest: DeleteRequest?
+    /// What "unchanged" means: the draft once the editor has filled in its own
+    /// defaults (account, category, currency). Nil until then.
+    @State private var baseline: RecordDraft?
     @FocusState private var noteFocused: Bool
     @FocusState private var amountFocused: Bool
 
@@ -119,9 +122,6 @@ struct RecordEditView: View {
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(isNew ? "Save" : "Update") { save() }
                         .fontWeight(.semibold)
@@ -169,8 +169,8 @@ struct RecordEditView: View {
             .onChange(of: draft.accountID) { _, _ in currencyMayHaveChanged() }
             .onChange(of: draft.toAccountID) { _, _ in currencyMayHaveChanged() }
             .onChange(of: draft.note) { _, note in applySuggestion(for: note) }
+            .cancelAction(hasChanges: hasChanges) { dismiss() }
         }
-        .interactiveDismissDisabled(isDirty)
     }
 
     private var title: String {
@@ -182,9 +182,17 @@ struct RecordEditView: View {
         }
     }
 
-    private var isDirty: Bool {
-        let original = record.map(RecordDraft.init(record:))
-        return amountValue != (original?.amount ?? 0) || draft.note != (original?.note ?? "")
+    /// Anything the user changed since the editor opened. The amount and received
+    /// fields live outside the draft until Save; the rate and currency follow the
+    /// account, so they aren't edits of their own.
+    private var hasChanges: Bool {
+        guard let baseline else { return false }
+        var current = draft
+        current.amount = amountValue
+        current.toAmount = received ?? 0
+        current.rateToBase = baseline.rateToBase
+        current.currencyCode = baseline.currencyCode
+        return current != baseline || trackAsItem
             || linkedItem?.persistentModelID != record?.item?.persistentModelID
     }
 
@@ -645,6 +653,10 @@ struct RecordEditView: View {
             // Pre-select the most common category, but keep it visibly "suggested".
             draft.categoryKey = top
         }
+        var settled = draft
+        settled.amount = amountValue
+        settled.toAmount = received ?? 0
+        baseline = settled
     }
 
     private func kindChanged(from old: RecordKind, to new: RecordKind) {

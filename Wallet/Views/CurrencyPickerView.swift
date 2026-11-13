@@ -53,7 +53,7 @@ struct CurrencyPickerView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    CancelButton { dismiss() }
                 }
             }
         }

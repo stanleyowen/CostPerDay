@@ -11,6 +11,8 @@ struct ItemEditView: View {
     /// The form edits this, never `item` directly — so Cancel can simply dismiss
     /// without needing to undo anything. `item` is only touched once, on Save.
     @State private var draft: ItemDraft
+    /// The draft once the form has filled in its defaults; Cancel compares with it.
+    @State private var baseline: ItemDraft?
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
@@ -163,9 +165,6 @@ struct ItemEditView: View {
             .navigationTitle(isNew ? String(localized: "New Item", comment: "Screen title") : String(localized: "Edit Item", comment: "Screen title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { cancel() }
-                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { save() }
                         .fontWeight(.semibold)
@@ -208,11 +207,14 @@ struct ItemEditView: View {
                 } else {
                     lifetimeIsCustom = true
                 }
+                baseline = draft
             }
             .sensoryFeedback(.success, trigger: savedTrigger)
             .sensoryFeedback(.error, trigger: invalidTrigger)
+            // A new item is already inserted, so even unchanged it must leave
+            // through Cancel, which removes it.
+            .cancelAction(hasChanges: baseline.map { $0 != draft } ?? false, blocksSwipe: isNew) { cancel() }
         }
-        .interactiveDismissDisabled(isNew)
     }
 
     // MARK: Sections

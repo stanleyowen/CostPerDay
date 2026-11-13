@@ -219,6 +219,8 @@
  "Deselect account": "계좌 선택 해제",
  "Desktop": "데스크톱",
  "Details": "세부사항",
+ "Discard Changes": "변경 사항 삭제",
+ "Discard unsaved changes?": "저장하지 않은 변경 사항을 삭제하시겠습니까?",
  "Dismiss": "닫기",
  "Distribution across areas of life": "생활 영역별 분포",
  "Distribution across categories": "카테고리별 분포",
@@ -335,6 +337,7 @@
  },
  "Jewellery": "귀금속",
  "Jewels, accessories": "주얼리, 액세서리",
+ "Keep Editing": "계속 편집",
  "Kids": "자녀",
  "Labels": "라벨",
  "Labels cut across categories — a shop, a trip, a person you split costs with.": "라벨은 카테고리와 별개로 지정합니다. 예를 들어 상점, 여행, 비용을 나누는 사람 등에 사용할 수 있습니다.",
@@ -670,6 +673,7 @@
  "Yearly": "매년",
  "Yellow": "노랑",
  "Yesterday": "어제",
+ "You have changes that haven't been saved. If you leave now, they'll be lost.": "저장되지 않은 변경 사항이 있습니다. 지금 나가면 변경 사항이 사라집니다.",
  "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
   "other": "현재 항목 %1$lld개의 가격은 %2$@을(를) 기준으로 설정되어 있습니다. 이 환율은 해당 항목을 %3$@(으)로 다시 표시합니다. 처음 입력한 가격은 그대로 유지되며 환산만 조정됩니다."
  },

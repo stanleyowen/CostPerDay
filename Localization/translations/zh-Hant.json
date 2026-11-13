@@ -219,6 +219,8 @@
  "Deselect account": "取消選擇帳戶",
  "Desktop": "桌上型電腦",
  "Details": "詳細資料",
+ "Discard Changes": "放棄變更",
+ "Discard unsaved changes?": "放棄未儲存的變更？",
  "Dismiss": "關閉",
  "Distribution across areas of life": "各生活領域的分布",
  "Distribution across categories": "各類別的分布",
@@ -335,6 +337,7 @@
  },
  "Jewellery": "首飾",
  "Jewels, accessories": "珠寶、飾品",
+ "Keep Editing": "繼續編輯",
  "Kids": "兒童",
  "Labels": "標籤",
  "Labels cut across categories — a shop, a trip, a person you split costs with.": "標籤可跨越類別使用，例如一家商店、一趟旅行，或與您分攤費用的人。",
@@ -670,6 +673,7 @@
  "Yearly": "每年",
  "Yellow": "黃色",
  "Yesterday": "昨天",
+ "You have changes that haven't been saved. If you leave now, they'll be lost.": "您有尚未儲存的變更。如果現在離開，這些變更將會遺失。",
  "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
   "other": "您的 %lld 件物品目前以 %@ 計價。此匯率會將其改以 %@ 表示。原先輸入的價格維持不變，僅調整換算結果。"
  },

@@ -18,6 +18,8 @@ struct AccountEditView: View {
 
     @State private var draft: AccountDraft
     @State private var balanceText: Double?
+    /// The draft and balance once loaded; Cancel compares with them.
+    @State private var baseline: (draft: AccountDraft, balance: Double?)?
     @State private var recordedDelta: Double = 0
     @State private var choosingCurrency = false
     @State private var deleteRequest: DeleteRequest?
@@ -157,7 +159,6 @@ struct AccountEditView: View {
             .navigationTitle(isNew ? String(localized: "New Account", comment: "Screen title") : String(localized: "Edit Account", comment: "Screen title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save", action: save)
                         .fontWeight(.semibold)
@@ -172,6 +173,7 @@ struct AccountEditView: View {
                 Button("OK", role: .cancel) {}
             } message: { Text(saveError ?? "") }
             .task { load() }
+            .cancelAction(hasChanges: baseline.map { $0.draft != draft || $0.balance != balanceText } ?? false) { dismiss() }
         }
     }
 
@@ -187,6 +189,7 @@ struct AccountEditView: View {
             draft.currencyCode = draft.currencyCode.isEmpty ? baseCurrency : draft.currencyCode
             balanceText = nil
             nameFocused = true
+            baseline = (draft, nil)
             return
         }
         guard let account else { return }
@@ -196,6 +199,7 @@ struct AccountEditView: View {
         let balance = Ledger.balances(accounts: [AccountRef(account)], flows: records.map(\.flow))[id] ?? account.initialBalance
         recordedDelta = balance - account.initialBalance
         balanceText = balance
+        baseline = (draft, balance)
     }
 
     private func save() {

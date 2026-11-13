@@ -144,6 +144,7 @@ struct CustomCategoryEditView: View {
     /// The form edits this, never `category` directly — so Cancel can simply dismiss
     /// without needing to undo anything. `category` is only touched once, on Save.
     @State private var draft: CustomCategoryDraft
+    private let original: CustomCategoryDraft
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
@@ -153,7 +154,8 @@ struct CustomCategoryEditView: View {
         self.category = category
         self.isNew = isNew
         self.onSave = onSave
-        _draft = State(initialValue: CustomCategoryDraft(category: category))
+        original = CustomCategoryDraft(category: category)
+        _draft = State(initialValue: original)
     }
 
     private var trimmedName: String {
@@ -257,9 +259,6 @@ struct CustomCategoryEditView: View {
             .navigationTitle(isNew ? String(localized: "New Category", comment: "Screen title") : String(localized: "Edit Category", comment: "Screen title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { cancel() }
-                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { save() }
                         .disabled(trimmedName.isEmpty)
@@ -270,8 +269,8 @@ struct CustomCategoryEditView: View {
             } message: {
                 Text(saveError ?? "")
             }
+            .cancelAction(hasChanges: draft != original) { dismiss() }
         }
-        .interactiveDismissDisabled(isNew)
     }
 
     private func save() {
@@ -286,9 +285,5 @@ struct CustomCategoryEditView: View {
         } catch {
             saveError = error.localizedDescription
         }
-    }
-
-    private func cancel() {
-        dismiss()
     }
 }

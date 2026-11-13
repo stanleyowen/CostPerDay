@@ -4,7 +4,7 @@ import Foundation
 /// category-editing counterpart to `ItemDraft`, and for the same reason: the edit
 /// form must never mutate the live `CustomCategory` until Save is pressed, or Cancel
 /// can't reliably discard anything SwiftData's autosave already persisted.
-struct CustomCategoryDraft {
+struct CustomCategoryDraft: Equatable {
     var name: String
     var symbolName: String
     var sector: Sector

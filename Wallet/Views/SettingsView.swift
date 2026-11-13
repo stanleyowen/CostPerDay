@@ -476,7 +476,7 @@ private struct RebaseSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    CancelButton { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Convert") { onConfirm(factor) }

@@ -151,11 +151,14 @@ struct BudgetEditView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
     @State private var draft: BudgetDraft
+    private let original: BudgetDraft
     @State private var deleteRequest: DeleteRequest?
 
     init(budget: Budget?) {
         self.budget = budget
-        _draft = State(initialValue: budget.map(BudgetDraft.init(budget:)) ?? BudgetDraft(name: "", limit: 0, period: .month, categoryKeys: []))
+        let initial = budget.map(BudgetDraft.init(budget:)) ?? BudgetDraft(name: "", limit: 0, period: .month, categoryKeys: [])
+        original = initial
+        _draft = State(initialValue: initial)
     }
 
     var body: some View {
@@ -209,8 +212,8 @@ struct BudgetEditView: View {
             .navigationTitle(budget == nil ? String(localized: "New Budget", comment: "Screen title") : String(localized: "Edit Budget", comment: "Screen title"))
             .navigationBarTitleDisplayMode(.inline)
             .deleteConfirmation($deleteRequest)
+            .cancelAction(hasChanges: draft != original) { dismiss() }
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save", action: save).fontWeight(.semibold).disabled(!draft.isValid)
                 }

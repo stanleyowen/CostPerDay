@@ -236,6 +236,8 @@
  "Deselect account": "Desmarcar conta",
  "Desktop": "Computador de mesa",
  "Details": "Detalhes",
+ "Discard Changes": "Descartar alterações",
+ "Discard unsaved changes?": "Descartar alterações não salvas?",
  "Dismiss": "Dispensar",
  "Distribution across areas of life": "Distribuição por áreas da vida",
  "Distribution across categories": "Distribuição por categorias",
@@ -354,6 +356,7 @@
  },
  "Jewellery": "Joias",
  "Jewels, accessories": "Joias, acessórios",
+ "Keep Editing": "Continuar editando",
  "Kids": "Filhos",
  "Labels": "Etiquetas",
  "Labels cut across categories — a shop, a trip, a person you split costs with.": "As etiquetas abrangem várias categorias: uma loja, uma viagem, uma pessoa com quem você divide despesas.",
@@ -692,6 +695,7 @@
  "Yearly": "Anual",
  "Yellow": "Amarelo",
  "Yesterday": "Ontem",
+ "You have changes that haven't been saved. If you leave now, they'll be lost.": "Você tem alterações que não foram salvas. Se sair agora, elas serão perdidas.",
  "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
   "one": "Seu %lld item está atualmente precificado em %@. Esta taxa o reexpressa em %@. Os preços informados originalmente permanecem inalterados; apenas a conversão é ajustada.",
   "other": "Seus %lld itens estão atualmente precificados em %@. Esta taxa os reexpressa em %@. Os preços informados originalmente permanecem inalterados; apenas a conversão é ajustada."

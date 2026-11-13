@@ -130,7 +130,7 @@ struct LinkRecordSheet: View {
             .navigationTitle("Link a transaction")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) { CancelButton { dismiss() } }
             }
             .onAppear { asPurchase = !hasPurchase && (item.records ?? []).isEmpty }
         }
@@ -179,7 +179,7 @@ struct ItemPickerSheet: View {
             .navigationTitle("Add as upkeep to…")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) { CancelButton { dismiss() } }
             }
         }
     }

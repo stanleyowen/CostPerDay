@@ -219,6 +219,8 @@
  "Deselect account": "Batalkan pilihan akun",
  "Desktop": "Desktop",
  "Details": "Detail",
+ "Discard Changes": "Buang Perubahan",
+ "Discard unsaved changes?": "Buang perubahan yang belum disimpan?",
  "Dismiss": "Tutup",
  "Distribution across areas of life": "Distribusi menurut bidang kehidupan",
  "Distribution across categories": "Distribusi menurut kategori",
@@ -335,6 +337,7 @@
  },
  "Jewellery": "Perhiasan",
  "Jewels, accessories": "Perhiasan, aksesori",
+ "Keep Editing": "Lanjutkan Mengedit",
  "Kids": "Anak",
  "Labels": "Label",
  "Labels cut across categories — a shop, a trip, a person you split costs with.": "Label berlaku lintas kategori — misalnya toko, perjalanan, atau orang yang berbagi biaya dengan Anda.",
@@ -670,6 +673,7 @@
  "Yearly": "Tahunan",
  "Yellow": "Kuning",
  "Yesterday": "Kemarin",
+ "You have changes that haven't been saved. If you leave now, they'll be lost.": "Ada perubahan yang belum disimpan. Jika Anda keluar sekarang, perubahan tersebut akan hilang.",
  "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
   "other": "%lld barang Anda saat ini dinilai terhadap %@. Kurs ini menyatakan kembali nilainya dalam %@. Harga yang semula dimasukkan tetap tidak berubah; hanya konversinya yang disesuaikan."
  },

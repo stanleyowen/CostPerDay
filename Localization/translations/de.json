@@ -236,6 +236,8 @@
  "Deselect account": "Kontoauswahl aufheben",
  "Desktop": "Desktop-PC",
  "Details": "Details",
+ "Discard Changes": "Änderungen verwerfen",
+ "Discard unsaved changes?": "Ungesicherte Änderungen verwerfen?",
  "Dismiss": "Schließen",
  "Distribution across areas of life": "Verteilung nach Lebensbereichen",
  "Distribution across categories": "Verteilung nach Kategorien",
@@ -354,6 +356,7 @@
  },
  "Jewellery": "Schmuck",
  "Jewels, accessories": "Schmuck, Accessoires",
+ "Keep Editing": "Weiter bearbeiten",
  "Kids": "Kinder",
  "Labels": "Labels",
  "Labels cut across categories — a shop, a trip, a person you split costs with.": "Labels gelten kategorienübergreifend – etwa für ein Geschäft, eine Reise oder eine Person, mit der Sie Kosten teilen.",
@@ -692,6 +695,7 @@
  "Yearly": "Jährlich",
  "Yellow": "Gelb",
  "Yesterday": "Gestern",
+ "You have changes that haven't been saved. If you leave now, they'll be lost.": "Sie haben Änderungen, die noch nicht gesichert wurden. Wenn Sie jetzt abbrechen, gehen sie verloren.",
  "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
   "one": "Ihr %1$lld Artikel ist derzeit in %2$@ bewertet. Dieser Kurs rechnet ihn in %3$@ um. Die ursprünglich eingegebenen Preise bleiben unverändert; nur die Umrechnung wird angepasst.",
   "other": "Ihre %1$lld Artikel sind derzeit in %2$@ bewertet. Dieser Kurs rechnet sie in %3$@ um. Die ursprünglich eingegebenen Preise bleiben unverändert; nur die Umrechnung wird angepasst."

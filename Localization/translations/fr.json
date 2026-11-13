@@ -236,6 +236,8 @@
  "Deselect account": "Désélectionner le compte",
  "Desktop": "Ordinateur de bureau",
  "Details": "Détails",
+ "Discard Changes": "Ignorer les modifications",
+ "Discard unsaved changes?": "Ignorer les modifications non enregistrées ?",
  "Dismiss": "Fermer",
  "Distribution across areas of life": "Répartition par domaine de vie",
  "Distribution across categories": "Répartition par catégorie",
@@ -354,6 +356,7 @@
  },
  "Jewellery": "Bijoux",
  "Jewels, accessories": "Bijoux, accessoires",
+ "Keep Editing": "Continuer la modification",
  "Kids": "Enfants",
  "Labels": "Étiquettes",
  "Labels cut across categories — a shop, a trip, a person you split costs with.": "Les étiquettes regroupent des éléments de plusieurs catégories : un magasin, un voyage, une personne avec qui vous partagez des frais.",
@@ -692,6 +695,7 @@
  "Yearly": "Annuel",
  "Yellow": "Jaune",
  "Yesterday": "Hier",
+ "You have changes that haven't been saved. If you leave now, they'll be lost.": "Certaines modifications n'ont pas été enregistrées. Si vous quittez maintenant, elles seront perdues.",
  "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
   "one": "Votre %lld article est actuellement valorisé en %@. Ce taux le convertit en %@. Les prix saisis à l'origine restent inchangés ; seule la conversion est ajustée.",
   "other": "Vos %lld articles sont actuellement valorisés en %@. Ce taux les convertit en %@. Les prix saisis à l'origine restent inchangés ; seule la conversion est ajustée."

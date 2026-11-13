@@ -120,7 +120,7 @@ enum AccountKind: String, CaseIterable, Identifiable, Codable {
 
 /// Plain copy of an account's editable fields; the editor binds to this so Cancel
 /// never leaves half-made changes behind on the live model.
-struct AccountDraft {
+struct AccountDraft: Equatable {
     var name: String
     var kind: AccountKind
     var currencyCode: String

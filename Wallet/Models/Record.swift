@@ -335,7 +335,7 @@ enum BudgetPeriod: String, CaseIterable, Identifiable, Codable {
     }
 }
 
-struct BudgetDraft {
+struct BudgetDraft: Equatable {
     var name: String
     var limit: Double
     var period: BudgetPeriod

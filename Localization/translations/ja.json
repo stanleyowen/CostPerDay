@@ -219,6 +219,8 @@
  "Deselect account": "口座の選択を解除",
  "Desktop": "デスクトップ",
  "Details": "詳細",
+ "Discard Changes": "変更を破棄",
+ "Discard unsaved changes?": "保存されていない変更を破棄しますか？",
  "Dismiss": "閉じる",
  "Distribution across areas of life": "生活領域別の分布",
  "Distribution across categories": "カテゴリ別の分布",
@@ -335,6 +337,7 @@
  },
  "Jewellery": "宝飾品",
  "Jewels, accessories": "宝飾品・アクセサリー",
+ "Keep Editing": "編集を続ける",
  "Kids": "子ども",
  "Labels": "ラベル",
  "Labels cut across categories — a shop, a trip, a person you split costs with.": "ラベルはカテゴリをまたいで使用できます。たとえば店舗、旅行、費用を分担する相手などです。",
@@ -670,6 +673,7 @@
  "Yearly": "毎年",
  "Yellow": "黄",
  "Yesterday": "昨日",
+ "You have changes that haven't been saved. If you leave now, they'll be lost.": "保存されていない変更があります。今閉じると、変更は失われます。",
  "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
   "other": "現在、%1$lld 件の項目は %2$@ を基準として価格が設定されています。このレートにより、それらを %3$@ で表示し直します。当初入力された価格は変更されず、換算のみが調整されます。"
  },

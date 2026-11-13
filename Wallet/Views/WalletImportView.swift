@@ -44,7 +44,7 @@ struct WalletImportView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    if case .done = stage {} else { Button("Cancel") { dismiss() } }
+                    if case .done = stage {} else { CancelButton { dismiss() } }
                 }
             }
             .fileImporter(isPresented: $picking, allowedContentTypes: [.commaSeparatedText, .plainText, .text, .data]) { result in

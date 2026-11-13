@@ -16517,6 +16517,162 @@
         }
       }
     },
+    "Discard Changes": {
+      "comment": "Alert button that throws away unsaved changes",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Änderungen verwerfen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard Changes"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descartar cambios"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorer les modifications"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buang Perubahan"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "変更を破棄"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "변경 사항 삭제"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descartar alterações"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отменить изменения"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hủy thay đổi"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "放弃更改"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "放棄變更"
+          }
+        }
+      }
+    },
+    "Discard unsaved changes?": {
+      "comment": "Alert title when cancelling an editor with unsaved changes",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ungesicherte Änderungen verwerfen?"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard unsaved changes?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Descartar los cambios sin guardar?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorer les modifications non enregistrées ?"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buang perubahan yang belum disimpan?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存されていない変更を破棄しますか？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "저장하지 않은 변경 사항을 삭제하시겠습니까?"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descartar alterações não salvas?"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отменить несохранённые изменения?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hủy các thay đổi chưa lưu?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "放弃未保存的更改？"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "放棄未儲存的變更？"
+          }
+        }
+      }
+    },
     "Dismiss": {
       "extractionState": "manual",
       "localizations": {
@@ -25476,6 +25632,84 @@
           "stringUnit": {
             "state": "translated",
             "value": "珠寶、飾品"
+          }
+        }
+      }
+    },
+    "Keep Editing": {
+      "comment": "Alert button that returns to the editor",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weiter bearbeiten"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep Editing"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seguir editando"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuer la modification"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lanjutkan Mengedit"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "編集を続ける"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "계속 편집"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuar editando"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Продолжить редактирование"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếp tục chỉnh sửa"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "继续编辑"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "繼續編輯"
           }
         }
       }
@@ -51448,6 +51682,84 @@
           "stringUnit": {
             "state": "translated",
             "value": "昨天"
+          }
+        }
+      }
+    },
+    "You have changes that haven't been saved. If you leave now, they'll be lost.": {
+      "comment": "Alert message when cancelling an editor with unsaved changes",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sie haben Änderungen, die noch nicht gesichert wurden. Wenn Sie jetzt abbrechen, gehen sie verloren."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You have changes that haven't been saved. If you leave now, they'll be lost."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiene cambios que no se han guardado. Si sale ahora, se perderán."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Certaines modifications n'ont pas été enregistrées. Si vous quittez maintenant, elles seront perdues."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ada perubahan yang belum disimpan. Jika Anda keluar sekarang, perubahan tersebut akan hilang."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存されていない変更があります。今閉じると、変更は失われます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "저장되지 않은 변경 사항이 있습니다. 지금 나가면 변경 사항이 사라집니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Você tem alterações que não foram salvas. Se sair agora, elas serão perdidas."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "У вас есть несохранённые изменения. Если вы выйдете сейчас, они будут потеряны."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn có các thay đổi chưa được lưu. Nếu rời đi bây giờ, chúng sẽ bị mất."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "您有尚未保存的更改。如果现在离开，这些更改将会丢失。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "您有尚未儲存的變更。如果現在離開，這些變更將會遺失。"
           }
         }
       }

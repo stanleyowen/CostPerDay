@@ -236,6 +236,8 @@
  "Deselect account": "Deseleccionar cuenta",
  "Desktop": "Computadora de escritorio",
  "Details": "Detalles",
+ "Discard Changes": "Descartar cambios",
+ "Discard unsaved changes?": "¿Descartar los cambios sin guardar?",
  "Dismiss": "Descartar",
  "Distribution across areas of life": "Distribución por áreas de la vida",
  "Distribution across categories": "Distribución por categorías",
@@ -354,6 +356,7 @@
  },
  "Jewellery": "Joyería",
  "Jewels, accessories": "Joyas, accesorios",
+ "Keep Editing": "Seguir editando",
  "Kids": "Niños",
  "Labels": "Etiquetas",
  "Labels cut across categories — a shop, a trip, a person you split costs with.": "Las etiquetas abarcan varias categorías: una tienda, un viaje, una persona con quien comparte gastos.",
@@ -692,6 +695,7 @@
  "Yearly": "Anual",
  "Yellow": "Amarillo",
  "Yesterday": "Ayer",
+ "You have changes that haven't been saved. If you leave now, they'll be lost.": "Tiene cambios que no se han guardado. Si sale ahora, se perderán.",
  "Your %lld items are currently priced against %@. This rate re-expresses them in %@. The prices originally entered remain unchanged; only the conversion is adjusted.": {
   "one": "Su %lld artículo está valorado actualmente en %@. Esta tasa lo reexpresa en %@. Los precios introducidos originalmente no se modifican; solo se ajusta la conversión.",
   "other": "Sus %lld artículos están valorados actualmente en %@. Esta tasa los reexpresa en %@. Los precios introducidos originalmente no se modifican; solo se ajusta la conversión."
