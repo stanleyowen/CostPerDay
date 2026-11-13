@@ -159,42 +159,37 @@ struct ReportTests {
     }
 }
 
-@Suite("Amount keypad")
-struct AmountExpressionTests {
-    private func type(_ keys: String, digits: Int = 2) -> AmountExpression {
-        var expression = AmountExpression(maxFractionDigits: digits)
-        for key in keys { expression.input(key) }
-        return expression
+@Suite("Amount input")
+struct AmountInputTests {
+    let us = Locale(identifier: "en_US")
+    let de = Locale(identifier: "de_DE")
+
+    @Test("Keeps digits and one separator, within the currency's decimals")
+    func sanitize() {
+        #expect(AmountInput.sanitize("12.345", fractionDigits: 2, locale: us) == "12.34")
+        #expect(AmountInput.sanitize("12.5", fractionDigits: 0, locale: us) == "125")
+        #expect(AmountInput.sanitize(".5", fractionDigits: 2, locale: us) == "0.5")
+        #expect(AmountInput.sanitize("0005", fractionDigits: 2, locale: us) == "5")
+        #expect(AmountInput.sanitize("1,234.50", fractionDigits: 2, locale: us) == "1234.50")
+        #expect(AmountInput.sanitize("12a3", fractionDigits: 2, locale: us) == "123")
+        #expect(AmountInput.sanitize("", fractionDigits: 2, locale: us) == "")
     }
 
-    @Test("Multiplication and division bind tighter than addition")
-    func precedence() {
-        #expect(type("120+45×2").value == 210)
-        #expect(type("100−20÷4").value == 95)
+    @Test("Uses the locale's decimal separator")
+    func locales() {
+        #expect(AmountInput.sanitize("12.5", fractionDigits: 2, locale: de) == "12,5")
+        #expect(AmountInput.value(of: "12,5", locale: de) == 12.5)
+        #expect(AmountInput.text(for: 1234.5, fractionDigits: 2, locale: de) == "1234,5")
     }
 
-    @Test("Respects the currency's decimal places")
-    func decimals() {
-        #expect(type("12.345").text == "12.34")
-        #expect(type("12.5", digits: 0).text == "125")
-        #expect(type("..5").text == "0.5")
-    }
-
-    @Test("Trailing operators, leading zeros and division by zero are handled")
-    func edges() {
-        #expect(type("50+").value == 50)
-        #expect(type("0005").text == "5")
-        #expect(type("5÷0").value == nil)
-        #expect(type("+").isEmpty)
-        #expect(type("5+−").text == "5−")
-    }
-
-    @Test("Collapsing replaces the sum with its result")
-    func collapse() {
-        var expression = type("10+2.5")
-        expression.collapse()
-        #expect(expression.text == "12.5")
-        #expect(!expression.hasOperator)
+    @Test("Reads and shows stored amounts")
+    func values() {
+        #expect(AmountInput.value(of: "", locale: us) == nil)
+        #expect(AmountInput.value(of: "4.13", locale: us) == 4.13)
+        #expect(AmountInput.value(of: "0.", locale: us) == 0)
+        #expect(AmountInput.text(for: 0, fractionDigits: 2, locale: us) == "")
+        #expect(AmountInput.text(for: 1250, fractionDigits: 2, locale: us) == "1250")
+        #expect(AmountInput.text(for: 4.13, fractionDigits: 2, locale: us) == "4.13")
     }
 }
 

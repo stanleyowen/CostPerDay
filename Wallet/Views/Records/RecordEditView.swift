@@ -1,9 +1,9 @@
 import SwiftUI
 import SwiftData
 
-/// Adds or edits a transaction. Built for speed: the amount keypad is always on
-/// screen, the note field suggests from your own history and fills in category,
-/// account and usual amount, and Save is one tap away.
+/// Adds or edits a transaction. Built for speed: a new transaction opens with the
+/// decimal keyboard up on the amount, the note field suggests from your own history
+/// and fills in category, account and usual amount, and Save is one tap away.
 ///
 /// Tapping a transaction anywhere opens it here (there's no read-only screen), so
 /// an existing transaction also gets everything you can do with one: its link to
@@ -24,7 +24,8 @@ struct RecordEditView: View {
     @Query private var customCategories: [CustomCategory]
 
     @State private var draft: RecordDraft
-    @State private var expression: AmountExpression
+    /// The amount as typed (see `AmountInput`), in the user's own notation.
+    @State private var amountText: String
     @State private var received: Double?
     @State private var categoryChosen: Bool
     @State private var suggestions = SuggestionIndex.empty
@@ -36,29 +37,24 @@ struct RecordEditView: View {
     @State private var rateNote: String?
     @State private var saveError: String?
     @State private var invalidTrigger = 0
-    @State private var keyTrigger = 0
     /// The tracked item this transaction belongs to, and whether it's the purchase
     /// or upkeep. Edited here and written on Update, like the draft.
     @State private var linkedItem: Item?
     @State private var isItemPurchase: Bool
     @State private var choosingItem = false
     @State private var deleteRequest: DeleteRequest?
-    /// Up from the start for a new transaction, where the amount comes first. For
-    /// an existing one it waits for a tap on the amount, so the rest of the
-    /// transaction — ownership, Duplicate, Delete — isn't hidden behind it.
-    @State private var keypadShown: Bool
     @FocusState private var noteFocused: Bool
+    @FocusState private var amountFocused: Bool
 
     init(record: Record?, prefill: RecordDraft? = nil, onTrackItem: ((Item) -> Void)? = nil) {
         self.record = record
         self.onTrackItem = onTrackItem
         let initial = record.map(RecordDraft.init(record:)) ?? prefill ?? RecordDraft()
         _draft = State(initialValue: initial)
-        _expression = State(initialValue: AmountExpression(value: initial.amount, maxFractionDigits: Currency.fractionDigits(initial.currencyCode)))
+        _amountText = State(initialValue: AmountInput.text(for: initial.amount, fractionDigits: Currency.fractionDigits(initial.currencyCode)))
         _received = State(initialValue: initial.toAmount > 0 ? initial.toAmount : nil)
         // A blank new entry hasn't chosen a category yet, so typing a familiar note may pick one.
         _categoryChosen = State(initialValue: record != nil || (prefill.map { $0.categoryKey != RecordCategory.unknown.rawValue } ?? false))
-        _keypadShown = State(initialValue: record == nil)
         _linkedItem = State(initialValue: record?.item)
         _isItemPurchase = State(initialValue: record?.isItemPurchase ?? false)
     }
@@ -120,20 +116,6 @@ struct RecordEditView: View {
             }
             .scrollDismissesKeyboard(.interactively)
             .background(Color(.systemGroupedBackground))
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                if !noteFocused && keypadShown {
-                    AmountKeypad(
-                        expression: $expression,
-                        accent: draft.kind.tint,
-                        saveTitle: isNew ? String(localized: "Save", comment: "Button") : String(localized: "Update", comment: "Button"),
-                        onKey: { keyTrigger += 1 },
-                        onSave: save
-                    )
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
-            }
-            .animation(.snappy(duration: 0.25), value: noteFocused)
-            .animation(.snappy(duration: 0.25), value: keypadShown)
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -146,7 +128,10 @@ struct RecordEditView: View {
                 }
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
-                    Button("Done") { noteFocused = false }
+                    Button("Done") {
+                        noteFocused = false
+                        amountFocused = false
+                    }
                 }
             }
             .sheet(isPresented: $choosingCategory) {
@@ -178,7 +163,6 @@ struct RecordEditView: View {
             } message: {
                 Text(saveError ?? "")
             }
-            .sensoryFeedback(.impact(weight: .light, intensity: 0.6), trigger: keyTrigger)
             .sensoryFeedback(.error, trigger: invalidTrigger)
             .task { await loadContext() }
             .onChange(of: draft.kind) { old, new in kindChanged(from: old, to: new) }
@@ -200,42 +184,39 @@ struct RecordEditView: View {
 
     private var isDirty: Bool {
         let original = record.map(RecordDraft.init(record:))
-        return (expression.value ?? 0) != (original?.amount ?? 0) || draft.note != (original?.note ?? "")
+        return amountValue != (original?.amount ?? 0) || draft.note != (original?.note ?? "")
             || linkedItem?.persistentModelID != record?.item?.persistentModelID
     }
 
     // MARK: Amount
 
+    private var amountValue: Double { AmountInput.value(of: amountText) ?? 0 }
+
+    /// The amount, typed on the system decimal keyboard.
     private var amountDisplay: some View {
-        let value = expression.value ?? 0
+        // Shrinks as the number grows, so long amounts still fit on one line.
+        let size: CGFloat = amountText.count > 9 ? 36 : amountText.count > 6 ? 44 : 54
         return VStack(spacing: 4) {
             HStack(alignment: .firstTextBaseline, spacing: 6) {
                 Text(verbatim: draft.kind == .expense ? "−" : draft.kind == .income ? "+" : "")
                     .font(.system(size: 34, weight: .semibold, design: .rounded))
                     .foregroundStyle(draft.kind.tint)
-                Text(value.formatted(.number.precision(.fractionLength(0...Currency.fractionDigits(currency)))))
-                    .font(.system(size: 54, weight: .bold, design: .rounded))
+                    .accessibilityHidden(true)
+                TextField("Amount", text: $amountText, prompt: Text(verbatim: "0"))
+                    .keyboardType(.decimalPad)
+                    .focused($amountFocused)
+                    .font(.system(size: size, weight: .bold, design: .rounded))
                     .monospacedDigit()
-                    .contentTransition(.numericText(value: value))
-                    .foregroundStyle(expression.isEmpty ? AnyShapeStyle(.tertiary) : AnyShapeStyle(.primary))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.4)
+                    .multilineTextAlignment(.center)
+                    .fixedSize()
                 Text(currency)
                     .font(.system(.title3, design: .rounded).weight(.bold))
                     .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
             }
-            .animation(.snappy(duration: 0.2), value: value)
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text("Amount"))
-            .accessibilityValue(Text(Money.exact(value, code: currency)))
+            .animation(.snappy(duration: 0.2), value: size)
 
-            if expression.hasOperator {
-                Text(verbatim: expression.text)
-                    .font(.callout.monospacedDigit())
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .truncationMode(.head)
-            } else if let rateNote {
+            if let rateNote {
                 Text(rateNote)
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -243,12 +224,13 @@ struct RecordEditView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 8)
+        // Anywhere on the amount row puts the cursor in the field.
         .contentShape(.rect)
-        .onTapGesture {
-            noteFocused = false
-            keypadShown = true
+        .onTapGesture { amountFocused = true }
+        .onChange(of: amountText) { _, text in
+            let clean = AmountInput.sanitize(text, fractionDigits: Currency.fractionDigits(currency))
+            if clean != text { amountText = clean }
         }
-        .accessibilityAddTraits(keypadShown ? [] : .isButton)
     }
 
     // MARK: Details
@@ -465,8 +447,8 @@ struct RecordEditView: View {
             if let accountID = entry.accountID, accounts.contains(where: { $0.uuid == accountID && !$0.isArchived }) {
                 draft.accountID = accountID
             }
-            if expression.isEmpty, entry.typicalAmount > 0 {
-                expression = AmountExpression(value: entry.typicalAmount, maxFractionDigits: Currency.fractionDigits(currency))
+            if amountText.isEmpty, entry.typicalAmount > 0 {
+                amountText = AmountInput.text(for: entry.typicalAmount, fractionDigits: Currency.fractionDigits(currency))
             }
         }
         noteFocused = false
@@ -642,6 +624,8 @@ struct RecordEditView: View {
     // MARK: Behaviour
 
     private func loadContext() async {
+        // A new transaction starts with the amount, keyboard up.
+        if isNew { amountFocused = true }
         if isNew && draft.accountID == nil && draft.toAccountID == nil {
             draft.accountID = LedgerActions.defaultAccount(in: context)?.uuid
         }
@@ -681,9 +665,8 @@ struct RecordEditView: View {
     private func currencyMayHaveChanged() {
         let code = currency
         let digits = Currency.fractionDigits(code)
-        if expression.maxFractionDigits != digits {
-            expression = AmountExpression(value: expression.value ?? 0, maxFractionDigits: digits)
-        }
+        let resized = AmountInput.sanitize(amountText, fractionDigits: digits)
+        if resized != amountText { amountText = resized }
         guard code != draft.currencyCode || (isNew && code != baseCurrency && rateNote == nil) else { return }
         draft.currencyCode = code
         if code == baseCurrency {
@@ -697,7 +680,7 @@ struct RecordEditView: View {
             rateNote = "1 \(code) = \(rate.formatted(.number.precision(.fractionLength(0...4)))) \(baseCurrency)"
             if isCrossCurrency, received == nil, let destination {
                 let destinationRate = await LedgerActions.rate(for: destination.currencyCode, baseCurrency: baseCurrency, context: context)
-                if let value = expression.value, destinationRate > 0 {
+                if let value = AmountInput.value(of: amountText), destinationRate > 0 {
                     received = (value * rate / destinationRate * 100).rounded() / 100
                 }
             }
@@ -714,8 +697,9 @@ struct RecordEditView: View {
     }
 
     private func save() {
-        expression.collapse()
-        draft.amount = expression.value ?? 0
+        noteFocused = false
+        amountFocused = false
+        draft.amount = amountValue
         draft.currencyCode = currency
         if draft.kind == .transfer {
             draft.toAmount = isCrossCurrency ? (received ?? 0) : 0
@@ -795,96 +779,5 @@ struct FieldRow: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
         .contentShape(.rect)
-    }
-}
-
-/// Calculator-style keypad. Long-press ⌫ to clear.
-struct AmountKeypad: View {
-    @Binding var expression: AmountExpression
-    let accent: Color
-    let saveTitle: String
-    let onKey: () -> Void
-    let onSave: () -> Void
-
-    private let rows: [[Character]] = [
-        ["7", "8", "9", "÷"],
-        ["4", "5", "6", "×"],
-        ["1", "2", "3", "−"],
-        [".", "0", "⌫", "+"],
-    ]
-
-    var body: some View {
-        VStack(spacing: 8) {
-            ForEach(rows, id: \.self) { row in
-                HStack(spacing: 8) {
-                    ForEach(row, id: \.self) { key in
-                        keyButton(key)
-                    }
-                }
-            }
-            // While a sum is being typed this is "=", so the result can be checked
-            // before saving; otherwise it saves.
-            Button {
-                if expression.hasOperator {
-                    expression.collapse()
-                    onKey()
-                } else {
-                    onSave()
-                }
-            } label: {
-                Text(expression.hasOperator ? "=" : saveTitle)
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity, minHeight: 50)
-                    .background(accent.gradient, in: .rect(cornerRadius: 16, style: .continuous))
-                    .contentTransition(.interpolate)
-            }
-            .buttonStyle(PressableStyle())
-        }
-        .padding(.horizontal, 12)
-        .padding(.top, 10)
-        .padding(.bottom, 6)
-        .background(.bar)
-    }
-
-    @ViewBuilder
-    private func keyButton(_ key: Character) -> some View {
-        let isOperator = AmountExpression.operators.contains(key)
-        Button {
-            if key == "⌫" { expression.backspace() } else { expression.input(key) }
-            onKey()
-        } label: {
-            Group {
-                if key == "⌫" {
-                    Image(systemName: "delete.left")
-                } else {
-                    Text(String(key))
-                }
-            }
-            .font(.system(size: isOperator ? 22 : 24, weight: isOperator ? .semibold : .medium, design: .rounded))
-            .foregroundStyle(isOperator ? AnyShapeStyle(accent) : AnyShapeStyle(.primary))
-            .frame(maxWidth: .infinity, minHeight: 46)
-            .background(
-                isOperator ? AnyShapeStyle(accent.opacity(0.12)) : AnyShapeStyle(Color(.secondarySystemGroupedBackground)),
-                in: .rect(cornerRadius: 14, style: .continuous)
-            )
-        }
-        .buttonStyle(PressableStyle())
-        .accessibilityLabel(accessibilityName(key))
-        .simultaneousGesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in
-            if key == "⌫" { expression.clear(); onKey() }
-        })
-    }
-
-    private func accessibilityName(_ key: Character) -> Text {
-        switch key {
-        case "⌫": Text("Delete")
-        case "+": Text("Plus")
-        case "−": Text("Minus")
-        case "×": Text("Times")
-        case "÷": Text("Divided by")
-        case ".": Text("Decimal point")
-        default: Text(verbatim: String(key))
-        }
     }
 }
