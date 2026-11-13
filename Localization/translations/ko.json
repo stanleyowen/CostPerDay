@@ -552,6 +552,7 @@
  "Suggested from a cached rate. Please confirm it is still accurate.": "저장된 환율을 바탕으로 제안된 값입니다. 값이 여전히 정확한지 확인해 주세요.",
  "Suggested from today's rate. Adjust it if you prefer a different value.": "오늘 환율을 바탕으로 제안된 값입니다. 다른 값을 원하시면 수정해 주세요.",
  "Suggested from today's rate. Original amounts are kept; this only affects totals.": "오늘 환율을 기준으로 제안된 값입니다. 원래 금액은 유지되며 합계에만 영향을 줍니다.",
+ "Summary": "요약",
  "Switch to %@": "%@(으)로 전환",
  "TV, streaming": "TV, 스트리밍",
  "Table & Desk": "테이블·책상",

@@ -154,18 +154,25 @@ enum LabelTint {
 struct AccountCard: View {
     let account: Account
     let balance: Double
-    var width: CGFloat = 160
+    /// `nil` fills the width it's offered.
+    var width: CGFloat? = 160
+    /// A shorter card (icon and name on one line) for the paged grid on Home.
+    var compact = false
+
+    static let compactHeight: CGFloat = 84
 
     var body: some View {
         let tint = account.tint.color
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
+        let height = compact ? Self.compactHeight : 118
+        VStack(alignment: .leading, spacing: compact ? 8 : 10) {
+            HStack(spacing: 8) {
                 Image(systemName: account.kind.symbol)
-                    .font(.subheadline.weight(.semibold))
+                    .font((compact ? Font.caption : .subheadline).weight(.semibold))
                     .foregroundStyle(.white)
-                    .frame(width: 30, height: 30)
-                    .background(.white.opacity(0.2), in: .rect(cornerRadius: 9, style: .continuous))
-                Spacer()
+                    .frame(width: compact ? 26 : 30, height: compact ? 26 : 30)
+                    .background(.white.opacity(0.2), in: .rect(cornerRadius: compact ? 8 : 9, style: .continuous))
+                if compact { name }
+                Spacer(minLength: 0)
                 if account.excludeFromStats {
                     Image(systemName: "eye.slash")
                         .font(.caption2.weight(.bold))
@@ -173,10 +180,7 @@ struct AccountCard: View {
                 }
             }
             Spacer(minLength: 0)
-            Text(account.displayName)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.white.opacity(0.85))
-                .lineLimit(1)
+            if !compact { name }
             Text(Money.exact(balance, code: account.currencyCode))
                 .font(.system(.headline, design: .rounded).weight(.bold).monospacedDigit())
                 .foregroundStyle(.white)
@@ -185,19 +189,27 @@ struct AccountCard: View {
                 .contentTransition(.numericText(value: balance))
                 .sensitive()
         }
-        .padding(14)
-        .frame(width: width, height: 118, alignment: .leading)
+        .padding(compact ? 12 : 14)
+        .frame(width: width, height: height, alignment: .leading)
+        .frame(maxWidth: width == nil ? .infinity : nil, alignment: .leading)
         .background {
-            ZStack {
-                LinearGradient(colors: [tint, tint.mix(with: .black, by: 0.35)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                Circle()
-                    .fill(.white.opacity(0.10))
-                    .frame(width: 120)
-                    .offset(x: width * 0.42, y: -50)
-            }
+            LinearGradient(colors: [tint, tint.mix(with: .black, by: 0.35)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                .overlay(alignment: .topTrailing) {
+                    Circle()
+                        .fill(.white.opacity(0.10))
+                        .frame(width: compact ? 96 : 120)
+                        .offset(x: compact ? 34 : 47, y: compact ? -46 : -51)
+                }
         }
-        .clipShape(.rect(cornerRadius: 20, style: .continuous))
+        .clipShape(.rect(cornerRadius: compact ? 18 : 20, style: .continuous))
         .accessibilityElement(children: .combine)
+    }
+
+    private var name: some View {
+        Text(account.displayName)
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(.white.opacity(0.85))
+            .lineLimit(1)
     }
 }
 

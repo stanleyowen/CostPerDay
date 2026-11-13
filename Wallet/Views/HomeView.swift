@@ -27,8 +27,8 @@ struct HomeView: View {
                     if accounts.isEmpty {
                         WelcomeCard(onImport: { importing = true }, onAddAccount: { addingAccount = true })
                     } else {
-                        NetWorthHero(ledger: ledger, report: report, currency: baseCurrency, hideBalances: $hideBalances)
-                        accountsCarousel(ledger)
+                        accountsGrid(ledger)
+                        summary(ledger: ledger, report: report)
                         MonthCard(report: report, currency: baseCurrency)
                         if !report.expenseByGroup.isEmpty {
                             SpendingDonutCard(report: report, currency: baseCurrency)
@@ -69,7 +69,7 @@ struct HomeView: View {
 
     // MARK: Accounts
 
-    private func accountsCarousel(_ ledger: LedgerSnapshot) -> some View {
+    private func accountsGrid(_ ledger: LedgerSnapshot) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text("Accounts").font(.headline)
@@ -80,35 +80,16 @@ struct HomeView: View {
                     Text("See all").font(.subheadline.weight(.medium))
                 }
             }
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ForEach(ledger.activeAccounts) { account in
-                        NavigationLink(value: account) {
-                            AccountCard(account: account, balance: ledger.balance(of: account))
-                        }
-                        .buttonStyle(PressableStyle())
-                    }
-                    Button {
-                        addingAccount = true
-                    } label: {
-                        VStack(spacing: 8) {
-                            Image(systemName: "plus").font(.title3.weight(.semibold))
-                            Text("Add account").font(.caption.weight(.semibold))
-                        }
-                        .foregroundStyle(.secondary)
-                        .frame(width: 110, height: 118)
-                        .background {
-                            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                .strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
-                                .foregroundStyle(.quaternary)
-                        }
-                    }
-                    .buttonStyle(PressableStyle())
-                }
-                .scrollTargetLayout()
-            }
-            .scrollTargetBehavior(.viewAligned)
-            .scrollClipDisabled()
+            AccountPager(accounts: ledger.activeAccounts, balance: ledger.balance(of:)) { addingAccount = true }
+        }
+    }
+
+    // MARK: Summary
+
+    private func summary(ledger: LedgerSnapshot, report: Report) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(String(localized: "Summary", comment: "Home section title above the total balance")).font(.headline)
+            NetWorthHero(ledger: ledger, report: report, currency: baseCurrency, hideBalances: $hideBalances)
         }
     }
 
@@ -203,6 +184,131 @@ struct HomeView: View {
 }
 
 // MARK: - Hero
+
+/// Accounts in pages of two by two (the last slot is "Add account"), one page per
+/// swipe. The page being left shrinks and fades a touch so the motion has depth, and
+/// dots below show how many pages there are and which one is showing.
+private struct AccountPager: View {
+    let accounts: [Account]
+    let balance: (Account) -> Double
+    let onAdd: () -> Void
+
+    @State private var page: Int? = 0
+
+    private static let perPage = 4
+    private static let spacing: CGFloat = 12
+
+    private enum Slot: Identifiable {
+        case account(Account)
+        case add
+
+        var id: AnyHashable {
+            switch self {
+            case .account(let account): AnyHashable(account.persistentModelID)
+            case .add: AnyHashable("add")
+            }
+        }
+    }
+
+    var body: some View {
+        let slots = accounts.map(Slot.account) + [.add]
+        let pages = stride(from: 0, to: slots.count, by: Self.perPage).map {
+            Array(slots[$0..<min($0 + Self.perPage, slots.count)])
+        }
+        // Every page keeps the same height, so the section never jumps while swiping.
+        let rows = slots.count > 2 ? 2 : 1
+        let height = CGFloat(rows) * AccountCard.compactHeight + CGFloat(rows - 1) * Self.spacing
+        let current = min(page ?? 0, pages.count - 1)
+
+        VStack(spacing: 12) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                // The gap between pages matches the screen margin, so the next page
+                // waits just off-screen rather than peeking in.
+                HStack(alignment: .top, spacing: 16) {
+                    ForEach(pages.indices, id: \.self) { index in
+                        grid(pages[index])
+                            .frame(height: height, alignment: .top)
+                            .containerRelativeFrame(.horizontal)
+                            .scrollTransition(axis: .horizontal) { content, phase in
+                                content
+                                    .scaleEffect(1 - abs(phase.value) * 0.06)
+                                    .opacity(1 - abs(phase.value) * 0.45)
+                            }
+                            .id(index)
+                    }
+                }
+                .scrollTargetLayout()
+            }
+            .scrollTargetBehavior(.viewAligned(limitBehavior: .always))
+            .scrollPosition(id: $page)
+            .scrollClipDisabled()
+            .sensoryFeedback(.selection, trigger: current)
+
+            if pages.count > 1 {
+                PageDots(count: pages.count, current: current) { index in
+                    withAnimation(.smooth(duration: 0.4)) { page = index }
+                }
+            }
+        }
+    }
+
+    private func grid(_ slots: [Slot]) -> some View {
+        let column = GridItem(.flexible(), spacing: Self.spacing)
+        return LazyVGrid(columns: [column, column], spacing: Self.spacing) {
+            ForEach(slots) { slot in
+                switch slot {
+                case .account(let account):
+                    NavigationLink(value: account) {
+                        AccountCard(account: account, balance: balance(account), width: nil, compact: true)
+                    }
+                    .buttonStyle(PressableStyle())
+                case .add:
+                    Button(action: onAdd) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "plus").font(.subheadline.weight(.semibold))
+                            Text("Add account").font(.caption.weight(.semibold))
+                        }
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: AccountCard.compactHeight)
+                        .background {
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
+                                .foregroundStyle(.quaternary)
+                        }
+                        .contentShape(.rect(cornerRadius: 18, style: .continuous))
+                    }
+                    .buttonStyle(PressableStyle())
+                }
+            }
+        }
+    }
+}
+
+/// Page indicator: the current page stretches into a pill in the accent colour.
+/// Tapping a dot jumps to that page; VoiceOver skips it, since every card is
+/// reachable on its own.
+private struct PageDots: View {
+    let count: Int
+    let current: Int
+    let onSelect: (Int) -> Void
+
+    var body: some View {
+        HStack(spacing: 6) {
+            ForEach(0..<count, id: \.self) { index in
+                Capsule()
+                    .fill(index == current ? AnyShapeStyle(Brand.accent) : AnyShapeStyle(Color.secondary.opacity(0.3)))
+                    .frame(width: index == current ? 18 : 6, height: 6)
+                    .padding(.vertical, 6)
+                    .contentShape(.rect)
+                    .onTapGesture { onSelect(index) }
+            }
+        }
+        .animation(.spring(duration: 0.35, bounce: 0.25), value: current)
+        .frame(maxWidth: .infinity)
+        .accessibilityHidden(true)
+    }
+}
 
 private struct NetWorthHero: View {
     let ledger: LedgerSnapshot

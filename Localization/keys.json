@@ -510,6 +510,7 @@
  "Suggested from a cached rate. Please confirm it is still accurate.": "Note under a suggested exchange rate",
  "Suggested from today's rate. Adjust it if you prefer a different value.": "Note under a suggested exchange rate",
  "Suggested from today's rate. Original amounts are kept; this only affects totals.": "Import footer",
+ "Summary": "Home section title above the total balance",
  "Switch to %@": "",
  "TV, streaming": "Transaction category",
  "Table & Desk": "Category name",

@@ -552,6 +552,7 @@
  "Suggested from a cached rate. Please confirm it is still accurate.": "保存済みのレートに基づく推奨値です。現在も正しいかご確認ください。",
  "Suggested from today's rate. Adjust it if you prefer a different value.": "本日のレートに基づく推奨値です。別の値をご希望の場合は変更してください。",
  "Suggested from today's rate. Original amounts are kept; this only affects totals.": "本日のレートに基づく推奨値です。元の金額は保持され、合計のみに影響します。",
+ "Summary": "概要",
  "Switch to %@": "%@ に切り替える",
  "TV, streaming": "テレビ・動画配信",
  "Table & Desk": "テーブル・デスク",

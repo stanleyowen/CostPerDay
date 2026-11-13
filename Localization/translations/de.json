@@ -573,6 +573,7 @@
  "Suggested from a cached rate. Please confirm it is still accurate.": "Vorschlag auf Grundlage eines gespeicherten Kurses. Bitte bestätigen Sie, dass er noch zutrifft.",
  "Suggested from today's rate. Adjust it if you prefer a different value.": "Vorschlag auf Grundlage des heutigen Kurses. Passen Sie ihn an, wenn Sie einen anderen Wert bevorzugen.",
  "Suggested from today's rate. Original amounts are kept; this only affects totals.": "Vorschlag auf Grundlage des heutigen Kurses. Die ursprünglichen Beträge bleiben erhalten; dies wirkt sich nur auf die Summen aus.",
+ "Summary": "Übersicht",
  "Switch to %@": "Zu %@ wechseln",
  "TV, streaming": "TV, Streaming",
  "Table & Desk": "Tische und Schreibtische",

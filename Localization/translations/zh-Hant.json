@@ -552,6 +552,7 @@
  "Suggested from a cached rate. Please confirm it is still accurate.": "此為依快取匯率提供的建議值，請確認是否仍然準確。",
  "Suggested from today's rate. Adjust it if you prefer a different value.": "此為依今日匯率提供的建議值，如需其他數值請自行調整。",
  "Suggested from today's rate. Original amounts are kept; this only affects totals.": "此為依今日匯率提供的建議值。原始金額會保留，僅影響合計金額。",
+ "Summary": "概覽",
  "Switch to %@": "切換為 %@",
  "TV, streaming": "電視、串流",
  "Table & Desk": "桌子與書桌",
