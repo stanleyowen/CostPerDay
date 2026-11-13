@@ -177,7 +177,7 @@ struct AccountEditView: View {
         }
         guard let account else { return }
         let id = account.uuid
-        let records = (try? context.fetch(FetchDescriptor<Record>(predicate: #Predicate { $0.accountID == id || $0.toAccountID == id }))) ?? []
+        let records = LedgerActions.records(touching: account, in: context)
         recordCount = records.count
         let balance = Ledger.balances(accounts: [AccountRef(account)], flows: records.map(\.flow))[id] ?? account.initialBalance
         recordedDelta = balance - account.initialBalance
@@ -204,19 +204,7 @@ struct AccountEditView: View {
 
     private func deleteAccount() {
         guard let account else { return }
-        let id = account.uuid
-        let records = (try? context.fetch(FetchDescriptor<Record>(predicate: #Predicate { $0.accountID == id || $0.toAccountID == id }))) ?? []
-        for record in records {
-            if record.kind == .transfer {
-                if record.accountID == id { record.accountID = nil }
-                if record.toAccountID == id { record.toAccountID = nil }
-                if record.accountID == nil && record.toAccountID == nil { context.delete(record) }
-            } else {
-                context.delete(record)
-            }
-        }
-        context.delete(account)
-        try? context.save()
+        LedgerActions.delete(account, in: context)
         dismiss()
     }
 }
@@ -243,6 +231,9 @@ struct AccountsView: View {
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
     @State private var editing: Account?
     @State private var adding = false
+    /// The account a swipe asked to delete, waiting for confirmation, and how many
+    /// transactions it touches.
+    @State private var deleting: (account: Account, count: Int)?
 
     var body: some View {
         let ledger = LedgerSnapshot(accounts: accounts, records: records, baseCurrency: baseCurrency)
@@ -277,6 +268,19 @@ struct AccountsView: View {
         }
         .sheet(item: $editing) { AccountEditView(account: $0) }
         .sheet(isPresented: $adding) { AccountEditView(account: nil) }
+        .confirmationDialog(
+            Text("Delete \(deleting?.account.displayName ?? "")?"),
+            isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
+            titleVisibility: .visible,
+            presenting: deleting
+        ) { target in
+            Button("Delete account and \(target.count) transactions", role: .destructive) {
+                withAnimation { LedgerActions.delete(target.account, in: context) }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: { _ in
+            Text("Transfers to and from other accounts are kept, marked as coming from outside Wallet. This can't be undone.")
+        }
     }
 
     private func row(_ account: Account, ledger: LedgerSnapshot) -> some View {
@@ -297,7 +301,14 @@ struct AccountsView: View {
                     .foregroundStyle(ledger.balance(of: account) < 0 ? AnyShapeStyle(Brand.expense) : AnyShapeStyle(.primary))
             }
         }
-        .swipeActions(edge: .leading) {
+        // Swipe left for Edit and Delete. No full swipe: deleting always asks first.
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+            // Tinted rather than `role: .destructive`, which would start animating
+            // the row away before the confirmation is answered.
+            Button("Delete", systemImage: "trash") {
+                deleting = (account, LedgerActions.records(touching: account, in: context).count)
+            }
+            .tint(.red)
             Button("Edit", systemImage: "pencil") { editing = account }.tint(.blue)
         }
     }

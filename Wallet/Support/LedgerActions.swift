@@ -20,6 +20,29 @@ enum LedgerActions {
         return (try? context.fetch(descriptor).first?.rateToBase).map(Flow.safeRate) ?? 1
     }
 
+    /// Every record that moves money in or out of `account`, transfers included.
+    static func records(touching account: Account, in context: ModelContext) -> [Record] {
+        let id = account.uuid
+        return (try? context.fetch(FetchDescriptor<Record>(predicate: #Predicate { $0.accountID == id || $0.toAccountID == id }))) ?? []
+    }
+
+    /// Deletes an account with its income and expenses. Transfers survive as
+    /// transfers to or from outside Wallet, so the other account's balance holds.
+    static func delete(_ account: Account, in context: ModelContext) {
+        let id = account.uuid
+        for record in records(touching: account, in: context) {
+            if record.kind == .transfer {
+                if record.accountID == id { record.accountID = nil }
+                if record.toAccountID == id { record.toAccountID = nil }
+                if record.accountID == nil && record.toAccountID == nil { context.delete(record) }
+            } else {
+                context.delete(record)
+            }
+        }
+        context.delete(account)
+        try? context.save()
+    }
+
     /// The account new records go to by default: the one used most recently,
     /// else the first active account.
     static func defaultAccount(in context: ModelContext) -> Account? {
