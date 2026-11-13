@@ -45,13 +45,21 @@ struct ChartSelectionTests {
         #expect(changes == 3)
     }
 
-    @Test func sinkForwardsEveryValue() {
-        let sink = SelectionSink<Double>()
-        var seen: [Double?] = []
-        let binding = sink.binding { seen.append($0) }
-        binding.wrappedValue = 10
-        binding.wrappedValue = 11
-        binding.wrappedValue = nil
-        #expect(seen == [10, 11, nil])
+    @Test func donutTapMapsToTheAngleUnderTheFinger() throws {
+        let rect = CGRect(x: 0, y: 0, width: 200, height: 200) // centre (100, 100), radius 100
+        func angle(_ x: Double, _ y: Double) -> Double? {
+            donutAngle(at: CGPoint(x: x, y: y), in: rect, total: 400, innerRatio: 0.6)
+        }
+        // Clockwise from 12 o'clock, on the ring (radius 80).
+        #expect(try abs(#require(angle(100.001, 20)) - 0) < 0.01)
+        #expect(try abs(#require(angle(180, 100)) - 100) < 0.01)
+        #expect(try abs(#require(angle(100, 180)) - 200) < 0.01)
+        #expect(try abs(#require(angle(20, 100)) - 300) < 0.01)
+        // The hole and outside the ring don't count.
+        #expect(angle(100, 100) == nil)
+        #expect(angle(130, 100) == nil)
+        #expect(angle(100, -20) == nil)
+        // Nothing to hit in an empty chart.
+        #expect(donutAngle(at: CGPoint(x: 180, y: 100), in: rect, total: 0, innerRatio: 0.6) == nil)
     }
 }

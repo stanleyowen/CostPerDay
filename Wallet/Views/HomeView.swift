@@ -526,10 +526,7 @@ struct SpendingDonutCard: View {
     var title = String(localized: "Spending by category", comment: "Chart title")
 
     @Environment(AppRouter.self) private var router
-    /// Raw touch angles go here, not into view state: only a change of slice updates the card.
-    @State private var angleSink = SelectionSink<Double>()
     @State private var selected: String?
-    @State private var lastHit: String?
 
     private var slices: [Report.Slice] { Array(report.expenseByGroup.prefix(7)) }
 
@@ -548,14 +545,10 @@ struct SpendingDonutCard: View {
                 .foregroundStyle(group.tint)
                 .opacity(selected == nil || selected == slice.key ? 1 : 0.35)
             }
-            .chartAngleSelection(value: angleSink.binding { angle in
-                guard let angle else { lastHit = nil; return }
+            .onDonutTap(total: slices.reduce(0) { $0 + $1.total }, innerRatio: 0.62) { angle in
                 let hit = slice(at: angle)
-                guard hit != lastHit else { return }
-                let isNewGesture = lastHit == nil
-                lastHit = hit
-                withAnimation(.snappy) { selected = isNewGesture && selected == hit ? nil : hit }
-            })
+                withAnimation(.snappy) { selected = selected == hit ? nil : hit }
+            }
             .chartBackground { proxy in
                 GeometryReader { geo in
                     if let frame = proxy.plotFrame {

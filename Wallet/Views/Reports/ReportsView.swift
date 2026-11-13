@@ -621,10 +621,6 @@ private struct BreakdownCard: View {
     let accountFilter: UUID?
     let onSelect: (String) -> Void
 
-    /// Raw touch angles go here, not into view state: only a change of slice updates the card.
-    @State private var angleSink = SelectionSink<Double>()
-    @State private var lastHit: String?
-
     /// Groups only when nothing is focused and the user asked for groups; inside a
     /// focused group the slices are its categories.
     private var showsGroups: Bool { focusedCategory == nil && byGroup }
@@ -653,7 +649,8 @@ private struct BreakdownCard: View {
                 }
             }
 
-            Chart(slices.prefix(8)) { slice in
+            let plotted = Array(slices.prefix(8))
+            Chart(plotted) { slice in
                 SectorMark(
                     angle: .value("Spent", slice.total),
                     innerRadius: .ratio(0.6),
@@ -663,13 +660,9 @@ private struct BreakdownCard: View {
                 .cornerRadius(3)
                 .foregroundStyle(display(slice.key).tint)
             }
-            .chartAngleSelection(value: angleSink.binding { angle in
-                // One selection per tap: the first slice touched in each gesture.
-                guard let angle else { lastHit = nil; return }
-                guard lastHit == nil, let hit = slice(at: angle, in: Array(slices.prefix(8))) else { return }
-                lastHit = hit.key
-                onSelect(key(for: hit))
-            })
+            .onDonutTap(total: plotted.reduce(0) { $0 + $1.total }, innerRatio: 0.6) { angle in
+                if let hit = slice(at: angle, in: plotted) { onSelect(key(for: hit)) }
+            }
             .frame(height: 170)
             .chartBackground { proxy in
                 GeometryReader { geo in

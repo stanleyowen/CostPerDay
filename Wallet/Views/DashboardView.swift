@@ -198,11 +198,7 @@ private struct SectorDonutCard: View {
     let stats: Stats
     let currency: String
 
-    /// Raw touch angles go here, not into view state: only a change of slice updates the card.
-    @State private var angleSink = SelectionSink<Double>()
     @State private var selected: Sector?
-    /// The slice under the finger during the current gesture; nil between gestures.
-    @State private var lastHit: Sector?
 
     private var focused: Stats.SectorSlice? {
         selected.flatMap { sector in stats.bySector.first { $0.sector == sector } }
@@ -226,16 +222,11 @@ private struct SectorDonutCard: View {
                 .foregroundStyle(slice.sector.tint)
                 .opacity(selected == nil || selected == slice.sector ? 1 : 0.35)
             }
-            .chartAngleSelection(value: angleSink.binding { angle in
-                guard let angle else { lastHit = nil; return }
+            .onDonutTap(total: stats.bySector.reduce(0) { $0 + $1.total }, innerRatio: 0.64) { angle in
+                // Tapping the slice that's already focused clears the focus.
                 let hit = sector(at: angle)
-                guard hit != lastHit else { return }
-                // A fresh tap on the slice that's already focused clears the focus;
-                // dragging across slices just moves it.
-                let isNewGesture = lastHit == nil
-                lastHit = hit
-                withAnimation(.snappy) { selected = isNewGesture && selected == hit ? nil : hit }
-            })
+                withAnimation(.snappy) { selected = selected == hit ? nil : hit }
+            }
             .chartBackground { proxy in
                 GeometryReader { geo in
                     if let frame = proxy.plotFrame {
