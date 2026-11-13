@@ -135,7 +135,6 @@ private struct ReportsContent: View {
             .defaultScrollAnchor(DebugFlags.scrollAnchor)
             .background(Color(.systemGroupedBackground))
             .navigationTitle("Reports")
-            .undoBar()
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Menu {
@@ -1168,7 +1167,6 @@ struct CategoryReportView: View {
         }
         .navigationTitle(display.label)
         .navigationBarTitleDisplayMode(.inline)
-        .undoBar()
         .toolbar {
             Button("Show in Transactions", systemImage: "list.bullet") {
                 var filter = TransactionFilter()

@@ -121,9 +121,8 @@ struct BudgetsView: View {
                 .buttonStyle(.plain)
                 // The standard row actions (see RowActions.swift).
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                    Button(role: .destructive) { delete(budget) } label: { Label("Delete", systemImage: "trash") }
-                    Button { editing = budget } label: { Label("Edit", systemImage: "pencil") }
-                        .tint(editActionTint)
+                    SwipeDeleteButton { delete(budget) }
+                    SwipeEditButton { editing = budget }
                 }
                 .contextMenu {
                     Button("Edit", systemImage: "pencil") { editing = budget }
@@ -133,7 +132,6 @@ struct BudgetsView: View {
             }
         }
         .navigationTitle("Budgets")
-        .undoBar()
         .toolbar {
             Button("Add budget", systemImage: "plus") { adding = true }
         }
@@ -142,7 +140,7 @@ struct BudgetsView: View {
     }
 
     private func delete(_ budget: Budget) {
-        router.delete([budget], named: budget.name.isEmpty ? String(localized: "Budget") : budget.name, in: context)
+        router.pendingDelete = .budget(budget, in: context)
     }
 }
 
@@ -153,7 +151,7 @@ struct BudgetEditView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
     @State private var draft: BudgetDraft
-    @State private var confirmingDelete = false
+    @State private var deleteRequest: DeleteRequest?
 
     init(budget: Budget?) {
         self.budget = budget
@@ -199,22 +197,18 @@ struct BudgetEditView: View {
 
                 if budget != nil {
                     Section {
-                        Button("Delete budget", role: .destructive) { confirmingDelete = true }
+                        Button(role: .destructive) {
+                            if let budget { deleteRequest = .budget(budget, in: context) { dismiss() } }
+                        } label: {
+                            Label("Delete budget", systemImage: "trash")
+                        }
+                        .tint(.red)
                     }
                 }
             }
             .navigationTitle(budget == nil ? String(localized: "New Budget", comment: "Screen title") : String(localized: "Edit Budget", comment: "Screen title"))
             .navigationBarTitleDisplayMode(.inline)
-            .alert(Text("Delete this budget?"), isPresented: $confirmingDelete) {
-                Button("Delete", role: .destructive) {
-                    if let budget { context.delete(budget) }
-                    try? context.save()
-                    dismiss()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("Your transactions aren't affected. This can't be undone.")
-            }
+            .deleteConfirmation($deleteRequest)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {

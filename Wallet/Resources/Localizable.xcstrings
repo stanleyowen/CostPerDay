@@ -8347,6 +8347,84 @@
         }
       }
     },
+    "Archive account": {
+      "comment": "Account editor button",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konto archivieren"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archive account"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archivar cuenta"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiver le compte"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arsipkan akun"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "口座をアーカイブ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "계좌 보관"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arquivar conta"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Архивировать счёт"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lưu trữ tài khoản"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "归档账户"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "封存帳戶"
+          }
+        }
+      }
+    },
     "Archived": {
       "comment": "Account screens",
       "extractionState": "manual",
@@ -8421,6 +8499,84 @@
           "stringUnit": {
             "state": "translated",
             "value": "已封存"
+          }
+        }
+      }
+    },
+    "Archived accounts are hidden from Home and pickers, but their money still counts toward your balance.": {
+      "comment": "Account editor footer",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archivierte Konten werden auf der Startseite und in Auswahllisten ausgeblendet, ihr Geld zählt jedoch weiterhin zu Ihrem Saldo."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archived accounts are hidden from Home and pickers, but their money still counts toward your balance."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las cuentas archivadas no aparecen en Inicio ni en los selectores, pero su dinero sigue contando para su saldo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les comptes archivés sont masqués dans l'accueil et les sélecteurs, mais leur argent reste pris en compte dans votre solde."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akun yang diarsipkan disembunyikan dari Beranda dan daftar pilihan, tetapi uangnya tetap dihitung dalam saldo Anda."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アーカイブ済みの口座はホームと選択肢に表示されませんが、残高には引き続き含まれます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "보관된 계좌는 홈과 선택 목록에 표시되지 않지만 잔액에는 계속 포함됩니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contas arquivadas ficam ocultas no Início e nos seletores, mas o dinheiro delas continua contando no seu saldo."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Архивные счета скрыты на главном экране и в списках выбора, но их деньги по-прежнему учитываются в балансе."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tài khoản đã lưu trữ sẽ bị ẩn khỏi Trang chủ và danh sách chọn, nhưng tiền trong đó vẫn được tính vào số dư của bạn."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已归档的账户不会显示在首页和选择器中，但其金额仍计入您的余额。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已封存的帳戶不會顯示在首頁和選擇器中，但其金額仍計入您的餘額。"
           }
         }
       }
@@ -16127,84 +16283,6 @@
         }
       }
     },
-    "Deleted %@": {
-      "comment": "Undo bar message. The placeholder is an item name or a count.",
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ gelöscht"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deleted %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Eliminado: %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ supprimé"
-          }
-        },
-        "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ telah dihapus"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ を削除しました"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@을(를) 삭제했습니다"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Excluído: %@"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Удалено: %@"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Đã xóa %@"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已删除 %@"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已刪除 %@"
-          }
-        }
-      }
-    },
     "Deleted account": {
       "comment": "Transaction detail screen",
       "extractionState": "manual",
@@ -18619,80 +18697,80 @@
         }
       }
     },
-    "Excluded accounts still count toward your balance but not toward income and spending reports — useful for savings or investments. Archived accounts are hidden from pickers.": {
+    "Excluded accounts still count toward your balance but not toward income and spending reports — useful for savings or investments.": {
       "comment": "Account screens",
       "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ausgeschlossene Konten zählen weiterhin zu Ihrem Gesamtsaldo, jedoch nicht zu den Einnahmen- und Ausgabenberichten – nützlich für Ersparnisse oder Geldanlagen. Archivierte Konten werden in Auswahllisten ausgeblendet."
+            "value": "Ausgeschlossene Konten zählen weiterhin zu Ihrem Gesamtsaldo, jedoch nicht zu den Einnahmen- und Ausgabenberichten – nützlich für Ersparnisse oder Geldanlagen."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Excluded accounts still count toward your balance but not toward income and spending reports — useful for savings or investments. Archived accounts are hidden from pickers."
+            "value": "Excluded accounts still count toward your balance but not toward income and spending reports — useful for savings or investments."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Las cuentas excluidas siguen contando para su saldo, pero no para los informes de ingresos y gastos, lo que resulta útil para ahorros o inversiones. Las cuentas archivadas no aparecen en los selectores."
+            "value": "Las cuentas excluidas siguen contando para su saldo, pero no para los informes de ingresos y gastos, lo que resulta útil para ahorros o inversiones."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les comptes exclus restent pris en compte dans votre solde, mais pas dans les rapports de revenus et de dépenses, ce qui est utile pour l'épargne ou les placements. Les comptes archivés sont masqués dans les sélecteurs."
+            "value": "Les comptes exclus restent pris en compte dans votre solde, mais pas dans les rapports de revenus et de dépenses, ce qui est utile pour l'épargne ou les placements."
           }
         },
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Akun yang dikecualikan tetap dihitung dalam saldo, tetapi tidak dalam laporan pemasukan dan pengeluaran — berguna untuk tabungan atau investasi. Akun yang diarsipkan disembunyikan dari daftar pilihan."
+            "value": "Akun yang dikecualikan tetap dihitung dalam saldo, tetapi tidak dalam laporan pemasukan dan pengeluaran — berguna untuk tabungan atau investasi."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "除外した口座は残高には含まれますが、収入・支出のレポートには含まれません。貯蓄や投資用の口座に便利です。アーカイブ済みの口座は選択肢に表示されません。"
+            "value": "除外した口座は残高には含まれますが、収入・支出のレポートには含まれません。貯蓄や投資用の口座に便利です。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "제외된 계좌는 잔액에는 포함되지만 수입 및 지출 보고서에는 포함되지 않습니다. 저축이나 투자 계좌에 유용합니다. 보관된 계좌는 선택 목록에 표시되지 않습니다."
+            "value": "제외된 계좌는 잔액에는 포함되지만 수입 및 지출 보고서에는 포함되지 않습니다. 저축이나 투자 계좌에 유용합니다."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Contas excluídas continuam contando no seu saldo, mas não nos relatórios de receitas e gastos, o que é útil para poupança ou investimentos. Contas arquivadas ficam ocultas nos seletores."
+            "value": "Contas excluídas continuam contando no seu saldo, mas não nos relatórios de receitas e gastos, o que é útil para poupança ou investimentos."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Исключённые счета по-прежнему учитываются в общем балансе, но не в отчётах о доходах и расходах — это удобно для сбережений или инвестиций. Архивные счета скрываются из списков выбора."
+            "value": "Исключённые счета по-прежнему учитываются в общем балансе, но не в отчётах о доходах и расходах — это удобно для сбережений или инвестиций."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tài khoản bị loại trừ vẫn được tính vào số dư nhưng không được tính vào báo cáo thu nhập và chi tiêu — hữu ích cho tài khoản tiết kiệm hoặc đầu tư. Tài khoản đã lưu trữ sẽ bị ẩn khỏi danh sách chọn."
+            "value": "Tài khoản bị loại trừ vẫn được tính vào số dư nhưng không được tính vào báo cáo thu nhập và chi tiêu — hữu ích cho tài khoản tiết kiệm hoặc đầu tư."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "排除的账户仍会计入您的余额，但不会计入收支报表，适用于储蓄或投资账户。已归档的账户不会出现在选择器中。"
+            "value": "排除的账户仍会计入您的余额，但不会计入收支报表，适用于储蓄或投资账户。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "排除的帳戶仍會計入您的餘額，但不會計入收支報表，適用於儲蓄或投資帳戶。已封存的帳戶不會出現在選擇器中。"
+            "value": "排除的帳戶仍會計入您的餘額，但不會計入收支報表，適用於儲蓄或投資帳戶。"
           }
         }
       }
@@ -25122,6 +25200,84 @@
           "stringUnit": {
             "state": "translated",
             "value": "物品"
+          }
+        }
+      }
+    },
+    "Items in this category keep it, marked as missing, until you choose another. This can't be undone.": {
+      "comment": "Delete custom category alert message",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Artikel in dieser Kategorie behalten sie und werden als fehlend markiert, bis Sie eine andere wählen. Dies kann nicht rückgängig gemacht werden."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Items in this category keep it, marked as missing, until you choose another. This can't be undone."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los artículos de esta categoría la conservan, marcada como no disponible, hasta que elija otra. Esta acción no se puede deshacer."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les articles de cette catégorie la conservent, marquée comme manquante, jusqu'à ce que vous en choisissiez une autre. Cette action est irréversible."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Item dalam kategori ini tetap menggunakannya, ditandai sebagai hilang, hingga Anda memilih kategori lain. Tindakan ini tidak dapat diurungkan."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このカテゴリのアイテムは、別のカテゴリを選ぶまで「見つかりません」と表示されたまま保持されます。この操作は取り消せません。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 카테고리의 항목은 다른 카테고리를 선택할 때까지 누락됨으로 표시된 채 유지됩니다. 이 작업은 실행 취소할 수 없습니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os itens desta categoria a mantêm, marcada como ausente, até que você escolha outra. Essa ação não pode ser desfeita."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Предметы этой категории сохранят её с пометкой «отсутствует», пока вы не выберете другую. Это действие нельзя отменить."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Các mục trong danh mục này vẫn giữ danh mục, được đánh dấu là bị thiếu, cho đến khi bạn chọn danh mục khác. Không thể hoàn tác thao tác này."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此类别中的物品会保留该类别并标记为缺失，直到您选择其他类别。此操作无法撤销。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此類別中的物品會保留該類別並標示為缺少，直到您選擇其他類別。此操作無法復原。"
           }
         }
       }
@@ -49270,6 +49426,84 @@
         }
       }
     },
+    "Unarchive account": {
+      "comment": "Account editor button",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archivierung aufheben"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unarchive account"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desarchivar cuenta"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Désarchiver le compte"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Batalkan arsip akun"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "口座のアーカイブを解除"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "계좌 보관 해제"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desarquivar conta"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вернуть счёт из архива"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ lưu trữ tài khoản"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消归档账户"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消封存帳戶"
+          }
+        }
+      }
+    },
     "Uncategorised": {
       "comment": "Transaction category",
       "extractionState": "manual",
@@ -49344,83 +49578,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "未分類"
-          }
-        }
-      }
-    },
-    "Undo": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Widerrufen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Undo"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deshacer"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Annuler"
-          }
-        },
-        "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Urungkan"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "取り消す"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "실행 취소"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Desfazer"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Отменить"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hoàn tác"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "撤销"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "復原"
           }
         }
       }

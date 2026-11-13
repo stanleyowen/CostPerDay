@@ -75,7 +75,6 @@ struct ItemListView: View {
             .sheet(item: $editingItem) { item in
                 ItemEditView(item: item, isNew: false)
             }
-            .undoBar()
             .sensoryFeedback(.impact(weight: .light), trigger: retireTrigger)
         }
     }
@@ -140,11 +139,8 @@ struct ItemListView: View {
                     }
                     .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button(role: .destructive) { delete([row.item]) } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
-                        Button { editingItem = row.item } label: { Label("Edit", systemImage: "pencil") }
-                            .tint(editActionTint)
+                        SwipeDeleteButton { router.pendingDelete = .item(row.item, in: context) }
+                        SwipeEditButton { editingItem = row.item }
                     }
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
                         retireButton(for: row.item)
@@ -153,7 +149,7 @@ struct ItemListView: View {
                         Button("Edit", systemImage: "pencil") { editingItem = row.item }
                         retireButton(for: row.item)
                         Divider()
-                        Button("Delete", systemImage: "trash", role: .destructive) { delete([row.item]) }
+                        Button("Delete", systemImage: "trash", role: .destructive) { router.pendingDelete = .item(row.item, in: context) }
                     } preview: {
                         ItemPreviewCard(row: row, currency: baseCurrency)
                     }
@@ -229,20 +225,6 @@ struct ItemListView: View {
         let item = Item(currencyCode: baseCurrency)
         context.insert(item)
         newItem = item
-    }
-
-    private func delete(_ doomed: [Item]) {
-        guard !doomed.isEmpty else { return }
-        let name: String
-        if doomed.count == 1 {
-            name = doomed[0].name.isEmpty
-                ? String(localized: "Item", comment: "Fallback name for an unnamed item")
-                : doomed[0].name
-        } else {
-            name = String(localized: "\(doomed.count) items", comment: "Number of items deleted")
-        }
-
-        router.delete(doomed, named: name, in: context)
     }
 }
 
@@ -375,48 +357,6 @@ private struct BurnRateHero: View {
         .background(HeroBackground())
         .clipShape(.rect(cornerRadius: 28, style: .continuous))
         .environment(\.colorScheme, .dark)
-    }
-}
-
-// MARK: - Undo
-
-/// Delete is the one destructive action in the app, so it always comes with a way back.
-struct UndoBar: View {
-    let message: String
-    let undo: () -> Void
-    let dismiss: () -> Void
-
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "trash")
-                .foregroundStyle(.secondary)
-            Text(message)
-                .font(.subheadline)
-                .lineLimit(1)
-            Spacer()
-            Button("Undo", action: undo)
-                .font(.subheadline.weight(.semibold))
-                .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.capsule)
-                .controlSize(.small)
-            Button("Dismiss", systemImage: "xmark", action: dismiss)
-                .labelStyle(.iconOnly)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-        }
-        .padding(.leading, 16)
-        .padding(.trailing, 12)
-        .padding(.vertical, 10)
-        .background(.regularMaterial, in: .capsule)
-        .shadow(color: .black.opacity(0.12), radius: 12, y: 4)
-        .padding(.horizontal, 16)
-        .padding(.bottom, 8)
-        .transition(.move(edge: .bottom).combined(with: .opacity))
-        .task(id: message) {
-            // Auto-dismiss so the bar never sits there permanently.
-            try? await Task.sleep(for: .seconds(6))
-            dismiss()
-        }
     }
 }
 

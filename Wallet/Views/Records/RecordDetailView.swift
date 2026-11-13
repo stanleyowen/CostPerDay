@@ -14,7 +14,7 @@ struct RecordDetailView: View {
 
     @State private var editing = false
     @State private var duplicating: RecordDraft?
-    @State private var confirmingDelete = false
+    @State private var deleteRequest: DeleteRequest?
     @State private var newItem: Item?
     @State private var choosingItem = false
     @State private var linkTrigger = 0
@@ -72,16 +72,7 @@ struct RecordDetailView: View {
                 try? context.save()
             }
         }
-        .alert(Text("Delete this transaction?"), isPresented: $confirmingDelete) {
-            Button("Delete", role: .destructive) {
-                context.delete(record)
-                try? context.save()
-                dismiss()
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("Account balances and reports will update. A tracked item linked to it is kept.")
-        }
+        .deleteConfirmation($deleteRequest)
         .sensoryFeedback(.success, trigger: linkTrigger)
     }
 
@@ -253,7 +244,7 @@ struct RecordDetailView: View {
             .buttonBorderShape(.roundedRectangle(radius: 16))
 
             Button(role: .destructive) {
-                confirmingDelete = true
+                deleteRequest = .record(record, in: context) { dismiss() }
             } label: {
                 Label("Delete", systemImage: "trash")
                     .font(.body.weight(.semibold))
@@ -262,6 +253,7 @@ struct RecordDetailView: View {
             }
             .buttonStyle(.bordered)
             .buttonBorderShape(.roundedRectangle(radius: 16))
+            .tint(.red)
         }
     }
 }

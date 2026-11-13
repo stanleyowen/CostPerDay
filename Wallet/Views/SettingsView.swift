@@ -160,9 +160,8 @@ struct SettingsView: View {
                         .buttonStyle(.plain)
                         // The standard row actions (see RowActions.swift).
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(role: .destructive) { delete(category) } label: { Label("Delete", systemImage: "trash") }
-                            Button { editingCategory = category } label: { Label("Edit", systemImage: "pencil") }
-                                .tint(editActionTint)
+                            SwipeDeleteButton { delete(category) }
+                            SwipeEditButton { editingCategory = category }
                         }
                         .contextMenu {
                             Button("Edit", systemImage: "pencil") { editingCategory = category }
@@ -244,7 +243,6 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
-            .undoBar()
             .sheet(item: $exportURL) { url in
                 ShareSheet(url: url)
             }
@@ -365,10 +363,8 @@ struct SettingsView: View {
         items.filter { $0.categoryKey == category.key }.count
     }
 
-    /// Items in a deleted category keep its key and show as "missing" until
-    /// recategorised, so Undo brings everything back as it was.
     private func delete(_ category: CustomCategory) {
-        router.delete([category], named: category.name.isEmpty ? String(localized: "Untitled") : category.name, in: context)
+        router.pendingDelete = .category(category, in: context)
     }
 
     private func save(failureTitle: String) {

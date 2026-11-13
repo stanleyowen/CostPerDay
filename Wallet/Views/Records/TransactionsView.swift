@@ -84,14 +84,9 @@ struct TransactionsView: View {
                 }
             }
             .safeAreaInset(edge: .bottom, spacing: 0) {
-                VStack(spacing: 8) {
-                    if let notice = router.undoNotice {
-                        UndoBar(message: notice) { router.undoDelete(in: context) } dismiss: { router.dismissUndo() }
-                    }
-                    HStack {
-                        Spacer()
-                        FloatingAddButton { router.compose() }
-                    }
+                HStack {
+                    Spacer()
+                    FloatingAddButton { router.compose() }
                 }
             }
             .sheet(isPresented: $showingFilters) {

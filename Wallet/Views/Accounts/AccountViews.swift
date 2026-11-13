@@ -20,10 +20,8 @@ struct AccountEditView: View {
     @State private var balanceText: Double?
     @State private var recordedDelta: Double = 0
     @State private var choosingCurrency = false
-    @State private var confirmingDelete = false
+    @State private var deleteRequest: DeleteRequest?
     @State private var recordCount = 0
-    /// Records the delete would remove (transfers with other accounts survive).
-    @State private var deletedCount = 0
     @State private var saveError: String?
     @FocusState private var nameFocused: Bool
 
@@ -124,16 +122,35 @@ struct AccountEditView: View {
 
                 Section {
                     Toggle("Exclude from statistics", isOn: $draft.excludeFromStats)
-                    if !isNew {
-                        Toggle("Archived", isOn: $draft.isArchived)
-                    }
                 } footer: {
-                    Text("Excluded accounts still count toward your balance but not toward income and spending reports — useful for savings or investments. Archived accounts are hidden from pickers.")
+                    Text("Excluded accounts still count toward your balance but not toward income and spending reports — useful for savings or investments.")
                 }
 
                 if !isNew {
                     Section {
-                        Button("Delete account", role: .destructive) { confirmingDelete = true }
+                        // An action, not a setting: it saves and closes, like retiring
+                        // an item. Orange to put away, green to bring back.
+                        Button {
+                            draft.isArchived.toggle()
+                            save()
+                        } label: {
+                            if draft.isArchived {
+                                Label(String(localized: "Unarchive account", comment: "Account editor button"), systemImage: "tray.and.arrow.up")
+                            } else {
+                                Label(String(localized: "Archive account", comment: "Account editor button"), systemImage: "archivebox")
+                            }
+                        }
+                        .tint(draft.isArchived ? .green : .orange)
+                        .disabled(draft.name.trimmingCharacters(in: .whitespaces).isEmpty)
+
+                        Button(role: .destructive) {
+                            if let account { deleteRequest = .account(account, in: context) { dismiss() } }
+                        } label: {
+                            Label("Delete account", systemImage: "trash")
+                        }
+                        .tint(.red)
+                    } footer: {
+                        Text("Archived accounts are hidden from Home and pickers, but their money still counts toward your balance.")
                     }
                 }
             }
@@ -150,12 +167,7 @@ struct AccountEditView: View {
             .sheet(isPresented: $choosingCurrency) {
                 CurrencyPickerView(selection: $draft.currencyCode)
             }
-            .alert(Text("Delete \(draft.name)?"), isPresented: $confirmingDelete) {
-                Button("Delete", role: .destructive, action: deleteAccount)
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(LedgerActions.deleteWarning(deleting: deletedCount))
-            }
+            .deleteConfirmation($deleteRequest)
             .alert("Couldn't save", isPresented: Binding(get: { saveError != nil }, set: { if !$0 { saveError = nil } })) {
                 Button("OK", role: .cancel) {}
             } message: { Text(saveError ?? "") }
@@ -181,7 +193,6 @@ struct AccountEditView: View {
         let id = account.uuid
         let records = LedgerActions.records(touching: account, in: context)
         recordCount = records.count
-        deletedCount = LedgerActions.recordsDeleted(with: account, in: context)
         let balance = Ledger.balances(accounts: [AccountRef(account)], flows: records.map(\.flow))[id] ?? account.initialBalance
         recordedDelta = balance - account.initialBalance
         balanceText = balance
@@ -203,12 +214,6 @@ struct AccountEditView: View {
         } catch {
             saveError = error.localizedDescription
         }
-    }
-
-    private func deleteAccount() {
-        guard let account else { return }
-        LedgerActions.delete(account, in: context)
-        dismiss()
     }
 }
 
@@ -234,9 +239,7 @@ struct AccountsView: View {
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
     @State private var editing: Account?
     @State private var adding = false
-    /// The account a swipe asked to delete, waiting for confirmation, and how many
-    /// transactions it touches.
-    @State private var deleting: (account: Account, count: Int)?
+    @Environment(AppRouter.self) private var router
 
     var body: some View {
         let ledger = LedgerSnapshot(accounts: accounts, records: records, baseCurrency: baseCurrency)
@@ -271,18 +274,6 @@ struct AccountsView: View {
         }
         .sheet(item: $editing) { AccountEditView(account: $0) }
         .sheet(isPresented: $adding) { AccountEditView(account: nil) }
-        .alert(
-            Text("Delete \(deleting?.account.displayName ?? "")?"),
-            isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
-            presenting: deleting
-        ) { target in
-            Button("Delete", role: .destructive) {
-                withAnimation { LedgerActions.delete(target.account, in: context) }
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: { target in
-            Text(LedgerActions.deleteWarning(deleting: target.count))
-        }
     }
 
     private func row(_ account: Account, ledger: LedgerSnapshot) -> some View {
@@ -303,16 +294,10 @@ struct AccountsView: View {
                     .foregroundStyle(ledger.balance(of: account) < 0 ? AnyShapeStyle(Brand.expense) : AnyShapeStyle(.primary))
             }
         }
-        // The standard row actions (see RowActions.swift). Deleting an account takes
-        // its transactions with it, so unlike other rows it asks first and has no
-        // full swipe.
-        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-            // Tinted rather than `role: .destructive`, which would start animating
-            // the row away before the confirmation is answered.
-            Button { confirmDelete(account) } label: { Label("Delete", systemImage: "trash") }
-                .tint(.red)
-            Button { editing = account } label: { Label("Edit", systemImage: "pencil") }
-                .tint(editActionTint)
+        // The standard row actions (see RowActions.swift).
+        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+            SwipeDeleteButton { confirmDelete(account) }
+            SwipeEditButton { editing = account }
         }
         .swipeActions(edge: .leading, allowsFullSwipe: true) {
             archiveButton(account)
@@ -341,7 +326,7 @@ struct AccountsView: View {
     }
 
     private func confirmDelete(_ account: Account) {
-        deleting = (account, LedgerActions.recordsDeleted(with: account, in: context))
+        router.pendingDelete = .account(account, in: context)
     }
 
     private func move(_ offsets: IndexSet, _ destination: Int, among list: [Account]) {
@@ -416,7 +401,6 @@ struct AccountDetailView: View {
         }
         .navigationTitle(account.displayName)
         .navigationBarTitleDisplayMode(.inline)
-        .undoBar()
         .toolbar {
             Button("Edit") { editing = true }
         }

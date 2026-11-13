@@ -66,6 +66,7 @@ struct RootView: View {
             ItemEditView(item: item, isNew: true, prefilled: true)
         }
         .sheet(item: $router.recordToEdit) { RecordEditView(record: $0) }
+        .deleteConfirmation($router.pendingDelete)
         .overlay {
             if lockEnabled && lock.isLocked {
                 LockScreen(lock: lock)

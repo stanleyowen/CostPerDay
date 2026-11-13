@@ -11,7 +11,7 @@ struct ItemDetailView: View {
     @AppStorage("costMode") private var costModeRaw = CostMode.actual.rawValue
 
     @State private var isEditing = false
-    @State private var confirmingDelete = false
+    @State private var deleteRequest: DeleteRequest?
     @State private var linkingRecord = false
 
     private var isForeign: Bool { item.currencyCode != baseCurrency }
@@ -78,18 +78,7 @@ struct ItemDetailView: View {
         .sheet(isPresented: $linkingRecord) {
             LinkRecordSheet(item: item)
         }
-        .alert(
-            Text("Delete \(item.name.isEmpty ? String(localized: "this item", comment: "Used in a delete confirmation when the item has no name") : item.name)?"),
-            isPresented: $confirmingDelete
-        ) {
-            Button("Delete", role: .destructive) {
-                context.delete(item)
-                dismiss()
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("This permanently removes the item from your history and statistics. If you have simply stopped using it, retire it instead.")
-        }
+        .deleteConfirmation($deleteRequest)
     }
 
     // MARK: Sections
@@ -206,7 +195,7 @@ struct ItemDetailView: View {
             .sensoryFeedback(.impact(weight: .medium), trigger: item.retiredDate)
 
             Button(role: .destructive) {
-                confirmingDelete = true
+                deleteRequest = .item(item, in: context) { dismiss() }
             } label: {
                 Label("Delete", systemImage: "trash")
                     .font(.body.weight(.semibold))
@@ -215,6 +204,7 @@ struct ItemDetailView: View {
             }
             .buttonStyle(.bordered)
             .buttonBorderShape(.roundedRectangle(radius: 16))
+            .tint(.red)
 
             Text("Retiring an item stops its cost calculation while retaining it in your history and statistics.")
                 .font(.caption)
