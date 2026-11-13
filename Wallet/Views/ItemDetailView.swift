@@ -78,10 +78,9 @@ struct ItemDetailView: View {
         .sheet(isPresented: $linkingRecord) {
             LinkRecordSheet(item: item)
         }
-        .confirmationDialog(
+        .alert(
             Text("Delete \(item.name.isEmpty ? String(localized: "this item", comment: "Used in a delete confirmation when the item has no name") : item.name)?"),
-            isPresented: $confirmingDelete,
-            titleVisibility: .visible
+            isPresented: $confirmingDelete
         ) {
             Button("Delete", role: .destructive) {
                 context.delete(item)

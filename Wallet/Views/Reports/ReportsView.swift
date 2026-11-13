@@ -135,6 +135,7 @@ private struct ReportsContent: View {
             .defaultScrollAnchor(DebugFlags.scrollAnchor)
             .background(Color(.systemGroupedBackground))
             .navigationTitle("Reports")
+            .undoBar()
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Menu {
@@ -487,6 +488,7 @@ private struct DayCard: View {
                             .padding(.vertical, 4)
                     }
                     .buttonStyle(.plain)
+                    .recordActions(record)
                 }
             }
         }
@@ -946,6 +948,7 @@ private struct TopExpensesCard: View {
                             .padding(.vertical, 4)
                     }
                     .buttonStyle(.plain)
+                    .recordActions(record)
                 }
             }
         }
@@ -1159,11 +1162,13 @@ struct CategoryReportView: View {
                     NavigationLink(value: record) {
                         RecordRow(flow: record.flow, accountLine: ledger.accountLine(for: record.flow), showsDate: true, linkedItemName: record.item?.displayName)
                     }
+                    .recordActions(record)
                 }
             }
         }
         .navigationTitle(display.label)
         .navigationBarTitleDisplayMode(.inline)
+        .undoBar()
         .toolbar {
             Button("Show in Transactions", systemImage: "list.bullet") {
                 var filter = TransactionFilter()

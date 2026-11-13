@@ -72,7 +72,7 @@ struct RecordDetailView: View {
                 try? context.save()
             }
         }
-        .confirmationDialog(Text("Delete this transaction?"), isPresented: $confirmingDelete, titleVisibility: .visible) {
+        .alert(Text("Delete this transaction?"), isPresented: $confirmingDelete) {
             Button("Delete", role: .destructive) {
                 context.delete(record)
                 try? context.save()

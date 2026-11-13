@@ -62,6 +62,8 @@ struct HomeView: View {
                     FloatingAddButton { router.compose() }
                 }
             }
+            // After the overlay, so the + button rises above the bar.
+            .undoBar()
             .sheet(isPresented: $addingAccount) { AccountEditView(account: nil) }
             .sheet(isPresented: $importing) { WalletImportView() }
             .navigationDestination(for: Record.self) { RecordDetailView(record: $0) }
@@ -214,6 +216,7 @@ struct HomeView: View {
                         .padding(.vertical, 6)
                 }
                 .buttonStyle(.plain)
+                .recordActions(record)
                 if record.id != records.prefix(6).last?.id { Divider().padding(.leading, 52) }
             }
         }

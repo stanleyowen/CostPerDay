@@ -11,9 +11,6 @@ struct TransactionsView: View {
 
     @State private var search = ""
     @State private var showingFilters = false
-    @State private var editing: Record?
-    @State private var duplicating: RecordDraft?
-    @State private var deletedNotice: String?
     @State private var visibleLimit = 400
 
     var body: some View {
@@ -88,8 +85,8 @@ struct TransactionsView: View {
             }
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 VStack(spacing: 8) {
-                    if let deletedNotice {
-                        UndoBar(message: deletedNotice) { undoDelete() } dismiss: { withAnimation { self.deletedNotice = nil } }
+                    if let notice = router.undoNotice {
+                        UndoBar(message: notice) { router.undoDelete(in: context) } dismiss: { router.dismissUndo() }
                     }
                     HStack {
                         Spacer()
@@ -100,8 +97,6 @@ struct TransactionsView: View {
             .sheet(isPresented: $showingFilters) {
                 TransactionFilterSheet(filter: $router.transactionFilter, accounts: accounts, labels: snapshot.allLabels)
             }
-            .sheet(item: $editing) { RecordEditView(record: $0) }
-            .sheet(item: $duplicating) { RecordEditView(record: nil, prefill: $0) }
             .navigationDestination(for: Record.self) { RecordDetailView(record: $0) }
             .onChange(of: router.transactionFilter) { _, _ in visibleLimit = 400 }
         }
@@ -112,24 +107,7 @@ struct TransactionsView: View {
         return NavigationLink(value: record) {
             RecordRow(flow: flow, accountLine: ledger.accountLine(for: flow), linkedItemName: record.item?.displayName)
         }
-        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-            Button(role: .destructive) { delete(record) } label: { Label("Delete", systemImage: "trash") }
-        }
-        .swipeActions(edge: .leading) {
-            Button { duplicate(record) } label: { Label("Duplicate", systemImage: "plus.square.on.square") }
-                .tint(.blue)
-        }
-        .contextMenu {
-            Button("Edit", systemImage: "pencil") { editing = record }
-            Button("Duplicate", systemImage: "plus.square.on.square") { duplicate(record) }
-            if record.item == nil && record.kind == .expense {
-                Button("Track as item", systemImage: "shippingbox") {
-                    router.itemToConfirm = LedgerActions.trackAsItem(record, in: context)
-                }
-            }
-            Divider()
-            Button("Delete", systemImage: "trash", role: .destructive) { delete(record) }
-        }
+        .recordActions(record)
     }
 
     private func summary(_ snapshot: Snapshot) -> some View {
@@ -207,29 +185,6 @@ struct TransactionsView: View {
             }
             .padding(.horizontal, 16)
         }
-    }
-
-    // MARK: Actions
-
-    private func duplicate(_ record: Record) {
-        var copy = RecordDraft(record: record)
-        copy.date = .now
-        duplicating = copy
-    }
-
-    private func delete(_ record: Record) {
-        let name = record.note.isEmpty ? (record.category?.label ?? record.kind.label) : record.note
-        context.undoManager?.beginUndoGrouping()
-        context.delete(record)
-        context.undoManager?.endUndoGrouping()
-        withAnimation {
-            deletedNotice = String(localized: "Deleted \(name)", comment: "Undo bar message. The placeholder is an item name or a count.")
-        }
-    }
-
-    private func undoDelete() {
-        context.undoManager?.undo()
-        withAnimation { deletedNotice = nil }
     }
 }
 

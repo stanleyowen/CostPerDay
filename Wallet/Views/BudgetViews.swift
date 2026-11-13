@@ -84,6 +84,7 @@ struct BudgetRow: View {
 /// All budgets, with add/edit/delete.
 struct BudgetsView: View {
     @Environment(\.modelContext) private var context
+    @Environment(AppRouter.self) private var router
     @Query(sort: \Budget.createdAt) private var budgets: [Budget]
     @Query private var records: [Record]
     @Query private var accounts: [Account]
@@ -118,18 +119,30 @@ struct BudgetsView: View {
                     .padding(.vertical, 6)
                 }
                 .buttonStyle(.plain)
-            }
-            .onDelete { offsets in
-                for index in offsets { context.delete(budgets[index]) }
-                try? context.save()
+                // The standard row actions (see RowActions.swift).
+                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                    Button(role: .destructive) { delete(budget) } label: { Label("Delete", systemImage: "trash") }
+                    Button { editing = budget } label: { Label("Edit", systemImage: "pencil") }
+                        .tint(editActionTint)
+                }
+                .contextMenu {
+                    Button("Edit", systemImage: "pencil") { editing = budget }
+                    Divider()
+                    Button("Delete", systemImage: "trash", role: .destructive) { delete(budget) }
+                }
             }
         }
         .navigationTitle("Budgets")
+        .undoBar()
         .toolbar {
             Button("Add budget", systemImage: "plus") { adding = true }
         }
         .sheet(item: $editing) { BudgetEditView(budget: $0) }
         .sheet(isPresented: $adding) { BudgetEditView(budget: nil) }
+    }
+
+    private func delete(_ budget: Budget) {
+        router.delete([budget], named: budget.name.isEmpty ? String(localized: "Budget") : budget.name, in: context)
     }
 }
 
@@ -140,6 +153,7 @@ struct BudgetEditView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
     @State private var draft: BudgetDraft
+    @State private var confirmingDelete = false
 
     init(budget: Budget?) {
         self.budget = budget
@@ -183,18 +197,24 @@ struct BudgetEditView: View {
                     Text(draft.categoryKeys.isEmpty ? "Nothing selected means the budget covers every expense." : "Only expenses in the selected categories count toward this budget.")
                 }
 
-                if let budget {
+                if budget != nil {
                     Section {
-                        Button("Delete budget", role: .destructive) {
-                            context.delete(budget)
-                            try? context.save()
-                            dismiss()
-                        }
+                        Button("Delete budget", role: .destructive) { confirmingDelete = true }
                     }
                 }
             }
             .navigationTitle(budget == nil ? String(localized: "New Budget", comment: "Screen title") : String(localized: "Edit Budget", comment: "Screen title"))
             .navigationBarTitleDisplayMode(.inline)
+            .alert(Text("Delete this budget?"), isPresented: $confirmingDelete) {
+                Button("Delete", role: .destructive) {
+                    if let budget { context.delete(budget) }
+                    try? context.save()
+                    dismiss()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Your transactions aren't affected. This can't be undone.")
+            }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {

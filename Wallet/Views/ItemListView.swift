@@ -15,7 +15,6 @@ struct ItemListView: View {
     @State private var search = ""
     @State private var newItem: Item?
     @State private var editingItem: Item?
-    @State private var deletedNotice: String?
     @State private var retireTrigger = 0
 
     private var costMode: Binding<CostMode> {
@@ -76,11 +75,7 @@ struct ItemListView: View {
             .sheet(item: $editingItem) { item in
                 ItemEditView(item: item, isNew: false)
             }
-            .safeAreaInset(edge: .bottom) {
-                if let notice = deletedNotice {
-                    UndoBar(message: notice) { undoDelete() } dismiss: { withAnimation { deletedNotice = nil } }
-                }
-            }
+            .undoBar()
             .sensoryFeedback(.impact(weight: .light), trigger: retireTrigger)
         }
     }
@@ -148,6 +143,8 @@ struct ItemListView: View {
                         Button(role: .destructive) { delete([row.item]) } label: {
                             Label("Delete", systemImage: "trash")
                         }
+                        Button { editingItem = row.item } label: { Label("Edit", systemImage: "pencil") }
+                            .tint(editActionTint)
                     }
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
                         retireButton(for: row.item)
@@ -245,18 +242,7 @@ struct ItemListView: View {
             name = String(localized: "\(doomed.count) items", comment: "Number of items deleted")
         }
 
-        context.undoManager?.beginUndoGrouping()
-        for item in doomed { context.delete(item) }
-        context.undoManager?.endUndoGrouping()
-
-        withAnimation {
-            deletedNotice = String(localized: "Deleted \(name)", comment: "Undo bar message. The placeholder is an item name or a count.")
-        }
-    }
-
-    private func undoDelete() {
-        context.undoManager?.undo()
-        withAnimation { deletedNotice = nil }
+        router.delete(doomed, named: name, in: context)
     }
 }
 

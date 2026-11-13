@@ -65,6 +65,7 @@ struct RootView: View {
         .sheet(item: $router.itemToConfirm) { item in
             ItemEditView(item: item, isNew: true, prefilled: true)
         }
+        .sheet(item: $router.recordToEdit) { RecordEditView(record: $0) }
         .overlay {
             if lockEnabled && lock.isLocked {
                 LockScreen(lock: lock)

@@ -4,6 +4,7 @@ import UniformTypeIdentifiers
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var context
+    @Environment(AppRouter.self) private var router
     @Query private var items: [Item]
     @Query private var records: [Record]
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
@@ -157,8 +158,18 @@ struct SettingsView: View {
                         // Without this, List gives every Button row's text the accent
                         // tint by default — it reads as disabled/washed-out, not selectable.
                         .buttonStyle(.plain)
+                        // The standard row actions (see RowActions.swift).
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) { delete(category) } label: { Label("Delete", systemImage: "trash") }
+                            Button { editingCategory = category } label: { Label("Edit", systemImage: "pencil") }
+                                .tint(editActionTint)
+                        }
+                        .contextMenu {
+                            Button("Edit", systemImage: "pencil") { editingCategory = category }
+                            Divider()
+                            Button("Delete", systemImage: "trash", role: .destructive) { delete(category) }
+                        }
                     }
-                    .onDelete(perform: deleteCategories)
 
                     Button {
                         editingCategory = CustomCategory()
@@ -233,6 +244,7 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
+            .undoBar()
             .sheet(item: $exportURL) { url in
                 ShareSheet(url: url)
             }
@@ -353,11 +365,10 @@ struct SettingsView: View {
         items.filter { $0.categoryKey == category.key }.count
     }
 
-    private func deleteCategories(at offsets: IndexSet) {
-        for index in offsets where customCategories.indices.contains(index) {
-            context.delete(customCategories[index])
-        }
-        save(failureTitle: String(localized: "Could not delete category", comment: "Alert title"))
+    /// Items in a deleted category keep its key and show as "missing" until
+    /// recategorised, so Undo brings everything back as it was.
+    private func delete(_ category: CustomCategory) {
+        router.delete([category], named: category.name.isEmpty ? String(localized: "Untitled") : category.name, in: context)
     }
 
     private func save(failureTitle: String) {

@@ -303,16 +303,45 @@ struct AccountsView: View {
                     .foregroundStyle(ledger.balance(of: account) < 0 ? AnyShapeStyle(Brand.expense) : AnyShapeStyle(.primary))
             }
         }
-        // Swipe left for Edit and Delete. No full swipe: deleting always asks first.
+        // The standard row actions (see RowActions.swift). Deleting an account takes
+        // its transactions with it, so unlike other rows it asks first and has no
+        // full swipe.
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             // Tinted rather than `role: .destructive`, which would start animating
             // the row away before the confirmation is answered.
-            Button("Delete", systemImage: "trash") {
-                deleting = (account, LedgerActions.recordsDeleted(with: account, in: context))
-            }
-            .tint(.red)
-            Button("Edit", systemImage: "pencil") { editing = account }.tint(.blue)
+            Button { confirmDelete(account) } label: { Label("Delete", systemImage: "trash") }
+                .tint(.red)
+            Button { editing = account } label: { Label("Edit", systemImage: "pencil") }
+                .tint(editActionTint)
         }
+        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+            archiveButton(account)
+        }
+        .contextMenu {
+            Button("Edit", systemImage: "pencil") { editing = account }
+            archiveButton(account)
+            Divider()
+            Button("Delete", systemImage: "trash", role: .destructive) { confirmDelete(account) }
+        }
+    }
+
+    /// Archive hides an account from Home and pickers; its money still counts.
+    /// Orange to put away and green to bring back, like retiring an item.
+    private func archiveButton(_ account: Account) -> some View {
+        Button {
+            withAnimation(.snappy) { account.isArchived.toggle() }
+        } label: {
+            if account.isArchived {
+                Label(String(localized: "Unarchive", comment: "Account row action"), systemImage: "tray.and.arrow.up")
+            } else {
+                Label(String(localized: "Archive", comment: "Account row action"), systemImage: "archivebox")
+            }
+        }
+        .tint(account.isArchived ? .green : .orange)
+    }
+
+    private func confirmDelete(_ account: Account) {
+        deleting = (account, LedgerActions.recordsDeleted(with: account, in: context))
     }
 
     private func move(_ offsets: IndexSet, _ destination: Int, among list: [Account]) {
@@ -377,6 +406,7 @@ struct AccountDetailView: View {
                             } label: {
                                 RecordRow(flow: flow, accountLine: ledger.accountLine(for: flow), linkedItemName: record.item?.displayName)
                             }
+                            .recordActions(record)
                         }
                     } header: {
                         Text(group.title)
@@ -386,6 +416,7 @@ struct AccountDetailView: View {
         }
         .navigationTitle(account.displayName)
         .navigationBarTitleDisplayMode(.inline)
+        .undoBar()
         .toolbar {
             Button("Edit") { editing = true }
         }
