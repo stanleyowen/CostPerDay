@@ -11,7 +11,8 @@ struct TransactionsView: View {
 
     @State private var search = ""
     @State private var visibleLimit = 400
-    @State private var showingFilters = false
+    /// `-openFilters`: opens with the filter sheet up, for screenshots; inert in Release.
+    @State private var showingFilters = DebugFlags.has("-openFilters")
 
     var body: some View {
         @Bindable var router = router
@@ -22,12 +23,8 @@ struct TransactionsView: View {
             List {
                 if !records.isEmpty {
                     Section {
-                        // Scrolls with the list, like Reports' period control.
-                        TransactionPeriodControl(period: $router.transactionFilter.period)
-                            .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                            .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
                         summary(snapshot)
+                            .modifier(PeriodSwipe(period: $router.transactionFilter.period))
                             // Flush with the day sections below.
                             .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                             .listRowBackground(Color.clear)
@@ -79,8 +76,10 @@ struct TransactionsView: View {
             }
             .searchable(text: $search, prompt: Text("Notes, labels, amounts"))
             .navigationTitle("Transactions")
-            // The period is at the top of the list; the other filters are behind
-            // the toolbar button. The bottom is left to the tab bar and +.
+            // Every filter, the period included, is behind the toolbar button; the
+            // period in force is shown under the title. The bottom is left to the
+            // tab bar and +.
+            .periodSubtitle(router.transactionFilter.period)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     FilterToolbarButton(count: TransactionFilterSheet.count(router.transactionFilter, part: .all)) { showingFilters = true }
@@ -120,13 +119,20 @@ struct TransactionsView: View {
             }
             Divider().padding(.leading, 52)
             summaryRow(symbol: "equal", tint: .gray, title: String(localized: "Net"),
-                       subtitle: String(localized: "\(snapshot.count) transactions", comment: "Chart subtitle"),
+                       subtitle: netSubtitle(count: snapshot.count),
                        value: Money.string(net, code: baseCurrency), valueTint: net >= 0 ? .income : Brand.expense)
                 .padding(.horizontal, 8)
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
         .background(Color(.secondarySystemGroupedBackground), in: .rect(cornerRadius: 20, style: .continuous))
+    }
+
+    /// The count, and on iOS before 26 (no navigation subtitle) the period too.
+    private func netSubtitle(count: Int) -> String {
+        let transactions = String(localized: "\(count) transactions", comment: "Chart subtitle")
+        if #available(iOS 26, *) { return transactions }
+        return router.transactionFilter.period.label() + " · " + transactions
     }
 
     private func summaryRow(symbol: String, tint: Color, title: String, subtitle: String? = nil, value: String, valueTint: Color) -> some View {

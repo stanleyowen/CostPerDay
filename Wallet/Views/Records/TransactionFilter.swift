@@ -60,9 +60,10 @@ struct TransactionFilter: Equatable {
     }
 }
 
-/// Every filter except the period, which has its own control above the list:
-/// which accounts (`.all`, on the Transactions tab) and type, categories, labels
-/// and items (`.details`, on an account's page, which is already one account).
+/// Every filter for a transaction list, behind its toolbar button: the period
+/// first, then which accounts (`.all`, on the Transactions tab; an account's page
+/// uses `.details`, being one account already), then type, categories, labels and
+/// items. The list shows the period under its title.
 struct TransactionFilterSheet: View {
     enum Part { case all, details }
 
@@ -76,6 +77,14 @@ struct TransactionFilterSheet: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    TransactionPeriodControl(period: $filter.period)
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                } header: {
+                    Text("Period")
+                }
+
                 if part == .all && !accounts.isEmpty {
                     Section {
                         ForEach(accounts) { account in
@@ -95,8 +104,8 @@ struct TransactionFilterSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    // Resets what this sheet shows; the period is left alone.
                     Button("Reset") {
+                        filter.period = .all
                         if part == .all { filter.accounts = [] }
                         filter.clearDetails()
                     }
@@ -112,7 +121,7 @@ struct TransactionFilterSheet: View {
 
     /// How many filters this sheet holds are on — the badge on its button.
     static func count(_ filter: TransactionFilter, part: Part) -> Int {
-        filter.detailCount + (part == .all && !filter.accounts.isEmpty ? 1 : 0)
+        (filter.period == .all ? 0 : 1) + filter.detailCount + (part == .all && !filter.accounts.isEmpty ? 1 : 0)
     }
 
     @ViewBuilder
@@ -188,5 +197,35 @@ struct FilterToolbarButton: View {
         // when the count changes; tying the button's identity to the count rebuilds
         // it, badge included, whenever the count moves.
         .id(count)
+    }
+}
+
+extension View {
+    /// The period a transaction list shows, under its title (iOS 26). Earlier
+    /// versions have no navigation subtitle, so the list shows it itself.
+    @ViewBuilder
+    func periodSubtitle(_ period: TransactionPeriod) -> some View {
+        if #available(iOS 26, *) {
+            navigationSubtitle(period.label())
+        } else {
+            self
+        }
+    }
+}
+
+/// Swiping sideways on a list's summary steps a calendar period back or forward,
+/// so a month-by-month browse doesn't need the filter sheet.
+struct PeriodSwipe: ViewModifier {
+    @Binding var period: TransactionPeriod
+
+    func body(content: Content) -> some View {
+        content
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 30).onEnded { value in
+                    guard case .calendar = period, abs(value.translation.width) > abs(value.translation.height) * 1.5 else { return }
+                    withAnimation(.snappy) { period = period.stepped(by: value.translation.width < 0 ? 1 : -1) }
+                }
+            )
+            .sensoryFeedback(.selection, trigger: period)
     }
 }
