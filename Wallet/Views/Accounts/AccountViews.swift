@@ -347,7 +347,7 @@ struct AccountDetailView: View {
     @Query private var accounts: [Account]
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
     @State private var editing = false
-    @State private var composing = false
+    @Environment(AppRouter.self) private var router
 
     init(account: Account) {
         self.account = account
@@ -386,9 +386,7 @@ struct AccountDetailView: View {
                     Section {
                         ForEach(group.records) { record in
                             let flow = record.flow
-                            NavigationLink {
-                                RecordDetailView(record: record)
-                            } label: {
+                            RecordLink(record: record) {
                                 RecordRow(flow: flow, accountLine: ledger.accountLine(for: flow), linkedItemName: record.item?.displayName)
                             }
                             .recordActions(record)
@@ -405,12 +403,9 @@ struct AccountDetailView: View {
             Button("Edit") { editing = true }
         }
         .safeAreaInset(edge: .bottom, alignment: .trailing) {
-            FloatingAddButton { composing = true }
+            FloatingAddButton { router.composer = RecordDraft(kind: .expense, accountID: account.uuid) }
         }
         .sheet(isPresented: $editing) { AccountEditView(account: account) }
-        .sheet(isPresented: $composing) {
-            RecordEditView(record: nil, prefill: RecordDraft(kind: .expense, accountID: account.uuid))
-        }
     }
 
     private struct DayGroup: Identifiable {

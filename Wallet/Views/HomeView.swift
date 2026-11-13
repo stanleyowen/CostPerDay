@@ -64,7 +64,6 @@ struct HomeView: View {
             }
             .sheet(isPresented: $addingAccount) { AccountEditView(account: nil) }
             .sheet(isPresented: $importing) { WalletImportView() }
-            .navigationDestination(for: Record.self) { RecordDetailView(record: $0) }
             .navigationDestination(for: Account.self) { AccountDetailView(account: $0) }
             .navigationDestination(item: $openedAccount) { AccountDetailView(account: $0) }
             .sensoryFeedback(.selection, trigger: selectedAccounts)
@@ -209,11 +208,10 @@ struct HomeView: View {
             }
             ForEach(records.prefix(6)) { record in
                 let flow = record.flow
-                NavigationLink(value: record) {
+                RecordLink(record: record) {
                     RecordRow(flow: flow, accountLine: ledger.accountLine(for: flow), showsDate: true, linkedItemName: record.item?.displayName)
                         .padding(.vertical, 6)
                 }
-                .buttonStyle(.plain)
                 .recordActions(record)
                 if record.id != records.prefix(6).last?.id { Divider().padding(.leading, 52) }
             }

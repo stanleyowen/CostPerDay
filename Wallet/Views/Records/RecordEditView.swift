@@ -5,7 +5,12 @@ import SwiftData
 /// screen, the note field suggests from your own history and fills in category,
 /// account and usual amount, and Save is one tap away.
 ///
-/// Binds to a `RecordDraft`, never the live `Record` — Cancel is a true no-op.
+/// Tapping a transaction anywhere opens it here (there's no read-only screen), so
+/// an existing transaction also gets everything you can do with one: its link to
+/// a tracked item, Duplicate and Delete.
+///
+/// Binds to a `RecordDraft`, never the live `Record` — Cancel is a true no-op. The
+/// item link is held the same way and only written on Update.
 struct RecordEditView: View {
     /// Nil when creating.
     let record: Record?
@@ -13,8 +18,10 @@ struct RecordEditView: View {
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
+    @Environment(AppRouter.self) private var router
     @AppStorage("baseCurrency") private var baseCurrency = Currency.deviceDefault
     @Query(sort: \Account.sortOrder) private var accounts: [Account]
+    @Query private var customCategories: [CustomCategory]
 
     @State private var draft: RecordDraft
     @State private var expression: AmountExpression
@@ -30,6 +37,16 @@ struct RecordEditView: View {
     @State private var saveError: String?
     @State private var invalidTrigger = 0
     @State private var keyTrigger = 0
+    /// The tracked item this transaction belongs to, and whether it's the purchase
+    /// or upkeep. Edited here and written on Update, like the draft.
+    @State private var linkedItem: Item?
+    @State private var isItemPurchase: Bool
+    @State private var choosingItem = false
+    @State private var deleteRequest: DeleteRequest?
+    /// Up from the start for a new transaction, where the amount comes first. For
+    /// an existing one it waits for a tap on the amount, so the rest of the
+    /// transaction — ownership, Duplicate, Delete — isn't hidden behind it.
+    @State private var keypadShown: Bool
     @FocusState private var noteFocused: Bool
 
     init(record: Record?, prefill: RecordDraft? = nil, onTrackItem: ((Item) -> Void)? = nil) {
@@ -41,6 +58,9 @@ struct RecordEditView: View {
         _received = State(initialValue: initial.toAmount > 0 ? initial.toAmount : nil)
         // A blank new entry hasn't chosen a category yet, so typing a familiar note may pick one.
         _categoryChosen = State(initialValue: record != nil || (prefill.map { $0.categoryKey != RecordCategory.unknown.rawValue } ?? false))
+        _keypadShown = State(initialValue: record == nil)
+        _linkedItem = State(initialValue: record?.item)
+        _isItemPurchase = State(initialValue: record?.isItemPurchase ?? false)
     }
 
     private var isNew: Bool { record == nil }
@@ -79,6 +99,14 @@ struct RecordEditView: View {
                         trackToggle
                     }
 
+                    if let record {
+                        if draft.kind == .expense || linkedItem != nil {
+                            ownershipCard
+                        }
+                        infoCard(record)
+                        actions(record)
+                    }
+
                     if let issue = draft.issues.first, invalidTrigger > 0 {
                         Label(message(for: issue), systemImage: "exclamationmark.circle.fill")
                             .font(.footnote.weight(.medium))
@@ -93,7 +121,7 @@ struct RecordEditView: View {
             .scrollDismissesKeyboard(.interactively)
             .background(Color(.systemGroupedBackground))
             .safeAreaInset(edge: .bottom, spacing: 0) {
-                if !noteFocused {
+                if !noteFocused && keypadShown {
                     AmountKeypad(
                         expression: $expression,
                         accent: draft.kind.tint,
@@ -105,6 +133,7 @@ struct RecordEditView: View {
                 }
             }
             .animation(.snappy(duration: 0.25), value: noteFocused)
+            .animation(.snappy(duration: 0.25), value: keypadShown)
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -135,6 +164,15 @@ struct RecordEditView: View {
                     draft.accountID = created.uuid
                 }
             }
+            .sheet(isPresented: $choosingItem) {
+                ItemPickerSheet { item in
+                    withAnimation(.snappy) {
+                        linkedItem = item
+                        isItemPurchase = false
+                    }
+                }
+            }
+            .deleteConfirmation($deleteRequest)
             .alert("Couldn't save", isPresented: Binding(get: { saveError != nil }, set: { if !$0 { saveError = nil } })) {
                 Button("OK", role: .cancel) {}
             } message: {
@@ -163,6 +201,7 @@ struct RecordEditView: View {
     private var isDirty: Bool {
         let original = record.map(RecordDraft.init(record:))
         return (expression.value ?? 0) != (original?.amount ?? 0) || draft.note != (original?.note ?? "")
+            || linkedItem?.persistentModelID != record?.item?.persistentModelID
     }
 
     // MARK: Amount
@@ -204,6 +243,12 @@ struct RecordEditView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 8)
+        .contentShape(.rect)
+        .onTapGesture {
+            noteFocused = false
+            keypadShown = true
+        }
+        .accessibilityAddTraits(keypadShown ? [] : .isButton)
     }
 
     // MARK: Details
@@ -454,6 +499,146 @@ struct RecordEditView: View {
         .background(Color(.secondarySystemGroupedBackground), in: .rect(cornerRadius: 20, style: .continuous))
     }
 
+    // MARK: Existing transaction
+
+    /// The bridge to the ownership tracker: make this purchase a tracked item, file
+    /// it as upkeep on one you already track, or see and unlink the one it's on.
+    private var ownershipCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            CardHeader(
+                title: String(localized: "Ownership", comment: "Card title"),
+                subtitle: linkedItem == nil
+                    ? String(localized: "Bought something that lasts? Track what it costs you per day.", comment: "Card subtitle")
+                    : nil
+            )
+            if let item = linkedItem {
+                let display = CategoryCatalog(custom: customCategories).display(for: item.categoryKey)
+                NavigationLink {
+                    ItemDetailView(item: item)
+                } label: {
+                    HStack(spacing: 12) {
+                        ItemGlyph(category: display, progress: item.lifetimeProgress(), isRetired: item.isRetired, size: 46)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(item.displayName).font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
+                            Text(isItemPurchase
+                                 ? String(localized: "Purchase", comment: "Role of a transaction linked to an item")
+                                 : String(localized: "Upkeep", comment: "Role of a transaction linked to an item"))
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(Brand.accent)
+                        }
+                        Spacer()
+                        VStack(alignment: .trailing, spacing: 1) {
+                            Text(Money.perDay(item.totalCostPerDay(), code: baseCurrency))
+                                .font(.system(.subheadline, design: .rounded).weight(.bold).monospacedDigit())
+                                .foregroundStyle(.primary)
+                            Text("per day").font(.caption2).foregroundStyle(.secondary)
+                        }
+                        Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(.tertiary)
+                    }
+                    .contentShape(.rect)
+                }
+                .buttonStyle(.plain)
+                Button("Unlink", systemImage: "xmark.circle") {
+                    withAnimation(.snappy) {
+                        linkedItem = nil
+                        isItemPurchase = false
+                    }
+                }
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(.secondary)
+            } else {
+                HStack(spacing: 10) {
+                    // Saves your edits first, then opens the new item to confirm.
+                    Button {
+                        trackAsItem = true
+                        save()
+                    } label: {
+                        Label("Track as item", systemImage: "shippingbox.fill")
+                            .font(.subheadline.weight(.semibold))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 4)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.roundedRectangle(radius: 14))
+                    Button {
+                        noteFocused = false
+                        choosingItem = true
+                    } label: {
+                        Label("Add as upkeep", systemImage: "wrench.and.screwdriver.fill")
+                            .font(.subheadline.weight(.semibold))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 4)
+                    }
+                    .buttonStyle(.bordered)
+                    .buttonBorderShape(.roundedRectangle(radius: 14))
+                }
+            }
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.secondarySystemGroupedBackground), in: .rect(cornerRadius: 20, style: .continuous))
+    }
+
+    /// What the form doesn't edit: the payee and exchange rate recorded with the
+    /// transaction, and where it came from.
+    @ViewBuilder
+    private func infoCard(_ record: Record) -> some View {
+        let showsRate = record.currencyCode != baseCurrency
+        let imported = record.importKey != nil
+        if !record.payee.isEmpty || showsRate || imported {
+            VStack(alignment: .leading, spacing: 0) {
+                if !record.payee.isEmpty {
+                    InfoRow("Payee", value: record.payee)
+                }
+                if showsRate {
+                    if !record.payee.isEmpty { Divider() }
+                    InfoRow("Rate", value: "1 \(record.currencyCode) = \(Flow.safeRate(record.rateToBase).formatted(.number.precision(.fractionLength(0...4)))) \(baseCurrency)")
+                }
+                if imported {
+                    if !record.payee.isEmpty || showsRate { Divider() }
+                    InfoRow("Source", value: String(localized: "Imported from BudgetBakers", comment: "Transaction source"))
+                }
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 2)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color(.secondarySystemGroupedBackground), in: .rect(cornerRadius: 20, style: .continuous))
+        }
+    }
+
+    private func actions(_ record: Record) -> some View {
+        HStack(spacing: 10) {
+            // Opens a new transaction prefilled from this one (as saved), dated now,
+            // in this editor's place.
+            Button {
+                var copy = RecordDraft(record: record)
+                copy.date = .now
+                router.composer = copy
+            } label: {
+                Label("Duplicate", systemImage: "plus.square.on.square")
+                    .font(.body.weight(.semibold))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6)
+            }
+            .buttonStyle(.bordered)
+            .buttonBorderShape(.roundedRectangle(radius: 16))
+
+            Button(role: .destructive) {
+                noteFocused = false
+                deleteRequest = .record(record, in: context) { dismiss() }
+            } label: {
+                Label("Delete", systemImage: "trash")
+                    .font(.body.weight(.semibold))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6)
+            }
+            .buttonStyle(.bordered)
+            .buttonBorderShape(.roundedRectangle(radius: 16))
+            .tint(.red)
+        }
+        .padding(.top, 4)
+    }
+
     // MARK: Behaviour
 
     private func loadContext() async {
@@ -545,7 +730,12 @@ struct RecordEditView: View {
 
         let target = record ?? Record()
         draft.apply(to: target)
-        if record == nil { context.insert(target) }
+        if record == nil {
+            context.insert(target)
+        } else {
+            target.item = linkedItem
+            target.isItemPurchase = linkedItem != nil && isItemPurchase
+        }
         var trackedItem: Item?
         if trackAsItem && draft.kind == .expense {
             trackedItem = LedgerActions.trackAsItem(target, in: context)

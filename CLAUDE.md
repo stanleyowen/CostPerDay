@@ -33,7 +33,7 @@ python3 Localization/build_catalog.py
 Debug builds accept launch arguments (all inert in Release, see `Support/DebugFlags.swift` and `SampleData`):
 - `-seedSampleData` — items plus two accounts and ~3 months of transactions in an empty store.
 - `-importWalletCSV <path>` — import a Wallet CSV at launch (idempotent).
-- `-skipOnboarding`, `-initialTab home|transactions|reports|items|settings`, `-openComposer`, `-scrollAnchor center|bottom`, `-reportFocus <category key or group:raw>`, `-reportDay <day of month>`, `-selectAccounts <n>` (pre-select the first n Home account cards) — for scripted simulator screenshots (`xcrun simctl launch … ` then `xcrun simctl io booted screenshot`).
+- `-skipOnboarding`, `-initialTab home|transactions|reports|items|settings`, `-openComposer`, `-openRecord` (the latest transaction in the editor), `-scrollAnchor center|bottom`, `-reportFocus <category key or group:raw>`, `-reportDay <day of month>`, `-selectAccounts <n>` (pre-select the first n Home account cards) — for scripted simulator screenshots (`xcrun simctl launch … ` then `xcrun simctl io booted screenshot`).
 
 The Xcode project uses file-system-synchronized groups, so new Swift files under `Wallet/` or `WalletTests/` are picked up without editing `project.pbxproj`.
 

@@ -39,9 +39,7 @@ struct ItemSpendingCard: View {
                 }
                 ForEach(linked) { record in
                     let flow = record.flow
-                    NavigationLink {
-                        RecordDetailView(record: record)
-                    } label: {
+                    RecordLink(record: record) {
                         HStack(spacing: 10) {
                             CategoryTile(symbol: flow.category.symbol, tint: flow.category.tint, size: 32)
                             VStack(alignment: .leading, spacing: 1) {
@@ -59,9 +57,7 @@ struct ItemSpendingCard: View {
                                 .foregroundStyle(.primary)
                         }
                         .padding(.vertical, 6)
-                        .contentShape(.rect)
                     }
-                    .buttonStyle(.plain)
                 }
             }
 
@@ -137,6 +133,54 @@ struct LinkRecordSheet: View {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
             }
             .onAppear { asPurchase = !hasPurchase && (item.records ?? []).isEmpty }
+        }
+    }
+}
+
+extension RecordDraft: Identifiable {
+    var id: String { "\(kind.rawValue)|\(date.timeIntervalSince1970)|\(amount)|\(note)" }
+}
+
+/// Choose one of your tracked items, to file a transaction as upkeep on it.
+struct ItemPickerSheet: View {
+    let onPick: (Item) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @Query(sort: \Item.purchaseDate, order: .reverse) private var items: [Item]
+    @Query private var customCategories: [CustomCategory]
+    @State private var search = ""
+
+    var body: some View {
+        let catalog = CategoryCatalog(custom: customCategories)
+        let filtered = items.filter { search.isEmpty || $0.name.localizedCaseInsensitiveContains(search) || $0.brand.localizedCaseInsensitiveContains(search) }
+        NavigationStack {
+            List(filtered) { item in
+                Button {
+                    onPick(item)
+                    dismiss()
+                } label: {
+                    HStack(spacing: 12) {
+                        ItemGlyph(category: catalog.display(for: item.categoryKey), progress: item.lifetimeProgress(), isRetired: item.isRetired, size: 40)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(item.displayName).foregroundStyle(.primary)
+                            Text(item.purchaseDate.formatted(date: .abbreviated, time: .omitted))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+            .overlay {
+                if items.isEmpty {
+                    ContentUnavailableView("No tracked items", systemImage: "shippingbox", description: Text("Track a purchase as an item first."))
+                }
+            }
+            .searchable(text: $search, prompt: Text("Search items"))
+            .navigationTitle("Add as upkeep to…")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+            }
         }
     }
 }

@@ -168,7 +168,6 @@ private struct ReportsContent: View {
             }
             .sensoryFeedback(.selection, trigger: filterTrigger)
             .sheet(item: $exportURL) { ShareSheet(url: $0) }
-            .navigationDestination(for: Record.self) { RecordDetailView(record: $0) }
             .navigationDestination(for: CategoryReportRoute.self) { route in
                 CategoryReportView(route: route, records: records, accounts: accounts)
             }
@@ -482,11 +481,10 @@ private struct DayCard: View {
             .padding(.bottom, 2)
             ForEach(flows.prefix(30)) { flow in
                 if let record = byID[flow.id] {
-                    NavigationLink(value: record) {
+                    RecordLink(record: record) {
                         RecordRow(flow: flow, accountLine: ledger.accountLine(for: flow), linkedItemName: record.item?.displayName)
                             .padding(.vertical, 4)
                     }
-                    .buttonStyle(.plain)
                     .recordActions(record)
                 }
             }
@@ -942,11 +940,10 @@ private struct TopExpensesCard: View {
                 .padding(.bottom, 4)
             ForEach(report.largestExpenses) { flow in
                 if let record = byID[flow.id] {
-                    NavigationLink(value: record) {
+                    RecordLink(record: record) {
                         RecordRow(flow: flow, accountLine: ledger.accountLine(for: flow), showsDate: true, linkedItemName: record.item?.displayName)
                             .padding(.vertical, 4)
                     }
-                    .buttonStyle(.plain)
                     .recordActions(record)
                 }
             }
@@ -1158,7 +1155,7 @@ struct CategoryReportView: View {
 
             Section("Transactions") {
                 ForEach(inPeriod.prefix(300)) { record in
-                    NavigationLink(value: record) {
+                    RecordLink(record: record) {
                         RecordRow(flow: record.flow, accountLine: ledger.accountLine(for: record.flow), showsDate: true, linkedItemName: record.item?.displayName)
                     }
                     .recordActions(record)

@@ -27,6 +27,7 @@ struct RootView: View {
 
     @Environment(AppRouter.self) private var router
     @Environment(AppLock.self) private var lock
+    @Environment(\.modelContext) private var context
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage(AppLock.enabledKey) private var lockEnabled = false
@@ -57,15 +58,17 @@ struct RootView: View {
                 TemporaryStoreBanner()
             }
         }
-        .sheet(item: $router.composer) { draft in
-            RecordEditView(record: nil, prefill: draft) { item in
-                router.itemToConfirm = item
+        .sheet(item: $router.recordSheet) { sheet in
+            switch sheet {
+            case .new(let draft):
+                RecordEditView(record: nil, prefill: draft) { router.itemToConfirm = $0 }
+            case .edit(let record):
+                RecordEditView(record: record) { router.itemToConfirm = $0 }
             }
         }
         .sheet(item: $router.itemToConfirm) { item in
             ItemEditView(item: item, isNew: true, prefilled: true)
         }
-        .sheet(item: $router.recordToEdit) { RecordEditView(record: $0) }
         .deleteConfirmation($router.pendingDelete)
         .overlay {
             if lockEnabled && lock.isLocked {
@@ -92,6 +95,12 @@ struct RootView: View {
                 router.tab = tab
             }
             if arguments.contains("-openComposer") { router.compose() }
+            if arguments.contains("-openRecord") {
+                // The most recent transaction, in the editor.
+                var latest = FetchDescriptor<Record>(sortBy: [SortDescriptor(\.date, order: .reverse)])
+                latest.fetchLimit = 1
+                router.recordToEdit = try? context.fetch(latest).first
+            }
             #endif
             showOnboarding = !hasCompletedOnboarding
         }

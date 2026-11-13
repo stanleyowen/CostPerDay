@@ -23,7 +23,8 @@ struct TransactionsView: View {
                 if !records.isEmpty {
                     Section {
                         summary(snapshot)
-                            .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                            // Flush with the day sections below.
+                            .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                             .listRowBackground(Color.clear)
                             .listRowSeparator(.hidden)
                         if router.transactionFilter.isActive {
@@ -92,44 +93,64 @@ struct TransactionsView: View {
             .sheet(isPresented: $showingFilters) {
                 TransactionFilterSheet(filter: $router.transactionFilter, accounts: accounts, labels: snapshot.allLabels)
             }
-            .navigationDestination(for: Record.self) { RecordDetailView(record: $0) }
             .onChange(of: router.transactionFilter) { _, _ in visibleLimit = 400 }
         }
     }
 
     private func row(_ record: Record, ledger: LedgerSnapshot) -> some View {
         let flow = record.flow
-        return NavigationLink(value: record) {
+        return RecordLink(record: record) {
             RecordRow(flow: flow, accountLine: ledger.accountLine(for: flow), linkedItemName: record.item?.displayName)
         }
         .recordActions(record)
     }
 
+    /// Income, expenses and net, one per row so each figure has room to read.
     private func summary(_ snapshot: Snapshot) -> some View {
-        HStack(alignment: .top) {
+        let net = snapshot.income - snapshot.expense
+        return VStack(spacing: 0) {
             kindToggle(.income) {
-                FigureColumn(title: String(localized: "Income"), value: Money.string(snapshot.income, code: baseCurrency), tint: .income)
+                summaryRow(symbol: "arrow.down.left", tint: .income, title: String(localized: "Income"),
+                           value: Money.string(snapshot.income, code: baseCurrency), valueTint: .income)
             }
-            Spacer()
+            Divider().padding(.leading, 52)
             kindToggle(.expense) {
-                FigureColumn(title: String(localized: "Expenses"), value: Money.string(snapshot.expense, code: baseCurrency), alignment: .center)
+                summaryRow(symbol: "arrow.up.right", tint: Brand.expense, title: String(localized: "Expenses"),
+                           value: Money.string(snapshot.expense, code: baseCurrency), valueTint: .primary)
             }
-            Spacer()
-            FigureColumn(title: String(localized: "Net"), value: Money.string(snapshot.income - snapshot.expense, code: baseCurrency),
-                         tint: snapshot.income >= snapshot.expense ? .income : Brand.expense, alignment: .trailing)
+            Divider().padding(.leading, 52)
+            summaryRow(symbol: "equal", tint: .gray, title: String(localized: "Net"),
+                       subtitle: String(localized: "\(snapshot.count) transactions", comment: "Chart subtitle"),
+                       value: Money.string(net, code: baseCurrency), valueTint: net >= 0 ? .income : Brand.expense)
+                .padding(.horizontal, 8)
         }
-        .padding(16)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
         .background(Color(.secondarySystemGroupedBackground), in: .rect(cornerRadius: 20, style: .continuous))
-        .overlay(alignment: .bottom) {
-            Text("\(snapshot.count) transactions")
-                .font(.caption2.weight(.medium))
-                .foregroundStyle(.tertiary)
-                .offset(y: 18)
-        }
-        .padding(.bottom, 14)
     }
 
-    /// Tapping a figure in the summary narrows the list to that type (tap again to undo).
+    private func summaryRow(symbol: String, tint: Color, title: String, subtitle: String? = nil, value: String, valueTint: Color) -> some View {
+        HStack(spacing: 12) {
+            CategoryTile(symbol: symbol, tint: tint, size: 32)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(title).font(.subheadline.weight(.medium))
+                if let subtitle {
+                    Text(subtitle).font(.caption).foregroundStyle(.secondary)
+                }
+            }
+            Spacer(minLength: 12)
+            Text(value)
+                .font(.system(.title3, design: .rounded).weight(.bold).monospacedDigit())
+                .foregroundStyle(valueTint)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .accessibilityElement(children: .combine)
+    }
+
+    /// Tapping Income or Expenses narrows the list to that type (tap again to undo).
     private func kindToggle<Content: View>(_ kind: RecordKind, @ViewBuilder content: () -> Content) -> some View {
         let selected = router.transactionFilter.kinds == [kind]
         return Button {
@@ -137,12 +158,10 @@ struct TransactionsView: View {
         } label: {
             content()
                 .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(selected ? kind.tint.opacity(0.14) : .clear, in: .rect(cornerRadius: 10, style: .continuous))
+                .background(selected ? kind.tint.opacity(0.14) : .clear, in: .rect(cornerRadius: 12, style: .continuous))
                 .contentShape(.rect)
         }
         .buttonStyle(.plain)
-        .padding(.horizontal, -8)
         .accessibilityAddTraits(selected ? .isSelected : [])
         .sensoryFeedback(.selection, trigger: selected)
     }

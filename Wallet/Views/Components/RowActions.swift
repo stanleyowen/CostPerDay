@@ -114,6 +114,30 @@ extension View {
     }
 }
 
+/// A transaction row that opens the transaction in the editor — the one way to
+/// open a transaction anywhere in the app. Duplicate, Delete and Track as item
+/// live in the editor too, so a tap reaches everything.
+struct RecordLink<Label: View>: View {
+    let record: Record
+    @ViewBuilder let label: Label
+    @Environment(AppRouter.self) private var router
+
+    var body: some View {
+        Button { router.recordToEdit = record } label: { label.contentShape(.rect) }
+            .buttonStyle(RowPressStyle())
+    }
+}
+
+/// Dims a tapped row, like a list row's highlight, without List tinting the
+/// row's text the accent colour as it does for a plain `Button`.
+struct RowPressStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .opacity(configuration.isPressed ? 0.55 : 1)
+            .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
+    }
+}
+
 /// The red Delete for a swipe. Tinted rather than `role: .destructive`, which
 /// would start animating the row away before the confirmation is answered.
 struct SwipeDeleteButton: View {
