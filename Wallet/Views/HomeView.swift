@@ -557,33 +557,35 @@ struct SpendingDonutCard: View {
                             if let selected, let slice = slices.first(where: { $0.key == selected }) {
                                 let group = RecordGroup(rawValue: selected) ?? .other
                                 Image(systemName: group.symbol)
-                                    .font(.subheadline)
+                                    .font(.title3)
                                     .foregroundStyle(group.tint)
                                 Text(group.label)
-                                    .font(.caption)
+                                    .font(.subheadline)
                                     .foregroundStyle(.secondary)
                                     .lineLimit(1)
-                                Text(Money.compact(slice.total, code: currency))
-                                    .font(.system(.title3, design: .rounded).weight(.bold).monospacedDigit())
-                                    .minimumScaleFactor(0.6)
+                                Text(Money.string(slice.total, code: currency))
+                                    .font(.system(.title2, design: .rounded).weight(.bold).monospacedDigit())
+                                    .minimumScaleFactor(0.5)
                                     .lineLimit(1)
                                 Text((slice.total / max(report.expense, 0.01)).formatted(.percent.precision(.fractionLength(0))))
-                                    .font(.caption.weight(.semibold).monospacedDigit())
+                                    .font(.subheadline.weight(.semibold).monospacedDigit())
                                     .foregroundStyle(group.tint)
                             } else {
-                                Text("Spent").font(.caption).foregroundStyle(.secondary)
-                                Text(Money.compact(report.expense, code: currency))
-                                    .font(.system(.title2, design: .rounded).weight(.bold).monospacedDigit())
-                                    .minimumScaleFactor(0.6)
+                                Text("Spent").font(.subheadline).foregroundStyle(.secondary)
+                                Text(Money.string(report.expense, code: currency))
+                                    .font(.system(.title, design: .rounded).weight(.bold).monospacedDigit())
+                                    .minimumScaleFactor(0.5)
                                     .lineLimit(1)
                             }
                         }
-                        .frame(width: rect.width * 0.55)
+                        .frame(width: rect.width * 0.56)
                         .position(x: rect.midX, y: rect.midY)
                     }
                 }
             }
-            .frame(width: 220, height: 220)
+            // As wide as the card allows, up to 320pt, and always square.
+            .aspectRatio(1, contentMode: .fit)
+            .frame(maxWidth: 320)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 4)
             .sensoryFeedback(.selection, trigger: selected)
