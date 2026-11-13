@@ -158,7 +158,7 @@ struct TransactionsView: View {
         } label: {
             content()
                 .padding(.horizontal, 8)
-                .background(selected ? kind.tint.opacity(0.14) : .clear, in: .rect(cornerRadius: 12, style: .continuous))
+                .background(selected ? Brand.accent.opacity(0.14) : .clear, in: .rect(cornerRadius: 12, style: .continuous))
                 .contentShape(.rect)
         }
         .buttonStyle(.plain)

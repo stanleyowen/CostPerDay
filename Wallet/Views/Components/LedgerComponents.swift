@@ -184,7 +184,8 @@ struct AccountCard: View {
 
 // MARK: - Controls
 
-/// Expense / Income / Transfer, each in its own colour.
+/// Expense / Income / Transfer. A control, so the selection is the brand accent
+/// like every other selection; coral and green stay reserved for money itself.
 struct KindPicker: View {
     @Binding var kind: RecordKind
     var allowsTransfer = true
@@ -207,7 +208,7 @@ struct KindPicker: View {
                         .background {
                             if selected {
                                 Capsule()
-                                    .fill(option.tint.gradient)
+                                    .fill(Brand.accent.gradient)
                                     .matchedGeometryEffect(id: "kind", in: namespace)
                             }
                         }
