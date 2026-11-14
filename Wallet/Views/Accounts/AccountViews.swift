@@ -331,6 +331,7 @@ struct AccountsView: View {
         }
         .swipeActions(edge: .leading, allowsFullSwipe: true) {
             archiveButton(account)
+                .tint(account.isArchived ? .green : .orange)
         }
         .contextMenu {
             Button("Edit", systemImage: "pencil") { editing = account }
@@ -341,7 +342,8 @@ struct AccountsView: View {
     }
 
     /// Archive hides an account from Home and pickers; its money still counts.
-    /// Orange to put away and green to bring back, like retiring an item.
+    /// The swipe tints it orange to put away and green to bring back, like retiring
+    /// an item; in the long-press menu it keeps the accent like Edit.
     private func archiveButton(_ account: Account) -> some View {
         Button {
             withAnimation(.snappy) { account.isArchived.toggle() }
@@ -352,7 +354,6 @@ struct AccountsView: View {
                 Label(String(localized: "Archive", comment: "Account row action"), systemImage: "archivebox")
             }
         }
-        .tint(account.isArchived ? .green : .orange)
     }
 
     private func confirmDelete(_ account: Account) {

@@ -143,7 +143,9 @@ struct ItemListView: View {
                         SwipeEditButton { editingItem = row.item }
                     }
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                        // Orange to put away, green to bring back; the menu keeps the accent.
                         retireButton(for: row.item)
+                            .tint(row.item.isRetired ? .green : .orange)
                     }
                     .contextMenu {
                         Button("Edit", systemImage: "pencil") { editingItem = row.item }
@@ -207,7 +209,6 @@ struct ItemListView: View {
                 Label("Retire", systemImage: "archivebox")
             }
         }
-        .tint(item.isRetired ? .green : .orange)
     }
 
     @Environment(AppRouter.self) private var router
