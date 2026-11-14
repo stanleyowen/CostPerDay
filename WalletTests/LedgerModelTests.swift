@@ -72,6 +72,40 @@ struct LedgerModelTests {
         #expect(abs(item.totalCostPerDay() - 32_000 / 10) < 0.01)
     }
 
+    #if DEBUG
+    @Test("The NT$ sample ledger never overdraws an account and pays the card off")
+    @MainActor
+    func taiwanSampleLedgerAddsUp() throws {
+        let container = try DataStore.inMemoryContainer()
+        let context = container.mainContext
+        SampleData.insertTaiwanLedger(into: context)
+        let accounts = try context.fetch(FetchDescriptor<Account>())
+        let records = try context.fetch(FetchDescriptor<Record>()).sorted { $0.date < $1.date }
+        #expect(accounts.count == 5)
+        #expect(records.count > 500)
+        #expect(records.allSatisfy { $0.currencyCode == "TWD" && $0.date <= .now })
+
+        var running = Dictionary(uniqueKeysWithValues: accounts.map { ($0.uuid, $0.initialBalance) })
+        var lowest = running
+        for record in records {
+            switch record.kind {
+            case .expense: record.accountID.map { running[$0, default: 0] -= record.amount }
+            case .income: record.accountID.map { running[$0, default: 0] += record.amount }
+            case .transfer:
+                record.accountID.map { running[$0, default: 0] -= record.amount }
+                record.toAccountID.map { running[$0, default: 0] += record.amount }
+            }
+            for (id, value) in running { lowest[id] = min(lowest[id] ?? value, value) }
+        }
+        for account in accounts where account.kind != .card {
+            #expect((lowest[account.uuid] ?? -1) >= 0, "\(account.name) went to \(lowest[account.uuid] ?? 0)")
+        }
+        // At most about a month of spending is ever left on the card.
+        let card = try #require(accounts.first { $0.kind == .card })
+        #expect((running[card.uuid] ?? 0) > -60_000)
+    }
+    #endif
+
     @Test("Account colours persist as a preset name or #RRGGBB, and nothing else")
     func accountTintRawValues() {
         #expect(AccountTint(rawValue: "teal") == .preset(.teal))

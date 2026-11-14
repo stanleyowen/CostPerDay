@@ -31,7 +31,7 @@ python3 Localization/build_catalog.py
 ```
 
 Debug builds accept launch arguments (all inert in Release, see `Support/DebugFlags.swift` and `SampleData`):
-- `-seedSampleData` — items plus two accounts and ~3 months of transactions in an empty store.
+- `-seedSampleData` — items plus two accounts and ~3 months of transactions in an empty store. With the base currency set to TWD it seeds a Taipei profile instead (`SampleDataTaiwan.swift`: NT$ prices, five accounts, ~5 months simulated day by day so no account is overdrawn); set it before the first seeded launch with `xcrun simctl spawn <id> defaults write com.stanley.wallet baseCurrency TWD`.
 - `-importWalletCSV <path>` — import a Wallet CSV at launch (idempotent).
 - `-skipOnboarding`, `-initialTab home|transactions|reports|items|settings`, `-openComposer`, `-openRecord` (the latest transaction in the editor), `-scrollAnchor center|bottom`, `-reportFocus <category key or group:raw>`, `-reportDay <day of month>`, `-selectAccounts <n>` (pre-select the first n Home account cards), `-openAccount` (the first account's page), `-openFilters` (the Transactions filter sheet) — for scripted simulator screenshots (`xcrun simctl launch … ` then `xcrun simctl io booted screenshot`).
 

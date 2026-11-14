@@ -4,6 +4,8 @@ import SwiftData
 
 /// Debug-only fixtures so the list, charts and detail screens can be exercised
 /// without hand-entering a dozen items. Deliberately mixes currencies and sectors.
+/// With a NT$ base currency it uses the Taiwan set instead (`SampleDataTaiwan.swift`),
+/// since these amounts are priced in US dollars.
 enum SampleData {
     static func insert(into context: ModelContext) {
         for item in make() { context.insert(item) }
@@ -22,7 +24,8 @@ enum SampleData {
     /// Reports look like real use (README screenshots are taken from this).
     @MainActor
     static func insertLedger(into context: ModelContext) {
-        let currency = UserDefaults.standard.string(forKey: "baseCurrency") ?? Currency.deviceDefault
+        let currency = baseCurrency
+        if currency == "TWD" { return insertTaiwanLedger(into: context) }
         let bank = Account(name: "Everyday", kind: .bank, currencyCode: currency, initialBalance: 4_250, tint: .preset(.blue), sortOrder: 0)
         let card = Account(name: "Credit card", kind: .card, currencyCode: currency, initialBalance: 0, tint: .preset(.indigo), sortOrder: 1)
         let cash = Account(name: "Cash", kind: .cash, currencyCode: currency, initialBalance: 160, tint: .preset(.green), sortOrder: 2)
@@ -107,7 +110,12 @@ enum SampleData {
         }
     }
 
+    private static var baseCurrency: String {
+        UserDefaults.standard.string(forKey: "baseCurrency") ?? Currency.deviceDefault
+    }
+
     private static func make() -> [Item] {
+        if baseCurrency == "TWD" { return makeTaiwanItems() }
         func ago(_ months: Int) -> Date {
             Calendar.current.date(byAdding: .month, value: -months, to: .now) ?? .now
         }
