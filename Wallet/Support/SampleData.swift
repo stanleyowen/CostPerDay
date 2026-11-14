@@ -23,10 +23,10 @@ enum SampleData {
     @MainActor
     static func insertLedger(into context: ModelContext) {
         let currency = UserDefaults.standard.string(forKey: "baseCurrency") ?? Currency.deviceDefault
-        let bank = Account(name: "Everyday", kind: .bank, currencyCode: currency, initialBalance: 4_250, tint: .blue, sortOrder: 0)
-        let card = Account(name: "Credit card", kind: .card, currencyCode: currency, initialBalance: 0, tint: .indigo, sortOrder: 1)
-        let cash = Account(name: "Cash", kind: .cash, currencyCode: currency, initialBalance: 160, tint: .green, sortOrder: 2)
-        let savings = Account(name: "Savings", kind: .savings, currencyCode: currency, initialBalance: 12_400, tint: .orange, sortOrder: 3)
+        let bank = Account(name: "Everyday", kind: .bank, currencyCode: currency, initialBalance: 4_250, tint: .preset(.blue), sortOrder: 0)
+        let card = Account(name: "Credit card", kind: .card, currencyCode: currency, initialBalance: 0, tint: .preset(.indigo), sortOrder: 1)
+        let cash = Account(name: "Cash", kind: .cash, currencyCode: currency, initialBalance: 160, tint: .preset(.green), sortOrder: 2)
+        let savings = Account(name: "Savings", kind: .savings, currencyCode: currency, initialBalance: 12_400, tint: .preset(.orange), sortOrder: 3)
         savings.excludeFromStats = true
         for account in [bank, card, cash, savings] { context.insert(account) }
 

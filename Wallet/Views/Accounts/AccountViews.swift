@@ -80,7 +80,7 @@ struct AccountEditView: View {
                             let selected = draft.kind == kind
                             Button {
                                 withAnimation(.snappy) {
-                                    if draft.tint == draft.kind.defaultTint { draft.tint = kind.defaultTint }
+                                    if draft.tint == .preset(draft.kind.defaultTint) { draft.tint = .preset(kind.defaultTint) }
                                     draft.kind = kind
                                 }
                             } label: {
@@ -100,24 +100,35 @@ struct AccountEditView: View {
                 }
 
                 Section("Colour") {
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 6), spacing: 10) {
-                        ForEach(CategoryTint.allCases) { tint in
+                    // The twelve presets plus the system colour picker as a
+                    // thirteenth swatch: 7 + 6 fits two rows on every iPhone.
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 7), spacing: 10) {
+                        ForEach(CategoryTint.allCases) { preset in
+                            let selected = draft.tint == .preset(preset)
                             Button {
-                                withAnimation(.snappy) { draft.tint = tint }
+                                withAnimation(.snappy) { draft.tint = .preset(preset) }
                             } label: {
                                 Circle()
-                                    .fill(tint.color.gradient)
+                                    .fill(preset.color.gradient)
                                     .frame(width: 34, height: 34)
                                     .overlay {
-                                        if draft.tint == tint {
-                                            Image(systemName: "checkmark").font(.caption.weight(.bold)).foregroundStyle(.white)
-                                        }
+                                        if selected { swatchCheckmark }
                                     }
                             }
                             .buttonStyle(.plain)
-                            .accessibilityLabel(Text(tint.label))
-                            .accessibilityAddTraits(draft.tint == tint ? .isSelected : [])
+                            .accessibilityLabel(Text(preset.label))
+                            .accessibilityAddTraits(selected ? .isSelected : [])
                         }
+                        ColorPicker(selection: customColor, supportsOpacity: false) {
+                            Text("Custom colour")
+                        }
+                        .labelsHidden()
+                        .scaleEffect(1.2)
+                        .frame(width: 34, height: 34)
+                        .overlay {
+                            if draft.tint.isCustom { swatchCheckmark.allowsHitTesting(false) }
+                        }
+                        .accessibilityAddTraits(draft.tint.isCustom ? .isSelected : [])
                     }
                     .padding(.vertical, 4)
                 }
@@ -177,6 +188,20 @@ struct AccountEditView: View {
         }
     }
 
+    private var swatchCheckmark: some View {
+        Image(systemName: "checkmark").font(.caption.weight(.bold)).foregroundStyle(.white)
+            .shadow(color: .black.opacity(0.3), radius: 1)
+    }
+
+    /// The colour picker opens on the current colour, preset or not; anything
+    /// picked becomes a custom tint, and the card preview follows it live.
+    private var customColor: Binding<Color> {
+        Binding(
+            get: { draft.tint.color },
+            set: { draft.tint = AccountTint(color: $0) }
+        )
+    }
+
     private var preview: some View {
         let probe = Account(name: draft.name.isEmpty ? String(localized: "Account name") : draft.name, kind: draft.kind, currencyCode: draft.currencyCode, tint: draft.tint)
         return AccountCard(account: probe, balance: balanceText ?? 0, width: 240)
@@ -227,7 +252,7 @@ extension AccountDraft {
         kind = .bank
         currencyCode = ""
         initialBalance = 0
-        tint = AccountKind.bank.defaultTint
+        tint = .preset(AccountKind.bank.defaultTint)
         isArchived = false
         excludeFromStats = false
     }

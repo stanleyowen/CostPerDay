@@ -69,7 +69,7 @@ actor LedgerWriter {
         for planned in plan.accounts where byName[planned.name.lowercased()] == nil {
             let account = Account(
                 name: planned.name, kind: planned.kind, currencyCode: planned.currency,
-                tint: planned.kind.defaultTint, sortOrder: nextOrder
+                tint: .preset(planned.kind.defaultTint), sortOrder: nextOrder
             )
             nextOrder += 1
             modelContext.insert(account)

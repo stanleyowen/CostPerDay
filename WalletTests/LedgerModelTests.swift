@@ -2,6 +2,7 @@ import Testing
 import Foundation
 import SwiftData
 import UIKit
+import SwiftUI
 @testable import Wallet
 
 @Suite("Ledger models")
@@ -71,6 +72,24 @@ struct LedgerModelTests {
         #expect(abs(item.totalCostPerDay() - 32_000 / 10) < 0.01)
     }
 
+    @Test("Account colours persist as a preset name or #RRGGBB, and nothing else")
+    func accountTintRawValues() {
+        #expect(AccountTint(rawValue: "teal") == .preset(.teal))
+        #expect(AccountTint(rawValue: "#1a2B3c") == .custom("#1A2B3C"))
+        #expect(AccountTint(rawValue: "1A2B3C") == .custom("#1A2B3C"))
+        for bad in ["", "#12345", "#1234567", "#GGGGGG", "magenta"] {
+            #expect(AccountTint(rawValue: bad) == nil, "\(bad)")
+        }
+        #expect(AccountTint(color: Color(hex: 0xC0FFEE)) == .custom("#C0FFEE"))
+        #expect(AccountTint(color: .white) == .custom("#FFFFFF"))
+
+        let account = Account(tint: .custom("#C0FFEE"))
+        #expect(account.tintRaw == "#C0FFEE")
+        #expect(account.tint == .custom("#C0FFEE"))
+        account.tintRaw = "not a colour"
+        #expect(account.tint == .preset(.blue))
+    }
+
     @Test("Backup v3 round-trips accounts, transactions, budgets and item links")
     @MainActor
     func backupRoundTrip() throws {
@@ -78,7 +97,7 @@ struct LedgerModelTests {
         // SwiftData traps if the container is freed while the context is in use.
         let sourceContainer = try DataStore.inMemoryContainer()
         let source = sourceContainer.mainContext
-        let account = Account(name: "Bank (TWD)", kind: .bank, currencyCode: "TWD", initialBalance: 500)
+        let account = Account(name: "Bank (TWD)", kind: .bank, currencyCode: "TWD", initialBalance: 500, tint: .custom("#C0FFEE"))
         source.insert(account)
         let record = Record(kind: .expense, amount: 8_400, currencyCode: "TWD", accountID: account.uuid, category: .electronics, note: "Apple Watch", labels: ["Gift"])
         source.insert(record)
@@ -97,6 +116,7 @@ struct LedgerModelTests {
         let added = Backup.restoreLedger(decoded, into: target, existingAccounts: [], existingRecords: [], existingBudgets: [])
         try target.save()
         #expect(added.accounts == 1 && added.records == 1 && added.budgets == 1)
+        #expect(try target.fetch(FetchDescriptor<Account>()).first?.tint == .custom("#C0FFEE"))
 
         let restored = try #require(try target.fetch(FetchDescriptor<Record>()).first)
         #expect(restored.uuid == record.uuid)

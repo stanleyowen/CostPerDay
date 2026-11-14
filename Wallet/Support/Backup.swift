@@ -313,7 +313,7 @@ enum Backup {
             account.kindRaw = AccountKind(rawValue: entry.kind)?.rawValue ?? AccountKind.other.rawValue
             account.currencyCode = entry.currencyCode.count == 3 ? entry.currencyCode : file.baseCurrency
             account.initialBalance = entry.initialBalance.isFinite ? entry.initialBalance : 0
-            account.tintRaw = CategoryTint(rawValue: entry.tint)?.rawValue ?? CategoryTint.blue.rawValue
+            account.tintRaw = AccountTint(rawValue: entry.tint)?.rawValue ?? CategoryTint.blue.rawValue
             account.isArchived = entry.isArchived
             account.excludeFromStats = entry.excludeFromStats
             account.sortOrder = entry.sortOrder

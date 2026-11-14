@@ -16,6 +16,8 @@ final class Account {
     var currencyCode: String = "USD"
     /// The balance before the first recorded transaction, in `currencyCode`.
     var initialBalance: Double = 0
+    /// A `CategoryTint` raw value, or `#RRGGBB` for a colour the user picked
+    /// (see `AccountTint`).
     var tintRaw: String = CategoryTint.blue.rawValue
     var isArchived: Bool = false
     /// Savings or investment accounts the user doesn't want counted as spending power.
@@ -28,7 +30,7 @@ final class Account {
         kind: AccountKind = .bank,
         currencyCode: String = Currency.deviceDefault,
         initialBalance: Double = 0,
-        tint: CategoryTint = .blue,
+        tint: AccountTint = .preset(.blue),
         sortOrder: Int = 0
     ) {
         self.uuid = UUID()
@@ -46,13 +48,68 @@ final class Account {
         set { kindRaw = newValue.rawValue }
     }
 
-    var tint: CategoryTint {
-        get { CategoryTint(rawValue: tintRaw) ?? .blue }
+    var tint: AccountTint {
+        get { AccountTint(rawValue: tintRaw) ?? .preset(.blue) }
         set { tintRaw = newValue.rawValue }
     }
 
     var displayName: String {
         name.isEmpty ? String(localized: "Untitled account", comment: "Fallback name for an unnamed account") : name
+    }
+}
+
+/// An account's colour: one of the shared presets, or any colour from the system
+/// colour picker. Persisted as a string in `Account.tintRaw` — the preset's raw
+/// value, or `#RRGGBB` (sRGB) for a custom colour — so stores and backups made
+/// before custom colours existed read back unchanged.
+enum AccountTint: Hashable {
+    case preset(CategoryTint)
+    /// Uppercase `#RRGGBB`.
+    case custom(String)
+
+    init?(rawValue: String) {
+        if let preset = CategoryTint(rawValue: rawValue) {
+            self = .preset(preset)
+        } else if let hex = Self.normalisedHex(rawValue) {
+            self = .custom(hex)
+        } else {
+            return nil
+        }
+    }
+
+    /// A custom tint from any SwiftUI colour; opacity is dropped and wide-gamut
+    /// colours are clamped to sRGB.
+    init(color: Color) {
+        var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
+        UIColor(color).getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        let byte = { (value: CGFloat) in Int((min(max(value, 0), 1) * 255).rounded()) }
+        self = .custom(String(format: "#%02X%02X%02X", byte(red), byte(green), byte(blue)))
+    }
+
+    var rawValue: String {
+        switch self {
+        case .preset(let preset): preset.rawValue
+        case .custom(let hex): hex
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .preset(let preset):
+            return preset.color
+        case .custom(let hex):
+            return Color(hex: UInt32(hex.dropFirst(), radix: 16) ?? 0)
+        }
+    }
+
+    var isCustom: Bool {
+        if case .custom = self { true } else { false }
+    }
+
+    private static func normalisedHex(_ raw: String) -> String? {
+        let digits = raw.hasPrefix("#") ? raw.dropFirst() : Substring(raw)
+        guard digits.count == 6, digits.allSatisfy(\.isHexDigit) else { return nil }
+        return "#" + digits.uppercased()
     }
 }
 
@@ -125,7 +182,7 @@ struct AccountDraft: Equatable {
     var kind: AccountKind
     var currencyCode: String
     var initialBalance: Double
-    var tint: CategoryTint
+    var tint: AccountTint
     var isArchived: Bool
     var excludeFromStats: Bool
 
