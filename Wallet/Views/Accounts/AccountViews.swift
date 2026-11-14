@@ -142,7 +142,8 @@ struct AccountEditView: View {
                 if !isNew {
                     Section {
                         // An action, not a setting: it saves and closes, like retiring
-                        // an item. Orange to put away, green to bring back.
+                        // an item. In the brand accent like any other button here;
+                        // only the swipe actions use orange/green.
                         Button {
                             draft.isArchived.toggle()
                             save()
@@ -153,7 +154,7 @@ struct AccountEditView: View {
                                 Label(String(localized: "Archive account", comment: "Account editor button"), systemImage: "archivebox")
                             }
                         }
-                        .tint(draft.isArchived ? .green : .orange)
+                        .tint(Brand.accent)
                         .disabled(draft.name.trimmingCharacters(in: .whitespaces).isEmpty)
 
                         Button(role: .destructive) {
