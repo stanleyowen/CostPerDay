@@ -35,6 +35,8 @@ Debug builds accept launch arguments (all inert in Release, see `Support/DebugFl
 - `-importWalletCSV <path>` — import a Wallet CSV at launch (idempotent).
 - `-skipOnboarding`, `-initialTab home|transactions|reports|items|settings`, `-openComposer`, `-openRecord` (the latest transaction in the editor), `-scrollAnchor center|bottom`, `-reportFocus <category key or group:raw>`, `-reportDay <day of month>`, `-selectAccounts <n>` (pre-select the first n Home account cards), `-openAccount` (the first account's page), `-openFilters` (the Transactions filter sheet) — for scripted simulator screenshots (`xcrun simctl launch … ` then `xcrun simctl io booted screenshot`).
 
+Free-provisioning builds on a real iPhone expire after 7 days. `Scripts/install-reinstall-agent.sh` installs a LaunchAgent that, every 2 h, runs `Scripts/reinstall-on-device.sh`: once 5 days have passed since the last success it builds the last commit with a fresh profile and installs it over the app on the iPhone (same Wi-Fi or cable), notifying on success or failure. The agent can't read `~/Documents`, so it builds from a bare mirror in `~/Library/Application Support/WalletReinstall` that git hooks in `.git/hooks` keep on the checked-out commit. Log: `~/Library/Logs/WalletReinstall.log`.
+
 The Xcode project uses file-system-synchronized groups, so new Swift files under `Wallet/` or `WalletTests/` are picked up without editing `project.pbxproj`.
 
 ## Architecture
